@@ -14,7 +14,9 @@ Instance::Instance() {
     }
 }
 
-Instance::~Instance() {}
+Instance::~Instance() {
+    vkDestroyInstance(m_Instance, nullptr);
+}
 
 VkInstanceCreateInfo Instance::getCreateInfo() {
     VkApplicationInfo appInfo = getAppInfo();
