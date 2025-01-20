@@ -1,0 +1,39 @@
+#include "Window.h"
+
+#include <stdexcept>
+
+namespace Vulkan {
+
+Window::Window() {
+    if (glfwInit() != GLFW_TRUE) {
+        throw std::runtime_error("ERROR: Failed to initialize GLFW.");
+    }
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+    m_Window = glfwCreateWindow(m_Width, m_Height, "vulkan-pathtracer", nullptr, nullptr);
+
+    if (m_Window == NULL) {
+        throw std::runtime_error("ERROR: Failed to create GLFW window.");
+    }
+}
+
+Window::~Window() {
+    glfwDestroyWindow(m_Window);
+    glfwTerminate();
+}
+
+GLFWwindow* Window::getWindow() {
+    return m_Window;
+}
+
+uint32_t Window::getWidth() {
+    return m_Width;
+}
+
+uint32_t Window::getHeight() {
+    return m_Height;
+}
+
+}  // namespace Vulkan
