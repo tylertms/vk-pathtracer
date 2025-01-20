@@ -12,7 +12,8 @@ Window::Window() {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-    m_Window = glfwCreateWindow(m_Width, m_Height, "vulkan-pathtracer", nullptr, nullptr);
+    m_Window = glfwCreateWindow(
+        m_Width, m_Height, "vulkan-pathtracer", nullptr, nullptr);
 
     if (m_Window == NULL) {
         throw std::runtime_error("ERROR: Failed to create GLFW window.");
@@ -24,7 +25,7 @@ Window::~Window() {
     glfwTerminate();
 }
 
-GLFWwindow* Window::getWindow() {
+GLFWwindow *Window::getWindow() {
     return m_Window;
 }
 
@@ -36,4 +37,4 @@ uint32_t Window::getHeight() {
     return m_Height;
 }
 
-}  // namespace Vulkan
+} // namespace Vulkan
