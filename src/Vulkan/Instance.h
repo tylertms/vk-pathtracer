@@ -13,6 +13,7 @@ class Instance {
 
   private:
     VkInstance m_Instance;
+    VkDebugUtilsMessengerEXT m_DebugMessenger;
     std::vector<const char *> m_Extensions;
 
     VkInstanceCreateInfo getCreateInfo();

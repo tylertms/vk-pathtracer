@@ -1,4 +1,5 @@
 #include "Instance.h"
+#include "DebugMessenger.h"
 
 #include <iostream>
 #include <stdexcept>
@@ -7,14 +8,24 @@
 namespace VKAPP {
 
 Instance::Instance() {
+    if (g_EnabledValidationLayers && !validationLayersSupported()) {
+        throw std::runtime_error("ERROR: Validation layers not supported.");
+    }
+
     VkInstanceCreateInfo createInfo = getCreateInfo();
 
     if (vkCreateInstance(&createInfo, nullptr, &m_Instance) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to create instance.");
     }
+
+    setupDebugMessenger(m_Instance, m_DebugMessenger);
 }
 
 Instance::~Instance() {
+    if (g_EnabledValidationLayers) {
+        destroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
+    }
+    
     vkDestroyInstance(m_Instance, nullptr);
 }
 
@@ -27,7 +38,12 @@ VkInstanceCreateInfo Instance::getCreateInfo() {
 
     attachExtensions(createInfo);
 
-    createInfo.enabledLayerCount = 0;
+    if (g_EnabledValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(g_ValidationLayers.size());
+        createInfo.ppEnabledLayerNames = g_ValidationLayers.data();
+    } else {
+        createInfo.enabledLayerCount = 0;
+    }
 
 #if __APPLE__
     createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
@@ -64,7 +80,7 @@ void Instance::attachExtensions(VkInstanceCreateInfo &createInfo) {
     m_Extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 #endif
 
-    if (false) { // TODO: Validation Layers
+    if (g_EnabledValidationLayers) {
         m_Extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
     }
 
