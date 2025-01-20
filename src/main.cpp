@@ -1,7 +1,7 @@
 #include "Vulkan/Application.h"
 
 int main() {
-  VkApp::Application app;
+  VKAPP::Application app;
   app.run();
   
   return 0;
