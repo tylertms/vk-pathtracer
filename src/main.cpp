@@ -1,6 +1,8 @@
-#include <iostream>
+#include "Application.h"
 
 int main() {
-  std::cout << "Hello world!" << std::endl;
+  Vulkan::Application app;
+  app.run();
+  
   return 0;
 }
