@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace VkApp {
+namespace VKAPP {
 
 class Instance {
   public:
@@ -20,4 +20,4 @@ class Instance {
     void attachExtensions(VkInstanceCreateInfo &createInfo);
 };
 
-} // namespace VkApp
+} // namespace VKAPP

@@ -1,7 +1,7 @@
 #include "Application.h"
 #include <iostream>
 
-namespace VkApp {
+namespace VKAPP {
 
 Application::~Application() {
 }
@@ -12,4 +12,4 @@ void Application::run() {
     }
 }
 
-} // namespace VkApp
+} // namespace VKAPP

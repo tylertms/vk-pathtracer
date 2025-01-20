@@ -2,7 +2,7 @@
 
 #include "VkApp.h"
 
-namespace VkApp {
+namespace VKAPP {
 
 class Window {
   public:
@@ -21,4 +21,4 @@ class Window {
     uint32_t m_Height = 600;
 };
 
-} // namespace VkApp
+} // namespace VKAPP

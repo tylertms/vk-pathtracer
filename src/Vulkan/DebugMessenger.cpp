@@ -1,5 +1,5 @@
 #include "DebugMessenger.h"
 
-namespace VkApp {
+namespace VKAPP {
     
 }

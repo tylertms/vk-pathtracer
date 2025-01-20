@@ -3,7 +3,7 @@
 #include "Instance.h"
 #include "Window.h"
 
-namespace VkApp {
+namespace VKAPP {
 
 class Application {
   public:
@@ -15,4 +15,4 @@ class Application {
     Instance m_Instance;
 };
 
-} // namespace VkApp
+} // namespace VKAPP
