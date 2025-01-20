@@ -1,0 +1,14 @@
+/build/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# IDE and editor settings
+.vscode/
