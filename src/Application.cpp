@@ -2,12 +2,16 @@
 
 #include <iostream>
 
+#include "Vulkan.h"
+
 namespace Vulkan {
 
 Application::~Application() {}
 
 void Application::run() {
-    std::cout << "RUNNING\n";
+    while (!glfwWindowShouldClose(m_AppWindow.getWindow())) {
+        glfwPollEvents();
+    }
 }
 
 }  // namespace Vulkan
