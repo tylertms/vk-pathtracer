@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace Vulkan {
+namespace VkApp {
 
 Instance::Instance() {
     VkInstanceCreateInfo createInfo = getCreateInfo();
@@ -72,4 +72,4 @@ void Instance::attachExtensions(VkInstanceCreateInfo &createInfo) {
     createInfo.ppEnabledExtensionNames = m_Extensions.data();
 }
 
-} // namespace Vulkan
+} // namespace VkApp

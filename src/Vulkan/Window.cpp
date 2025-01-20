@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace Vulkan {
+namespace VkApp {
 
 Window::Window() {
     if (glfwInit() != GLFW_TRUE) {
@@ -37,4 +37,4 @@ uint32_t Window::getHeight() {
     return m_Height;
 }
 
-} // namespace Vulkan
+} // namespace VkApp

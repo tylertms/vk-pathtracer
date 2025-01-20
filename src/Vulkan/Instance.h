@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace Vulkan {
+namespace VkApp {
 
 class Instance {
   public:
@@ -20,4 +20,4 @@ class Instance {
     void attachExtensions(VkInstanceCreateInfo &createInfo);
 };
 
-} // namespace Vulkan
+} // namespace VkApp
