@@ -1,11 +1,15 @@
 #pragma once
+#include "Window.h"
 
 namespace Vulkan {
 
 class Application {
    public:
-    virtual ~Application();
+    ~Application();
     void run();
+
+   private:
+    Window m_AppWindow;
 };
 
 }  // namespace Vulkan
