@@ -1,5 +1,6 @@
 #pragma once
-#include "Vulkan.hpp"
+
+#include "VkApp.h"
 
 namespace Vulkan {
 
