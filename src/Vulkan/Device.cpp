@@ -5,6 +5,8 @@
 
 namespace Vulkan {
 
+class SwapChain;
+
 void Device::init(const VkInstance &instance, const VkSurfaceKHR &surface) {
     ext_Instance = instance;
     ext_Surface = surface;
@@ -47,7 +49,7 @@ void Device::pickPhysicalDevice() {
 }
 
 void Device::createLogicalDevice() {
-    QueueFamilyIndices indices = findQueueFamilies(m_PhysicalDevice);
+    QueueFamilyIndices indices = findQueueFamilies(m_PhysicalDevice, ext_Surface);
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
     std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
@@ -80,7 +82,7 @@ void Device::createLogicalDevice() {
     vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
-Device::QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice) {
+Device::QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface) {
     QueueFamilyIndices indices;
 
     uint32_t queueFamilyCount = 0;
@@ -96,7 +98,7 @@ Device::QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &phy
         }
 
         VkBool32 presentSupport = false;
-        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, ext_Surface, &presentSupport);
+        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, surface, &presentSupport);
 
         if (presentSupport) {
             indices.presentFamily = i;
@@ -128,17 +130,15 @@ const char *Device::deviceString(const VkPhysicalDeviceType &type) {
 }
 
 int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDeviceProperties &properties) {
-    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice, ext_Surface);
     if (!indices.isComplete() || !deviceSupportsExtensions(physicalDevice)) {
         return -1;
     }
 
-    /*
-    SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
+    SwapChain::SupportDetails swapChainSupport = m_SwapChain.querySupport(physicalDevice, ext_Surface);
     bool validSwapChain = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     if (!validSwapChain)
         return -1;
-    */
 
     VkPhysicalDeviceFeatures features;
     vkGetPhysicalDeviceProperties(physicalDevice, &properties);

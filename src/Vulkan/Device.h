@@ -1,6 +1,8 @@
 #pragma once
 
+#include "SwapChain.h"
 #include "VulkanApp.h"
+
 #include <vulkan/vulkan_beta.h>
 
 #include <optional>
@@ -14,13 +16,6 @@ const std::vector<const char *> deviceExtensions = {
 
 class Device {
   public:
-    void init(const VkInstance &instance, const VkSurfaceKHR &surface);
-    void deinit();
-
-    void pickPhysicalDevice();
-    void createLogicalDevice();
-
-  private:
     struct QueueFamilyIndices {
         std::optional<uint32_t> graphicsFamily;
         std::optional<uint32_t> presentFamily;
@@ -30,6 +25,18 @@ class Device {
         }
     };
 
+  public:
+    void init(const VkInstance &instance, const VkSurfaceKHR &surface);
+    void deinit();
+
+    void pickPhysicalDevice();
+    void createLogicalDevice();
+
+    const VkPhysicalDevice &getVkPhysicalDevice() const { return m_PhysicalDevice; }
+    const VkDevice &getVkDevice() const { return m_Device; }
+
+    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface);
+
   private:
     VkDevice m_Device;
     VkPhysicalDevice m_PhysicalDevice;
@@ -37,7 +44,8 @@ class Device {
     VkQueue graphicsQueue;
     VkQueue presentQueue;
 
-    Device::QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &device);
+    SwapChain m_SwapChain;
+
     int getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties);
     bool deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice);
     const char *deviceString(const VkPhysicalDeviceType &type);
