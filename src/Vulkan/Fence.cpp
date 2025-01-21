@@ -21,4 +21,4 @@ void Fence::deinit(const VkDevice &device) {
     vkDestroyFence(device, m_Fence, nullptr);
 }
 
-}
+} // namespace Vulkan
