@@ -91,7 +91,7 @@ void Application::drawFrame() {
     submitInfo.pSignalSemaphores = signalSemaphores;
 
     if (vkQueueSubmit(m_Device.getGraphicsQueue(), 1, &submitInfo, m_InFlightFences[currentFrame].getVkFence()) != VK_SUCCESS) {
-        throw std::runtime_error("failed to submit draw command buffer!");
+        throw std::runtime_error("ERROR: Failed to submit draw command buffer.");
     }
 
     VkPresentInfoKHR presentInfo{};

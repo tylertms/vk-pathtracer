@@ -12,7 +12,7 @@ void CommandBuffer::init(const Device &device, const RenderPass &renderPass, con
     allocInfo.commandBufferCount = 1;
 
     if (vkAllocateCommandBuffers(device.getVkDevice(), &allocInfo, &m_CommandBuffer) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate command buffers!");
+        throw std::runtime_error("ERROR: Failed to allocate command buffers.");
     }
 }
 
@@ -23,7 +23,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFra
     beginInfo.pInheritanceInfo = nullptr;
 
     if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS) {
-        throw std::runtime_error("failed to begin recording command buffer!");
+        throw std::runtime_error("ERROR: Failed to begin recording command buffer.");
     }
 
     VkRenderPassBeginInfo renderPassInfo = ext_RenderPass.getBeginInfo(framebuffer);
@@ -42,7 +42,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFra
 
     vkCmdEndRenderPass(m_CommandBuffer);
     if (vkEndCommandBuffer(m_CommandBuffer) != VK_SUCCESS) {
-        throw std::runtime_error("failed to record command buffer!");
+        throw std::runtime_error("ERROR: Failed to record command buffer.");
     }
 }
 

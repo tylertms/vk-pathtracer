@@ -12,7 +12,7 @@ void CommandPool::init(const Device &device) {
     poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
 
     if (vkCreateCommandPool(device.getVkDevice(), &poolInfo, nullptr, &m_CommandPool) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create command pool!");
+        throw std::runtime_error("ERROR: Failed to create command pool.");
     }
 }
 
