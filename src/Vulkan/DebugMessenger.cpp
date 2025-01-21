@@ -7,7 +7,11 @@ const std::vector<const char *> g_ValidationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };
 
+#if NODEBUG
+const bool g_EnabledValidationLayers = false;
+#else
 const bool g_EnabledValidationLayers = true;
+#endif
 
 bool validationLayersSupported() {
     uint32_t layerCount;
