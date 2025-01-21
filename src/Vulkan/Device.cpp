@@ -82,7 +82,8 @@ void Device::createLogicalDevice() {
     vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
-Device::QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface) {
+Device::QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &opt_Surface) const {
+    VkSurfaceKHR surface = opt_Surface == nullptr ? ext_Surface : opt_Surface;
     QueueFamilyIndices indices;
 
     uint32_t queueFamilyCount = 0;

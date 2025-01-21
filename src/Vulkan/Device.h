@@ -35,7 +35,7 @@ class Device {
     const VkPhysicalDevice &getVkPhysicalDevice() const { return m_PhysicalDevice; }
     const VkDevice &getVkDevice() const { return m_Device; }
 
-    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface);
+    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &opt_Surface) const;
 
   private:
     VkDevice m_Device;
