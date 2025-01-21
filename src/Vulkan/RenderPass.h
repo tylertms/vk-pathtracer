@@ -11,7 +11,7 @@ class RenderPass {
 
     VkRenderPassBeginInfo getBeginInfo(const VkFramebuffer &framebuffer);
 
-    const VkRenderPass &getVkRenderPass() const { return m_RenderPass; }
+    inline const VkRenderPass &getVkRenderPass() const { return m_RenderPass; }
 
   private:
     VkRenderPass m_RenderPass;
