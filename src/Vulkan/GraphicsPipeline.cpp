@@ -86,7 +86,7 @@ VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::getInputAssembly() cons
     return inputAssembly;
 }
 
-inline VkViewport GraphicsPipeline::getViewport() const {
+VkViewport GraphicsPipeline::getViewport() const {
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
@@ -98,7 +98,7 @@ inline VkViewport GraphicsPipeline::getViewport() const {
     return viewport;
 }
 
-inline VkRect2D GraphicsPipeline::getScissor() const {
+VkRect2D GraphicsPipeline::getScissor() const {
     VkRect2D scissor{};
     scissor.offset = {0, 0};
     scissor.extent = ext_SwapChainExtent;

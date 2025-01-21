@@ -16,8 +16,8 @@ class GraphicsPipeline {
     inline const RenderPass &getRenderPass() const { return m_RenderPass; }
     inline const VkRenderPass &getVkRenderPass() const { return m_RenderPass.getVkRenderPass(); }
 
-    inline VkViewport getViewport() const;
-    inline VkRect2D getScissor() const;
+    VkViewport getViewport() const;
+    VkRect2D getScissor() const;
 
   private:
     std::vector<VkDynamicState> dynamicStates = {
