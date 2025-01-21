@@ -6,8 +6,11 @@ namespace Vulkan {
 
 class Fence {
   public:
-    void init(const VkDevice &device);
+    void init(const VkDevice &device, bool signaled);
     void deinit(const VkDevice &device);
+
+    inline const VkFence &getVkFence() const { return m_Fence; }
+
   private:
     VkFence m_Fence;
 };
