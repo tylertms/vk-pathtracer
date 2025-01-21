@@ -8,6 +8,11 @@ void SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *wi
     VkPhysicalDevice physicalDevice = device.getVkPhysicalDevice();
     SupportDetails swapChainSupport = querySupport(physicalDevice, surface);
 
+    m_ImageCount = swapChainSupport.capabilities.minImageCount + 1;
+    if (swapChainSupport.capabilities.maxImageCount > 0 && m_ImageCount > swapChainSupport.capabilities.maxImageCount) {
+        m_ImageCount = swapChainSupport.capabilities.maxImageCount;
+    }
+
     m_SurfaceFormat = chooseSurfaceFormat(swapChainSupport.formats);
     m_PresentMode = choosePresentMode(swapChainSupport.presentModes);
     m_Extent = chooseExtent(swapChainSupport.capabilities, window);
@@ -19,17 +24,12 @@ void SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *wi
         throw std::runtime_error("ERROR: Failed to create swapchain.");
     }
 
-    uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-    if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
-        imageCount = swapChainSupport.capabilities.maxImageCount;
-    }
+    vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &m_ImageCount, nullptr);
+    m_Images.resize(m_ImageCount);
+    vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &m_ImageCount, m_Images.data());
 
-    vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &imageCount, nullptr);
-    m_Images.resize(imageCount);
-    vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &imageCount, m_Images.data());
-
-    m_ImageViews.resize(imageCount);
-    for (int i = 0; i < imageCount; i++) {
+    m_ImageViews.resize(m_ImageCount);
+    for (int i = 0; i < m_ImageCount; i++) {
         m_ImageViews[i].init(device.getVkDevice(), m_Images[i], m_Format);
     }
 }
@@ -45,15 +45,10 @@ VkSwapchainCreateInfoKHR SwapChain::getCreateInfo(Device &device, const VkSurfac
     VkPhysicalDevice physicalDevice = device.getVkPhysicalDevice();
     SupportDetails swapChainSupport = querySupport(physicalDevice, surface);
 
-    uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-    if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
-        imageCount = swapChainSupport.capabilities.maxImageCount;
-    }
-
     VkSwapchainCreateInfoKHR createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = surface;
-    createInfo.minImageCount = imageCount;
+    createInfo.minImageCount = m_ImageCount;
     createInfo.imageFormat = m_SurfaceFormat.format;
     createInfo.imageColorSpace = m_SurfaceFormat.colorSpace;
     createInfo.imageExtent = m_Extent;
