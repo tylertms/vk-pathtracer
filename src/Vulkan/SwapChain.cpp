@@ -27,9 +27,17 @@ void SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *wi
     vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &imageCount, nullptr);
     m_Images.resize(imageCount);
     vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &imageCount, m_Images.data());
+
+    m_ImageViews.resize(imageCount);
+    for (int i = 0; i < imageCount; i++) {
+        m_ImageViews[i].init(device.getVkDevice(), m_Images[i], m_Format);
+    }
 }
 
 void SwapChain::deinit(const VkDevice &device) {
+    for (auto imageView : m_ImageViews) {
+        imageView.deinit(device);
+    }
     vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 }
 

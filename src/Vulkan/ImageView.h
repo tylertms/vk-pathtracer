@@ -1,0 +1,16 @@
+#pragma once
+
+#include "VulkanApp.h"
+
+namespace Vulkan {
+
+class ImageView {
+  public:
+    void init(const VkDevice &device, const VkImage &image, const VkFormat &format);
+    void deinit(const VkDevice &device);
+
+  private:
+    VkImageView m_ImageView;
+};
+
+} // namespace Vulkan

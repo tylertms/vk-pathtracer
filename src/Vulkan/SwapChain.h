@@ -1,6 +1,7 @@
 #pragma once
 
 #include "VulkanApp.h"
+#include "ImageView.h"
 
 #include <vector>
 
@@ -28,8 +29,9 @@ class SwapChain {
     VkPresentModeKHR m_PresentMode;
     VkExtent2D m_Extent;
 
-    VkImageFormat m_Format;
+    VkFormat m_Format;
     std::vector<VkImage> m_Images;
+    std::vector<ImageView> m_ImageViews;
 
     VkSurfaceFormatKHR chooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);
     VkPresentModeKHR choosePresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
