@@ -15,10 +15,11 @@ class Application {
 
     void run();
 
-    const Window &getWindow() { return m_Window; }
-    const Instance &getInstance() { return m_Instance; }
-    const Device &getDevice() { return m_Device; }
-    const Surface &getSurface() { return m_Surface; }
+    const Window &getWindow() const { return m_Window; }
+    const Instance &getInstance() const { return m_Instance; }
+    const Device &getDevice() const { return m_Device; }
+    const Surface &getSurface() const { return m_Surface; }
+    const SwapChain &getSwapChain() const { return m_SwapChain; }
 
   private:
     Window m_Window;

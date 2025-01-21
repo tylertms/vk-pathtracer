@@ -11,7 +11,7 @@ class Instance {
     void init();
     void deinit();
 
-    VkInstance &getVkInstance();
+    const VkInstance &getVkInstance() const { return m_Instance; }
 
   private:
     VkInstance m_Instance;

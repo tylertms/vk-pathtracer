@@ -25,16 +25,4 @@ void Window::deinit() {
     glfwTerminate();
 }
 
-GLFWwindow *Window::getGlfwWindow() {
-    return m_Window;
-}
-
-uint32_t Window::getWidth() {
-    return m_Width;
-}
-
-uint32_t Window::getHeight() {
-    return m_Height;
-}
-
 } // namespace Vulkan

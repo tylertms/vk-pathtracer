@@ -29,10 +29,6 @@ void Instance::deinit() {
     vkDestroyInstance(m_Instance, nullptr);
 }
 
-VkInstance &Instance::getVkInstance() {
-    return m_Instance;
-}
-
 VkInstanceCreateInfo Instance::getCreateInfo() {
     VkApplicationInfo appInfo = getAppInfo();
 
