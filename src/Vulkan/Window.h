@@ -9,9 +9,9 @@ class Window {
     void init();
     void deinit();
 
-    GLFWwindow *getGlfwWindow() const { return m_Window; }
-    const uint32_t getWidth() const { return m_Width; }
-    const uint32_t getHeight() const { return m_Height; }
+    inline GLFWwindow *getGlfwWindow() const { return m_Window; }
+    inline const uint32_t getWidth() const { return m_Width; }
+    inline const uint32_t getHeight() const { return m_Height; }
 
   private:
     GLFWwindow *m_Window;

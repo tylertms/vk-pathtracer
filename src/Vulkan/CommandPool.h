@@ -10,7 +10,7 @@ class CommandPool {
     void init(const Device &device);
     void deinit(const Device &device);
 
-    const VkCommandPool &getVkCommandPool() const { return m_CommandPool; } 
+    inline const VkCommandPool &getVkCommandPool() const { return m_CommandPool; } 
 
   private:
     VkCommandPool m_CommandPool;

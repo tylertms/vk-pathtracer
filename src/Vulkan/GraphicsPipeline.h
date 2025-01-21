@@ -12,10 +12,12 @@ class GraphicsPipeline {
     void init(const VkDevice &device, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent);
     void deinit(const VkDevice &device);
 
-    const VkPipeline &getVkPipeline() const { return m_GraphicsPipeline; }
+    inline const VkPipeline &getVkPipeline() const { return m_GraphicsPipeline; }
+    inline const RenderPass &getRenderPass() const { return m_RenderPass; }
+    inline const VkRenderPass &getVkRenderPass() const { return m_RenderPass.getVkRenderPass(); }
 
-    VkViewport getViewport() const;
-    VkRect2D getScissor() const;
+    inline VkViewport getViewport() const;
+    inline VkRect2D getScissor() const;
 
   private:
     std::vector<VkDynamicState> dynamicStates = {

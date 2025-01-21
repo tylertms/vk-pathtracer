@@ -13,7 +13,7 @@ class ShaderModule {
 
     VkPipelineShaderStageCreateInfo getPipelineStageCreateInfo();
 
-    const VkShaderModule &getVkShaderModule() const { return m_ShaderModule; }
+    inline const VkShaderModule &getVkShaderModule() const { return m_ShaderModule; }
 
   private:
     VkShaderModule m_ShaderModule;

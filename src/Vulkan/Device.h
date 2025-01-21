@@ -32,8 +32,11 @@ class Device {
     void pickPhysicalDevice();
     void createLogicalDevice();
 
-    const VkPhysicalDevice &getVkPhysicalDevice() const { return m_PhysicalDevice; }
-    const VkDevice &getVkDevice() const { return m_Device; }
+    inline const VkPhysicalDevice &getVkPhysicalDevice() const { return m_PhysicalDevice; }
+    inline const VkDevice &getVkDevice() const { return m_Device; }
+
+    inline const VkQueue &getGraphicsQueue() const { return m_GraphicsQueue; }
+    inline const VkQueue &getPresentQueue() const { return m_PresentQueue; }
 
     QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &opt_Surface) const;
 
@@ -41,8 +44,8 @@ class Device {
     VkDevice m_Device;
     VkPhysicalDevice m_PhysicalDevice;
 
-    VkQueue graphicsQueue;
-    VkQueue presentQueue;
+    VkQueue m_GraphicsQueue;
+    VkQueue m_PresentQueue;
 
     SwapChain m_SwapChain;
 
