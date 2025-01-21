@@ -1,28 +1,32 @@
 #include "Device.h"
 
 #include <iostream>
+#include <set>
 
 namespace VKAPP {
 
-void Device::init(const VkInstance &instance) {
-    pickPhysicalDevice(instance);
+void Device::init(const VkInstance &instance, const VkSurfaceKHR &surface) {
+    ext_Instance = instance;
+    ext_Surface = surface;
+
+    pickPhysicalDevice();
     createLogicalDevice();
 }
 
-Device::~Device() {
+void Device::deinit() {
     vkDestroyDevice(m_Device, nullptr);
 }
 
-void Device::pickPhysicalDevice(const VkInstance &instance) {
+void Device::pickPhysicalDevice() {
     uint32_t deviceCount = 0;
-    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    vkEnumeratePhysicalDevices(ext_Instance, &deviceCount, nullptr);
 
     if (deviceCount == 0) {
         throw std::runtime_error("ERROR: Vulkan not supported on any valid device on this system.");
     }
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
-    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+    vkEnumeratePhysicalDevices(ext_Instance, &deviceCount, devices.data());
 
     int bestDeviceScore = -1;
     VkPhysicalDeviceProperties properties, bestProperties;
@@ -45,35 +49,43 @@ void Device::pickPhysicalDevice(const VkInstance &instance) {
 void Device::createLogicalDevice() {
     QueueFamilyIndices indices = findQueueFamilies(m_PhysicalDevice);
 
-    VkDeviceQueueCreateInfo queueCreateInfo{};
-    queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
-    queueCreateInfo.queueCount = 1;
+    std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
 
     float queuePriority = 1.0f;
-    queueCreateInfo.pQueuePriorities = &queuePriority;
+    for (uint32_t queueFamily : uniqueQueueFamilies) {
+        VkDeviceQueueCreateInfo queueCreateInfo{};
+        queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        queueCreateInfo.queueFamilyIndex = queueFamily;
+        queueCreateInfo.queueCount = 1;
+        queueCreateInfo.pQueuePriorities = &queuePriority;
+        queueCreateInfos.push_back(queueCreateInfo);
+    }
 
     VkPhysicalDeviceFeatures deviceFeatures{};
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    createInfo.pQueueCreateInfos = &queueCreateInfo;
-    createInfo.queueCreateInfoCount = 1;
+    createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
     createInfo.pEnabledFeatures = &deviceFeatures;
 
     if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_Device) != VK_SUCCESS) {
         throw std::runtime_error("failed to create logical device!");
     }
+
+    vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &graphicsQueue);
+    vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
-QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &device) {
+QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice) {
     QueueFamilyIndices indices;
 
     uint32_t queueFamilyCount = 0;
-    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, nullptr);
 
     std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
-    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+    vkGetPhysicalDeviceQueueFamilyProperties(physicalDevice, &queueFamilyCount, queueFamilies.data());
 
     int i = 0;
     for (const auto &queueFamily : queueFamilies) {
@@ -82,7 +94,7 @@ QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &device) {
         }
 
         VkBool32 presentSupport = false;
-        // vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+        vkGetPhysicalDeviceSurfaceSupportKHR(physicalDevice, i, ext_Surface, &presentSupport);
 
         if (presentSupport) {
             indices.presentFamily = i;
@@ -113,8 +125,8 @@ const char *Device::deviceString(const VkPhysicalDeviceType &type) {
     }
 }
 
-int Device::getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties) {
-    QueueFamilyIndices indices = findQueueFamilies(device);
+int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDeviceProperties &properties) {
+    QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
     if (!indices.isComplete()) {
         return -1;
     }
@@ -128,9 +140,9 @@ int Device::getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties 
         return -1;
     */
 
-    VkPhysicalDeviceFeatures deviceFeatures;
-    vkGetPhysicalDeviceProperties(device, &properties);
-    vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+    VkPhysicalDeviceFeatures features;
+    vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+    vkGetPhysicalDeviceFeatures(physicalDevice, &features);
 
     // List of valid device types, higher index is better
     const VkPhysicalDeviceType deviceTypes[4] = {
