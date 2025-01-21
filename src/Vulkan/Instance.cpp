@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <vector>
 
-namespace VKAPP {
+namespace Vulkan {
 
 void Instance::init() {
     if (g_EnabledValidationLayers && !validationLayersSupported()) {
@@ -92,4 +92,4 @@ void Instance::attachExtensions(VkInstanceCreateInfo &createInfo) {
     createInfo.ppEnabledExtensionNames = m_Extensions.data();
 }
 
-} // namespace VKAPP
+} // namespace Vulkan

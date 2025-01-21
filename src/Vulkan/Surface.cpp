@@ -2,7 +2,7 @@
 
 #include <stdexcept>
 
-namespace VKAPP {
+namespace Vulkan {
 
 void Surface::init(const VkInstance &instance, GLFWwindow *window) {
     if (glfwCreateWindowSurface(instance, window, nullptr, &m_Surface) != VK_SUCCESS) {
@@ -15,4 +15,4 @@ void Surface::deinit(const VkInstance &instance) {
 }
 
 
-} // namespace VKAPP
+} // namespace Vulkan

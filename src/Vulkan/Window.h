@@ -1,8 +1,8 @@
 #pragma once
 
-#include "VkApp.h"
+#include "VulkanApp.h"
 
-namespace VKAPP {
+namespace Vulkan {
 
 class Window {
   public:
@@ -21,4 +21,4 @@ class Window {
     uint32_t m_Height = 600;
 };
 
-} // namespace VKAPP
+} // namespace Vulkan

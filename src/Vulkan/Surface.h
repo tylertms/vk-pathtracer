@@ -1,8 +1,8 @@
 #pragma once
 
-#include "VkApp.h"
+#include "VulkanApp.h"
 
-namespace VKAPP {
+namespace Vulkan {
 
 class Surface {
   public:
@@ -14,4 +14,4 @@ class Surface {
     VkSurfaceKHR m_Surface;
 };
 
-} // namespace VKAPP
+} // namespace Vulkan

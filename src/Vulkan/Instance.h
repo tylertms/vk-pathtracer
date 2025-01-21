@@ -1,10 +1,10 @@
 #pragma once
 
-#include "VkApp.h"
+#include "VulkanApp.h"
 
 #include <vector>
 
-namespace VKAPP {
+namespace Vulkan {
 
 class Instance {
   public:
@@ -23,4 +23,4 @@ class Instance {
     void attachExtensions(VkInstanceCreateInfo &createInfo);
 };
 
-} // namespace VKAPP
+} // namespace Vulkan

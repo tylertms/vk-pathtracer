@@ -3,7 +3,7 @@
 #include <iostream>
 #include <set>
 
-namespace VKAPP {
+namespace Vulkan {
 
 void Device::init(const VkInstance &instance, const VkSurfaceKHR &surface) {
     ext_Instance = instance;
@@ -80,7 +80,7 @@ void Device::createLogicalDevice() {
     vkGetDeviceQueue(m_Device, indices.presentFamily.value(), 0, &presentQueue);
 }
 
-QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice) {
+Device::QueueFamilyIndices Device::findQueueFamilies(const VkPhysicalDevice &physicalDevice) {
     QueueFamilyIndices indices;
 
     uint32_t queueFamilyCount = 0;
@@ -176,4 +176,4 @@ bool Device::deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice) {
     return requiredExtensions.empty();
 }
 
-} // namespace VKAPP
+} // namespace Vulkan

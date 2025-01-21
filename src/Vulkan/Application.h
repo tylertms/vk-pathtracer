@@ -5,7 +5,7 @@
 #include "Surface.h"
 #include "Window.h"
 
-namespace VKAPP {
+namespace Vulkan {
 
 class Application {
   public:
@@ -28,4 +28,4 @@ class Application {
 
 extern Application g_AppInstance;
 
-} // namespace VKAPP
+} // namespace Vulkan

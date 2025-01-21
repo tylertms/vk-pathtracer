@@ -1,7 +1,7 @@
 #include "Application.h"
 #include <iostream>
 
-namespace VKAPP {
+namespace Vulkan {
 
 Application::Application() {
     m_Window.init();
@@ -23,4 +23,4 @@ void Application::run() {
     }
 }
 
-} // namespace VKAPP
+} // namespace Vulkan

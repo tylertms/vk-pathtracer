@@ -1,7 +1,7 @@
 #include "DebugMessenger.h"
 #include <iostream>
 
-namespace VKAPP {
+namespace Vulkan {
 
 const std::vector<const char *> g_ValidationLayers = {
     "VK_LAYER_KHRONOS_validation"
@@ -85,4 +85,4 @@ void setupDebugMessenger(const VkInstance &instance, VkDebugUtilsMessengerEXT &d
     }
 }
 
-} // namespace VKAPP
+} // namespace Vulkan

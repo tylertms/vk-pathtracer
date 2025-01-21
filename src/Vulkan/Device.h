@@ -1,12 +1,12 @@
 #pragma once
 
-#include "VkApp.h"
+#include "VulkanApp.h"
 #include <vulkan/vulkan_beta.h>
 
 #include <optional>
 #include <vector>
 
-namespace VKAPP {
+namespace Vulkan {
 
 const std::vector<const char *> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
@@ -37,7 +37,7 @@ class Device {
     VkQueue graphicsQueue;
     VkQueue presentQueue;
 
-    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &device);
+    Device::QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &device);
     int getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties);
     bool deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice);
     const char *deviceString(const VkPhysicalDeviceType &type);
@@ -47,4 +47,4 @@ class Device {
     VkSurfaceKHR ext_Surface;
 };
 
-} // namespace VKAPP
+} // namespace Vulkan

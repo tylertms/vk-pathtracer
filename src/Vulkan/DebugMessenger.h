@@ -1,9 +1,9 @@
 #pragma once
 
-#include "VkApp.h"
+#include "VulkanApp.h"
 #include <vector>
 
-namespace VKAPP {
+namespace Vulkan {
 
 extern const std::vector<const char *> g_ValidationLayers;
 extern const bool g_EnabledValidationLayers;
@@ -15,4 +15,4 @@ VkResult createDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMes
 void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator);
 void setupDebugMessenger(const VkInstance &instance, VkDebugUtilsMessengerEXT &debugMessenger);
 
-} // namespace VKAPP
+} // namespace Vulkan
