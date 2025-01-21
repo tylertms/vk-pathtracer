@@ -12,6 +12,11 @@ class GraphicsPipeline {
     void init(const VkDevice &device, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent);
     void deinit(const VkDevice &device);
 
+    const VkPipeline &getVkPipeline() const { return m_GraphicsPipeline; }
+
+    VkViewport getViewport() const;
+    VkRect2D getScissor() const;
+
   private:
     std::vector<VkDynamicState> dynamicStates = {
         VK_DYNAMIC_STATE_VIEWPORT,
@@ -23,17 +28,15 @@ class GraphicsPipeline {
 
     RenderPass m_RenderPass;
 
-    VkPipelineDynamicStateCreateInfo getDynamicState();
-    VkPipelineVertexInputStateCreateInfo getVertexInput();
-    VkPipelineInputAssemblyStateCreateInfo getInputAssembly();
-    VkViewport getViewport();
-    VkRect2D getScissor();
-    VkPipelineViewportStateCreateInfo getViewportState();
-    VkPipelineRasterizationStateCreateInfo getRasterizer();
-    VkPipelineMultisampleStateCreateInfo getMultisampling();
-    VkPipelineColorBlendAttachmentState getColorBlendAttachment();
-    VkPipelineColorBlendStateCreateInfo getColorBlending(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
-    VkPipelineLayoutCreateInfo getPipelineLayoutInfo();
+    VkPipelineDynamicStateCreateInfo getDynamicState() const;
+    VkPipelineVertexInputStateCreateInfo getVertexInput() const;
+    VkPipelineInputAssemblyStateCreateInfo getInputAssembly() const;
+    VkPipelineViewportStateCreateInfo getViewportState() const;
+    VkPipelineRasterizationStateCreateInfo getRasterizer() const;
+    VkPipelineMultisampleStateCreateInfo getMultisampling() const;
+    VkPipelineColorBlendAttachmentState getColorBlendAttachment() const;
+    VkPipelineColorBlendStateCreateInfo getColorBlending(VkPipelineColorBlendAttachmentState &colorBlendAttachment) const;
+    VkPipelineLayoutCreateInfo getPipelineLayoutInfo() const;
 
   private:
     VkExtent2D ext_SwapChainExtent;

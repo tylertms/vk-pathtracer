@@ -28,7 +28,7 @@ void GraphicsPipeline::init(const VkDevice &device, const VkFormat &swapChainFor
     auto colorBlending = getColorBlending(colorBlendAttachment);
     auto dynamicState = getDynamicState();
 
-    m_RenderPass.init(device, swapChainFormat);
+    m_RenderPass.init(device, swapChainFormat, swapChainExtent);
 
     VkGraphicsPipelineCreateInfo pipelineInfo{};
     pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
@@ -56,7 +56,7 @@ void GraphicsPipeline::init(const VkDevice &device, const VkFormat &swapChainFor
     fragShader.deinit(device);
 }
 
-VkPipelineDynamicStateCreateInfo GraphicsPipeline::getDynamicState() {
+VkPipelineDynamicStateCreateInfo GraphicsPipeline::getDynamicState() const {
 
     VkPipelineDynamicStateCreateInfo dynamicState{};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
@@ -66,7 +66,7 @@ VkPipelineDynamicStateCreateInfo GraphicsPipeline::getDynamicState() {
     return dynamicState;
 }
 
-VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getVertexInput() {
+VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getVertexInput() const {
     VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
     vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
     vertexInputInfo.vertexBindingDescriptionCount = 0;
@@ -77,7 +77,7 @@ VkPipelineVertexInputStateCreateInfo GraphicsPipeline::getVertexInput() {
     return vertexInputInfo;
 }
 
-VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::getInputAssembly() {
+VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::getInputAssembly() const {
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -86,7 +86,7 @@ VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::getInputAssembly() {
     return inputAssembly;
 }
 
-VkViewport GraphicsPipeline::getViewport() {
+VkViewport GraphicsPipeline::getViewport() const {
     VkViewport viewport{};
     viewport.x = 0.0f;
     viewport.y = 0.0f;
@@ -98,7 +98,7 @@ VkViewport GraphicsPipeline::getViewport() {
     return viewport;
 }
 
-VkRect2D GraphicsPipeline::getScissor() {
+VkRect2D GraphicsPipeline::getScissor() const {
     VkRect2D scissor{};
     scissor.offset = {0, 0};
     scissor.extent = ext_SwapChainExtent;
@@ -106,7 +106,7 @@ VkRect2D GraphicsPipeline::getScissor() {
     return scissor;
 }
 
-VkPipelineViewportStateCreateInfo GraphicsPipeline::getViewportState() {
+VkPipelineViewportStateCreateInfo GraphicsPipeline::getViewportState() const {
     VkViewport viewport = getViewport();
     VkRect2D scissor = getScissor();
 
@@ -120,7 +120,7 @@ VkPipelineViewportStateCreateInfo GraphicsPipeline::getViewportState() {
     return viewportState;
 }
 
-VkPipelineRasterizationStateCreateInfo GraphicsPipeline::getRasterizer() {
+VkPipelineRasterizationStateCreateInfo GraphicsPipeline::getRasterizer() const {
     VkPipelineRasterizationStateCreateInfo rasterizer{};
     rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
     rasterizer.depthClampEnable = VK_FALSE;
@@ -137,7 +137,7 @@ VkPipelineRasterizationStateCreateInfo GraphicsPipeline::getRasterizer() {
     return rasterizer;
 }
 
-VkPipelineMultisampleStateCreateInfo GraphicsPipeline::getMultisampling() {
+VkPipelineMultisampleStateCreateInfo GraphicsPipeline::getMultisampling() const {
     VkPipelineMultisampleStateCreateInfo multisampling{};
     multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
     multisampling.sampleShadingEnable = VK_FALSE;
@@ -150,7 +150,7 @@ VkPipelineMultisampleStateCreateInfo GraphicsPipeline::getMultisampling() {
     return multisampling;
 }
 
-VkPipelineColorBlendAttachmentState GraphicsPipeline::getColorBlendAttachment() {
+VkPipelineColorBlendAttachmentState GraphicsPipeline::getColorBlendAttachment() const {
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
@@ -164,7 +164,7 @@ VkPipelineColorBlendAttachmentState GraphicsPipeline::getColorBlendAttachment() 
     return colorBlendAttachment;
 }
 
-VkPipelineColorBlendStateCreateInfo GraphicsPipeline::getColorBlending(VkPipelineColorBlendAttachmentState &colorBlendAttachment) {
+VkPipelineColorBlendStateCreateInfo GraphicsPipeline::getColorBlending(VkPipelineColorBlendAttachmentState &colorBlendAttachment) const {
     VkPipelineColorBlendStateCreateInfo colorBlending{};
     colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
     colorBlending.logicOpEnable = VK_FALSE;
@@ -179,7 +179,7 @@ VkPipelineColorBlendStateCreateInfo GraphicsPipeline::getColorBlending(VkPipelin
     return colorBlending;
 }
 
-VkPipelineLayoutCreateInfo GraphicsPipeline::getPipelineLayoutInfo() {
+VkPipelineLayoutCreateInfo GraphicsPipeline::getPipelineLayoutInfo() const {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 0;
