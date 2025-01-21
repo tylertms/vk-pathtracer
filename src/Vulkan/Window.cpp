@@ -20,12 +20,12 @@ void Window::init() {
     }
 }
 
-Window::~Window() {
+void Window::deinit() {
     glfwDestroyWindow(m_Window);
     glfwTerminate();
 }
 
-GLFWwindow *Window::getWindow() {
+GLFWwindow *Window::getVkWindow() {
     return m_Window;
 }
 

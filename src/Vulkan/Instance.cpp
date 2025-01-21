@@ -21,7 +21,7 @@ void Instance::init() {
     setupDebugMessenger(m_Instance, m_DebugMessenger);
 }
 
-Instance::~Instance() {
+void Instance::deinit() {
     if (g_EnabledValidationLayers) {
         destroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
     }

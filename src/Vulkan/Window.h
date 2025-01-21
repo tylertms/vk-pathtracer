@@ -7,9 +7,9 @@ namespace VKAPP {
 class Window {
   public:
     void init();
-    ~Window();
+    void deinit();
 
-    GLFWwindow *getWindow();
+    GLFWwindow *getVkWindow();
 
     uint32_t getWidth();
     uint32_t getHeight();
