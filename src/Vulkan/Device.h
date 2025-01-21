@@ -1,10 +1,17 @@
 #pragma once
 
 #include "VkApp.h"
+#include <vulkan/vulkan_beta.h>
 
+#include <vector>
 #include <optional>
 
 namespace VKAPP {
+
+const std::vector<const char *> deviceExtensions = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+    VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME
+};
 
 struct QueueFamilyIndices {
     std::optional<uint32_t> graphicsFamily;
@@ -32,6 +39,7 @@ class Device {
 
     QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &device);
     int getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties);
+    bool deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice);
     const char *deviceString(const VkPhysicalDeviceType &type);
 
   private:

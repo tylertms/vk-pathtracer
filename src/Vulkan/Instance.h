@@ -6,8 +6,6 @@
 
 namespace VKAPP {
 
-#define VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME "VK_KHR_portability_subset"
-
 class Instance {
   public:
     void init();

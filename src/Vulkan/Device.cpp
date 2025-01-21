@@ -69,6 +69,8 @@ void Device::createLogicalDevice() {
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
     createInfo.pEnabledFeatures = &deviceFeatures;
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
     if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_Device) != VK_SUCCESS) {
         throw std::runtime_error("failed to create logical device!");
@@ -127,11 +129,9 @@ const char *Device::deviceString(const VkPhysicalDeviceType &type) {
 
 int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDeviceProperties &properties) {
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice);
-    if (!indices.isComplete()) {
+    if (!indices.isComplete() || !deviceSupportsExtensions(physicalDevice)) {
         return -1;
     }
-    /*if (!checkDeviceExtensionSupport(device))
-        return -1;*/
 
     /*
     SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
@@ -158,6 +158,22 @@ int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDevicePro
     }
 
     return -1;
+}
+
+bool Device::deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice) {
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+    vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, availableExtensions.data());
+
+    std::set<std::string> requiredExtensions(deviceExtensions.begin(), deviceExtensions.end());
+
+    for (const auto &extension : availableExtensions) {
+        requiredExtensions.erase(extension.extensionName);
+    }
+
+    return requiredExtensions.empty();
 }
 
 } // namespace VKAPP

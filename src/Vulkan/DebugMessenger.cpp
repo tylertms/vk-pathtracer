@@ -3,7 +3,6 @@
 
 namespace VKAPP {
 
-// Global validation layers and flag
 const std::vector<const char *> g_ValidationLayers = {
     "VK_LAYER_KHRONOS_validation"
 };

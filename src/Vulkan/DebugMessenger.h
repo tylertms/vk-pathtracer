@@ -2,7 +2,6 @@
 
 #include "VkApp.h"
 #include <vector>
-#include <vulkan/vulkan.h>
 
 namespace VKAPP {
 
