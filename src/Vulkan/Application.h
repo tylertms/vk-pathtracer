@@ -3,6 +3,7 @@
 #include "Device.h"
 #include "Instance.h"
 #include "Surface.h"
+#include "SwapChain.h"
 #include "Window.h"
 
 namespace Vulkan {
@@ -24,6 +25,7 @@ class Application {
     Instance m_Instance;
     Device m_Device;
     Surface m_Surface;
+    SwapChain m_SwapChain;
 };
 
 extern Application g_AppInstance;
