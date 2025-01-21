@@ -73,7 +73,7 @@ void Device::createLogicalDevice() {
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
     if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_Device) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create logical device!");
+        throw std::runtime_error("ERROR: Failed to create logical device.");
     }
 
     vkGetDeviceQueue(m_Device, indices.graphicsFamily.value(), 0, &graphicsQueue);
