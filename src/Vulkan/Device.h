@@ -55,7 +55,7 @@ class Device {
 
   private:
     VkInstance ext_Instance;
-    VkSurfaceKHR ext_Surface;
+    VkSurfaceKHR ext_Surface = nullptr;
 };
 
 } // namespace Vulkan
