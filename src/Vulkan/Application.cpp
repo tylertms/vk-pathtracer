@@ -1,5 +1,4 @@
 #include "Application.h"
-#include <iostream>
 
 namespace Vulkan {
 
@@ -27,7 +26,7 @@ Application::Application() {
     m_InFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-        m_CommandBuffers[i].init(m_Device, m_GraphicsPipeline.getRenderPass(), m_CommandPool);
+        m_CommandBuffers[i].init(m_Device, m_CommandPool);
         m_ImageAvailableSemaphores[i].init(m_VkDevice);
         m_RenderFinishedSemaphores[i].init(m_VkDevice);
         m_InFlightFences[i].init(m_VkDevice, true);
@@ -42,13 +41,8 @@ Application::~Application() {
     }
 
     m_CommandPool.deinit(m_Device);
-
-    for (auto framebuffer : m_Framebuffers) {
-        framebuffer.deinit(m_VkDevice);
-    }
-
     m_GraphicsPipeline.deinit(m_VkDevice);
-    m_SwapChain.deinit(m_VkDevice);
+    m_SwapChain.deinit(m_VkDevice, m_Framebuffers);
     m_Device.deinit();
     m_Surface.deinit();
     m_Instance.deinit();
@@ -64,12 +58,38 @@ void Application::run() {
     vkDeviceWaitIdle(m_VkDevice);
 }
 
+void Application::rebuild() {
+    int width = 0, height = 0;
+    glfwGetFramebufferSize(m_GLFWwindow, &width, &height);
+    while (width == 0 || height == 0) {
+        glfwGetFramebufferSize(m_GLFWwindow, &width, &height);
+        glfwWaitEvents();
+    }
+
+    vkDeviceWaitIdle(m_VkDevice);
+
+    m_SwapChain.deinit(m_VkDevice, m_Framebuffers);
+    m_VkSwapChain = m_SwapChain.init(m_Device, m_VkSurface, m_GLFWwindow);
+    m_GraphicsPipeline.updateExtent(m_SwapChain.getExtent());
+
+    for (int i = 0; i < m_Framebuffers.size(); i++) {
+        m_Framebuffers[i].init(m_VkDevice, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
+    }
+}
+
 void Application::drawFrame() {
     vkWaitForFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
-    vkResetFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence());
 
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(m_VkDevice, m_VkSwapChain, UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(m_VkDevice, m_VkSwapChain, UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        rebuild();
+        return;
+    } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+        throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
+    }
+
+    vkResetFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence());
 
     vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
     m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Framebuffers[imageIndex].getVkFramebuffer());
@@ -106,7 +126,14 @@ void Application::drawFrame() {
 
     presentInfo.pImageIndices = &imageIndex;
 
-    vkQueuePresentKHR(m_Device.getPresentQueue(), &presentInfo);
+    result = vkQueuePresentKHR(m_Device.getPresentQueue(), &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasResized()) {
+        m_Window.clearResized();
+        rebuild();
+    } else if (result != VK_SUCCESS) {
+        throw std::runtime_error("failed to present swap chain image!");
+    }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
