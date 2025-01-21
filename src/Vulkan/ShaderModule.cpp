@@ -14,7 +14,7 @@ ShaderModule::ShaderModule(const VkDevice &device, const std::string &filename, 
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     if (vkCreateShaderModule(device, &createInfo, nullptr, &m_ShaderModule) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create shader module!");
+        throw std::runtime_error("ERROR: Failed to create shader module.");
     }
 }
 
@@ -36,7 +36,8 @@ std::vector<char> ShaderModule::readFile(const std::string &filename) {
     std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
     if (!file.is_open()) {
-        throw std::runtime_error("failed to open file!");
+        std::string error = "ERROR: Failed to open file: " + filename;
+        throw std::runtime_error(error);
     }
 
     size_t fileSize = (size_t)file.tellg();

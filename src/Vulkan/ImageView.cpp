@@ -21,7 +21,7 @@ void ImageView::init(const VkDevice &device, const VkImage &image, const VkForma
     createInfo.subresourceRange.layerCount = 1;
 
     if (vkCreateImageView(device, &createInfo, nullptr, &m_ImageView) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create image views!");
+        throw std::runtime_error("ERROR: Failed to create image views.");
     }
 }
 
