@@ -9,7 +9,7 @@ class Window {
     void init();
     void deinit();
 
-    GLFWwindow *getVkWindow();
+    GLFWwindow *getGlfwWindow();
 
     uint32_t getWidth();
     uint32_t getHeight();

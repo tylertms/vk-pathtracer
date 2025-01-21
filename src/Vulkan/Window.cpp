@@ -25,7 +25,7 @@ void Window::deinit() {
     glfwTerminate();
 }
 
-GLFWwindow *Window::getVkWindow() {
+GLFWwindow *Window::getGlfwWindow() {
     return m_Window;
 }
 
