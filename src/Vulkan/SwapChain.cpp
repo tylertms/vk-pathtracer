@@ -11,12 +11,22 @@ void SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *wi
     m_SurfaceFormat = chooseSurfaceFormat(swapChainSupport.formats);
     m_PresentMode = choosePresentMode(swapChainSupport.presentModes);
     m_Extent = chooseExtent(swapChainSupport.capabilities, window);
+    m_Format = m_SurfaceFormat.format;
 
     VkSwapchainCreateInfoKHR createInfo = getCreateInfo(device, surface);
 
     if (vkCreateSwapchainKHR(device.getVkDevice(), &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to create swapchain.");
     }
+
+    uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
+    if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
+        imageCount = swapChainSupport.capabilities.maxImageCount;
+    }
+
+    vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &imageCount, nullptr);
+    m_Images.resize(imageCount);
+    vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &imageCount, m_Images.data());
 }
 
 void SwapChain::deinit(const VkDevice &device) {
@@ -28,7 +38,6 @@ VkSwapchainCreateInfoKHR SwapChain::getCreateInfo(Device &device, const VkSurfac
     SupportDetails swapChainSupport = querySupport(physicalDevice, surface);
 
     uint32_t imageCount = swapChainSupport.capabilities.minImageCount + 1;
-
     if (swapChainSupport.capabilities.maxImageCount > 0 && imageCount > swapChainSupport.capabilities.maxImageCount) {
         imageCount = swapChainSupport.capabilities.maxImageCount;
     }
