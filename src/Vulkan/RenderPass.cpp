@@ -48,7 +48,7 @@ void RenderPass::init(const VkDevice &device, const VkFormat &format, const VkEx
     }
 }
 
-VkRenderPassBeginInfo RenderPass::getBeginInfo(const VkFramebuffer &framebuffer) {
+VkRenderPassBeginInfo RenderPass::getBeginInfo(const VkFramebuffer &framebuffer) const {
     VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
     VkRenderPassBeginInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -60,6 +60,10 @@ VkRenderPassBeginInfo RenderPass::getBeginInfo(const VkFramebuffer &framebuffer)
     renderPassInfo.pClearValues = &clearColor;
 
     return renderPassInfo;
+}
+
+void RenderPass::updateExtent(const VkExtent2D &extent) {
+    ext_Extent = extent;
 }
 
 void RenderPass::deinit(const VkDevice &device) {

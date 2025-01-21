@@ -56,6 +56,11 @@ void GraphicsPipeline::init(const VkDevice &device, const VkFormat &swapChainFor
     fragShader.deinit(device);
 }
 
+void GraphicsPipeline::updateExtent(const VkExtent2D &extent) {
+    ext_SwapChainExtent = extent;
+    m_RenderPass.updateExtent(extent);
+}
+
 VkPipelineDynamicStateCreateInfo GraphicsPipeline::getDynamicState() const {
 
     VkPipelineDynamicStateCreateInfo dynamicState{};
