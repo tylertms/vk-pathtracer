@@ -1,0 +1,49 @@
+#include "CommandBuffer.h"
+
+namespace Vulkan {
+
+void CommandBuffer::init(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool) {
+    ext_RenderPass = renderPass;
+
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = commandPool.getVkCommandPool();
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = 1;
+
+    if (vkAllocateCommandBuffers(device.getVkDevice(), &allocInfo, &m_CommandBuffer) != VK_SUCCESS) {
+        throw std::runtime_error("failed to allocate command buffers!");
+    }
+}
+
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFramebuffer &framebuffer) {
+    VkCommandBufferBeginInfo beginInfo{};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = 0;
+    beginInfo.pInheritanceInfo = nullptr;
+
+    if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS) {
+        throw std::runtime_error("failed to begin recording command buffer!");
+    }
+
+    VkRenderPassBeginInfo renderPassInfo = ext_RenderPass.getBeginInfo(framebuffer);
+
+    vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipeline());
+
+    VkViewport viewport = graphicsPipeline.getViewport();
+    vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
+
+    VkRect2D scissor = graphicsPipeline.getScissor();
+    vkCmdSetScissor(m_CommandBuffer, 0, 1, &scissor);
+
+    vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
+
+    vkCmdEndRenderPass(m_CommandBuffer);
+    if (vkEndCommandBuffer(m_CommandBuffer) != VK_SUCCESS) {
+        throw std::runtime_error("failed to record command buffer!");
+    }
+}
+
+} // namespace Vulkan
