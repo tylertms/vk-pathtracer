@@ -19,11 +19,15 @@ class Device {
     ~Device();
 
     void pickPhysicalDevice(const VkInstance &instance);
+    void createLogicalDevice();
 
   private:
+    VkDevice m_Device;
     VkPhysicalDevice m_PhysicalDevice;
 
+    QueueFamilyIndices findQueueFamilies(const VkPhysicalDevice &device);
     int getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties);
+    const char *deviceString(const VkPhysicalDeviceType &type);
 };
 
 } // namespace VKAPP
