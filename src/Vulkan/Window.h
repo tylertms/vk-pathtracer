@@ -13,8 +13,12 @@ class Window {
     inline const uint32_t getWidth() const { return m_Width; }
     inline const uint32_t getHeight() const { return m_Height; }
 
+    static void onResize(GLFWwindow* window, int width, int height);
+    bool wasResized();
+    void clearResized();
   private:
     GLFWwindow *m_Window;
+    bool m_Resized = false;
 
     uint32_t m_Width = 800;
     uint32_t m_Height = 600;
