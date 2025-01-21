@@ -4,7 +4,7 @@
 
 namespace VKAPP {
 
-Window::Window() {
+void Window::init() {
     if (glfwInit() != GLFW_TRUE) {
         throw std::runtime_error("ERROR: Failed to initialize GLFW.");
     }

@@ -6,7 +6,7 @@ namespace VKAPP {
 
 class Window {
   public:
-    Window();
+    void init();
     ~Window();
 
     GLFWwindow *getWindow();
