@@ -12,7 +12,7 @@ Application::Application() {
 
 Application::~Application() {
     m_Device.deinit();
-    m_Surface.deinit(m_Instance.getVkInstance());
+    m_Surface.deinit();
     m_Instance.deinit();
     m_Window.deinit();
 }
