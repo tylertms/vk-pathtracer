@@ -3,24 +3,14 @@
 #include "VkApp.h"
 #include <vulkan/vulkan_beta.h>
 
-#include <vector>
 #include <optional>
+#include <vector>
 
 namespace VKAPP {
 
 const std::vector<const char *> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-    VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME
-};
-
-struct QueueFamilyIndices {
-    std::optional<uint32_t> graphicsFamily;
-    std::optional<uint32_t> presentFamily;
-
-    bool isComplete() {
-        return graphicsFamily.has_value() && presentFamily.has_value();
-    }
-};
+    VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME};
 
 class Device {
   public:
@@ -29,6 +19,16 @@ class Device {
 
     void pickPhysicalDevice();
     void createLogicalDevice();
+
+  private:
+    struct QueueFamilyIndices {
+        std::optional<uint32_t> graphicsFamily;
+        std::optional<uint32_t> presentFamily;
+
+        bool isComplete() {
+            return graphicsFamily.has_value() && presentFamily.has_value();
+        }
+    };
 
   private:
     VkDevice m_Device;
