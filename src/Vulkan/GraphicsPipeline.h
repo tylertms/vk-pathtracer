@@ -1,16 +1,27 @@
 #pragma once
 
+#include "RenderPass.h"
 #include "VulkanApp.h"
+
+#include <vector>
 
 namespace Vulkan {
 
 class GraphicsPipeline {
   public:
-    void init(const VkDevice &device, const VkExtent2D swapChainExtent);
+    void init(const VkDevice &device, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent);
     void deinit(const VkDevice &device);
 
   private:
+    std::vector<VkDynamicState> dynamicStates = {
+        VK_DYNAMIC_STATE_VIEWPORT,
+        VK_DYNAMIC_STATE_SCISSOR};
+
+  private:
+    VkPipeline m_GraphicsPipeline;
     VkPipelineLayout m_PipelineLayout;
+
+    RenderPass m_RenderPass;
 
     VkPipelineDynamicStateCreateInfo getDynamicState();
     VkPipelineVertexInputStateCreateInfo getVertexInput();
@@ -21,7 +32,7 @@ class GraphicsPipeline {
     VkPipelineRasterizationStateCreateInfo getRasterizer();
     VkPipelineMultisampleStateCreateInfo getMultisampling();
     VkPipelineColorBlendAttachmentState getColorBlendAttachment();
-    VkPipelineColorBlendStateCreateInfo getColorBlendState();
+    VkPipelineColorBlendStateCreateInfo getColorBlending(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
     VkPipelineLayoutCreateInfo getPipelineLayoutInfo();
 
   private:

@@ -2,6 +2,7 @@
 
 #include "Device.h"
 #include "Instance.h"
+#include "GraphicsPipeline.h"
 #include "Surface.h"
 #include "SwapChain.h"
 #include "Window.h"
@@ -20,6 +21,7 @@ class Application {
     const Device &getDevice() const { return m_Device; }
     const Surface &getSurface() const { return m_Surface; }
     const SwapChain &getSwapChain() const { return m_SwapChain; }
+    const GraphicsPipeline &getGraphicsPipeline() const { return m_GraphicsPipeline; }
 
   private:
     Window m_Window;
@@ -27,6 +29,7 @@ class Application {
     Device m_Device;
     Surface m_Surface;
     SwapChain m_SwapChain;
+    GraphicsPipeline m_GraphicsPipeline;
 };
 
 extern Application g_AppInstance;

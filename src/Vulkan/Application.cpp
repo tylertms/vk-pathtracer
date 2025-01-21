@@ -9,9 +9,11 @@ Application::Application() {
     m_Surface.init(m_Instance.getVkInstance(), m_Window.getGlfwWindow());
     m_Device.init(m_Instance.getVkInstance(), m_Surface.getVkSurface());
     m_SwapChain.init(m_Device, m_Surface.getVkSurface(), m_Window.getGlfwWindow());
+    m_GraphicsPipeline.init(m_Device.getVkDevice(), m_SwapChain.getFormat(), m_SwapChain.getExtent());
 }
 
 Application::~Application() {
+    m_GraphicsPipeline.deinit(m_Device.getVkDevice());
     m_SwapChain.deinit(m_Device.getVkDevice());
     m_Device.deinit();
     m_Surface.deinit();

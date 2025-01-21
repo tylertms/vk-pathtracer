@@ -22,14 +22,17 @@ class SwapChain {
 
     SupportDetails querySupport(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface);
 
+    const VkFormat &getFormat() const { return m_Format; }
+    const VkExtent2D &getExtent() const { return m_Extent; }
+
   private:
     VkSwapchainKHR m_SwapChain;
 
     VkSurfaceFormatKHR m_SurfaceFormat;
     VkPresentModeKHR m_PresentMode;
     VkExtent2D m_Extent;
-
     VkFormat m_Format;
+
     std::vector<VkImage> m_Images;
     std::vector<ImageView> m_ImageViews;
 
