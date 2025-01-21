@@ -4,17 +4,19 @@
 namespace Vulkan {
 
 Application::Application() {
-    m_Window.init();
-    m_Instance.init();
-    m_Surface.init(m_Instance.getVkInstance(), m_Window.getGlfwWindow());
-    m_Device.init(m_Instance.getVkInstance(), m_Surface.getVkSurface());
-    m_SwapChain.init(m_Device, m_Surface.getVkSurface(), m_Window.getGlfwWindow());
-    m_GraphicsPipeline.init(m_Device.getVkDevice(), m_SwapChain.getFormat(), m_SwapChain.getExtent());
+    m_GLFWwindow = m_Window.init();
+    m_VkInstance = m_Instance.init();
+
+    m_VkSurface = m_Surface.init(m_VkInstance, m_GLFWwindow);
+    m_VkDevice = m_Device.init(m_VkInstance, m_VkSurface);
+    m_VkSwapChain = m_SwapChain.init(m_Device, m_VkSurface, m_GLFWwindow);
+
+    m_GraphicsPipeline.init(m_VkDevice, m_SwapChain.getFormat(), m_SwapChain.getExtent());
 
     m_Framebuffers.resize(m_SwapChain.getImageCount());
 
     for (int i = 0; i < m_Framebuffers.size(); i++) {
-        m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
+        m_Framebuffers[i].init(m_VkDevice, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     }
 
     m_CommandPool.init(m_Device);
@@ -26,27 +28,27 @@ Application::Application() {
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_GraphicsPipeline.getRenderPass(), m_CommandPool);
-        m_ImageAvailableSemaphores[i].init(m_Device.getVkDevice());
-        m_RenderFinishedSemaphores[i].init(m_Device.getVkDevice());
-        m_InFlightFences[i].init(m_Device.getVkDevice(), true);
+        m_ImageAvailableSemaphores[i].init(m_VkDevice);
+        m_RenderFinishedSemaphores[i].init(m_VkDevice);
+        m_InFlightFences[i].init(m_VkDevice, true);
     }
 }
 
 Application::~Application() {
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-        m_ImageAvailableSemaphores[i].deinit(m_Device.getVkDevice());
-        m_RenderFinishedSemaphores[i].deinit(m_Device.getVkDevice());
-        m_InFlightFences[i].deinit(m_Device.getVkDevice());
+        m_ImageAvailableSemaphores[i].deinit(m_VkDevice);
+        m_RenderFinishedSemaphores[i].deinit(m_VkDevice);
+        m_InFlightFences[i].deinit(m_VkDevice);
     }
 
     m_CommandPool.deinit(m_Device);
 
     for (auto framebuffer : m_Framebuffers) {
-        framebuffer.deinit(m_Device.getVkDevice());
+        framebuffer.deinit(m_VkDevice);
     }
 
-    m_GraphicsPipeline.deinit(m_Device.getVkDevice());
-    m_SwapChain.deinit(m_Device.getVkDevice());
+    m_GraphicsPipeline.deinit(m_VkDevice);
+    m_SwapChain.deinit(m_VkDevice);
     m_Device.deinit();
     m_Surface.deinit();
     m_Instance.deinit();
@@ -54,22 +56,20 @@ Application::~Application() {
 }
 
 void Application::run() {
-    auto window = m_Window.getGlfwWindow();
-
-    while (!glfwWindowShouldClose(window)) {
+    while (!glfwWindowShouldClose(m_GLFWwindow)) {
         glfwPollEvents();
         drawFrame();
     }
 
-    vkDeviceWaitIdle(m_Device.getVkDevice());
+    vkDeviceWaitIdle(m_VkDevice);
 }
 
 void Application::drawFrame() {
-    vkWaitForFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
-    vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
+    vkWaitForFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
+    vkResetFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence());
 
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(m_Device.getVkDevice(), m_SwapChain.getVkSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
+    vkAcquireNextImageKHR(m_VkDevice, m_VkSwapChain, UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
 
     vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
     m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Framebuffers[imageIndex].getVkFramebuffer());
@@ -100,7 +100,7 @@ void Application::drawFrame() {
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
 
-    VkSwapchainKHR swapChains[] = {m_SwapChain.getVkSwapChain()};
+    VkSwapchainKHR swapChains[] = {m_VkSwapChain};
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
 

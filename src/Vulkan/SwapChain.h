@@ -11,7 +11,7 @@ class Device;
 
 class SwapChain {
   public:
-    void init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window);
+    VkSwapchainKHR init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window);
     void deinit(const VkDevice &device);
 
     struct SupportDetails {

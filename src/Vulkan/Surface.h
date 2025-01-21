@@ -6,7 +6,7 @@ namespace Vulkan {
 
 class Surface {
   public:
-    void init(const VkInstance &instance, GLFWwindow *window);
+    VkSurfaceKHR init(const VkInstance &instance, GLFWwindow *window);
     void deinit();
 
     const VkSurfaceKHR &getVkSurface() { return m_Surface; }

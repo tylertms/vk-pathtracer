@@ -7,12 +7,14 @@ namespace Vulkan {
 
 class SwapChain;
 
-void Device::init(const VkInstance &instance, const VkSurfaceKHR &surface) {
+VkDevice Device::init(const VkInstance &instance, const VkSurfaceKHR &surface) {
     ext_Instance = instance;
     ext_Surface = surface;
 
     pickPhysicalDevice();
     createLogicalDevice();
+
+    return m_Device;
 }
 
 void Device::deinit() {

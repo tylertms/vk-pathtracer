@@ -23,9 +23,10 @@ class Application {
     void drawFrame();
 
   private:
-    const uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+    uint32_t MAX_FRAMES_IN_FLIGHT = 2;
     uint32_t currentFrame = 0;
 
+    /* ----------------------- */
     Window m_Window;
     Instance m_Instance;
     Device m_Device;
@@ -41,6 +42,17 @@ class Application {
     std::vector<Semaphore> m_ImageAvailableSemaphores;
     std::vector<Semaphore> m_RenderFinishedSemaphores;
     std::vector<Fence> m_InFlightFences;
+    /* ----------------------- */
+
+
+    /* ----------------------- */
+    GLFWwindow *m_GLFWwindow;
+    VkInstance m_VkInstance;
+    VkDevice m_VkDevice;
+    VkSurfaceKHR m_VkSurface;
+    VkSwapchainKHR m_VkSwapChain;
+    /* ----------------------- */
+
 };
 
 } // namespace Vulkan

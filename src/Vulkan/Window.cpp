@@ -4,7 +4,7 @@
 
 namespace Vulkan {
 
-void Window::init() {
+GLFWwindow *Window::init() {
     if (glfwInit() != GLFW_TRUE) {
         throw std::runtime_error("ERROR: Failed to initialize GLFW.");
     }
@@ -18,6 +18,8 @@ void Window::init() {
     if (m_Window == NULL) {
         throw std::runtime_error("ERROR: Failed to create GLFW window.");
     }
+
+    return m_Window;
 }
 
 void Window::deinit() {

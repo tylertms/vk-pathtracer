@@ -26,7 +26,7 @@ class Device {
     };
 
   public:
-    void init(const VkInstance &instance, const VkSurfaceKHR &surface);
+    VkDevice init(const VkInstance &instance, const VkSurfaceKHR &surface);
     void deinit();
 
     void pickPhysicalDevice();

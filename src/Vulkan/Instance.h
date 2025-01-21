@@ -8,7 +8,7 @@ namespace Vulkan {
 
 class Instance {
   public:
-    void init();
+    VkInstance init();
     void deinit();
 
     inline const VkInstance &getVkInstance() const { return m_Instance; }

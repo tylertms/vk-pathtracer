@@ -7,7 +7,7 @@
 
 namespace Vulkan {
 
-void Instance::init() {
+VkInstance Instance::init() {
     if (g_EnabledValidationLayers && !validationLayersSupported()) {
         throw std::runtime_error("ERROR: Validation layers not supported.");
     }
@@ -19,6 +19,8 @@ void Instance::init() {
     }
 
     setupDebugMessenger(m_Instance, m_DebugMessenger);
+
+    return m_Instance;
 }
 
 void Instance::deinit() {

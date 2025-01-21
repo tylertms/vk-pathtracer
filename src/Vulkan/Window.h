@@ -6,7 +6,7 @@ namespace Vulkan {
 
 class Window {
   public:
-    void init();
+    GLFWwindow *init();
     void deinit();
 
     inline GLFWwindow *getGlfwWindow() const { return m_Window; }

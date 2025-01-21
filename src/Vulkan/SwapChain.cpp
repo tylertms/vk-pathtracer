@@ -4,7 +4,7 @@
 
 namespace Vulkan {
 
-void SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window) {
+VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window) {
     VkPhysicalDevice physicalDevice = device.getVkPhysicalDevice();
     SupportDetails swapChainSupport = querySupport(physicalDevice, surface);
 
@@ -32,6 +32,8 @@ void SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *wi
     for (int i = 0; i < m_ImageCount; i++) {
         m_ImageViews[i].init(device.getVkDevice(), m_Images[i], m_Format);
     }
+
+    return m_SwapChain;
 }
 
 void SwapChain::deinit(const VkDevice &device) {
