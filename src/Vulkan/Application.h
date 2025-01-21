@@ -1,8 +1,13 @@
 #pragma once
 
+#include "CommandBuffer.h"
+#include "CommandPool.h"
 #include "Device.h"
+#include "Fence.h"
+#include "Framebuffer.h"
 #include "Instance.h"
 #include "GraphicsPipeline.h"
+#include "Semaphore.h"
 #include "Surface.h"
 #include "SwapChain.h"
 #include "Window.h"
@@ -15,13 +20,7 @@ class Application {
     ~Application();
 
     void run();
-
-    const Window &getWindow() const { return m_Window; }
-    const Instance &getInstance() const { return m_Instance; }
-    const Device &getDevice() const { return m_Device; }
-    const Surface &getSurface() const { return m_Surface; }
-    const SwapChain &getSwapChain() const { return m_SwapChain; }
-    const GraphicsPipeline &getGraphicsPipeline() const { return m_GraphicsPipeline; }
+    void drawFrame();
 
   private:
     Window m_Window;
@@ -30,6 +29,15 @@ class Application {
     Surface m_Surface;
     SwapChain m_SwapChain;
     GraphicsPipeline m_GraphicsPipeline;
+
+    std::vector<Framebuffer> m_Framebuffers;
+
+    CommandPool m_CommandPool;
+    CommandBuffer m_CommandBuffer;
+
+    Semaphore m_ImageAvailableSemaphore;
+    Semaphore m_RenderFinishedSemaphore;
+    Fence m_InFlightFence;
 };
 
 extern Application g_AppInstance;
