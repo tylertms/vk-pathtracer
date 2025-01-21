@@ -7,7 +7,7 @@
 
 namespace VKAPP {
 
-Instance::Instance() {
+void Instance::init() {
     if (g_EnabledValidationLayers && !validationLayersSupported()) {
         throw std::runtime_error("ERROR: Validation layers not supported.");
     }
@@ -27,6 +27,10 @@ Instance::~Instance() {
     }
     
     vkDestroyInstance(m_Instance, nullptr);
+}
+
+VkInstance &Instance::getVkInstance() {
+    return m_Instance;
 }
 
 VkInstanceCreateInfo Instance::getCreateInfo() {

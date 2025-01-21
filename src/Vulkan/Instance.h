@@ -8,8 +8,10 @@ namespace VKAPP {
 
 class Instance {
   public:
-    Instance();
+    void init();
     ~Instance();
+
+    VkInstance &getVkInstance();
 
   private:
     VkInstance m_Instance;
