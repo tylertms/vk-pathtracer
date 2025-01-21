@@ -9,7 +9,7 @@ class Surface {
     void init(const VkInstance &instance, GLFWwindow *window);
     void deinit();
 
-    VkSurfaceKHR getVkSurface() { return m_Surface; }
+    const VkSurfaceKHR &getVkSurface() { return m_Surface; }
 
   private:
     VkSurfaceKHR m_Surface;
