@@ -2,9 +2,7 @@
 
 namespace Vulkan {
 
-void CommandBuffer::init(const Device &device, const RenderPass &renderPass, const CommandPool &commandPool) {
-    ext_RenderPass = renderPass;
-
+void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     VkCommandBufferAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = commandPool.getVkCommandPool();
@@ -26,7 +24,8 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFra
         throw std::runtime_error("ERROR: Failed to begin recording command buffer.");
     }
 
-    VkRenderPassBeginInfo renderPassInfo = ext_RenderPass.getBeginInfo(framebuffer);
+    
+    VkRenderPassBeginInfo renderPassInfo = graphicsPipeline.getRenderPass().getBeginInfo(framebuffer);
 
     vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
