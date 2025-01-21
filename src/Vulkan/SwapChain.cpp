@@ -36,10 +36,15 @@ VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFW
     return m_SwapChain;
 }
 
-void SwapChain::deinit(const VkDevice &device) {
+void SwapChain::deinit(const VkDevice &device, std::vector<Framebuffer> &framebuffers) {
+    for (auto framebuffer : framebuffers) {
+        framebuffer.deinit(device);
+    }
+
     for (auto imageView : m_ImageViews) {
         imageView.deinit(device);
     }
+
     vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
 }
 

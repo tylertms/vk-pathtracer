@@ -1,7 +1,8 @@
 #pragma once
 
-#include "VulkanApp.h"
+#include "Framebuffer.h"
 #include "ImageView.h"
+#include "VulkanApp.h"
 
 #include <vector>
 
@@ -12,7 +13,7 @@ class Device;
 class SwapChain {
   public:
     VkSwapchainKHR init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window);
-    void deinit(const VkDevice &device);
+    void deinit(const VkDevice &device, std::vector<Framebuffer> &framebuffers);
 
     struct SupportDetails {
         VkSurfaceCapabilitiesKHR capabilities;
