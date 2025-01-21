@@ -6,13 +6,18 @@ namespace Vulkan {
 
 class RenderPass {
   public:
-    void init(const VkDevice &device, const VkFormat &format);
+    void init(const VkDevice &device, const VkFormat &format, const VkExtent2D &extent);
     void deinit(const VkDevice &device);
+
+    VkRenderPassBeginInfo getBeginInfo(const VkFramebuffer &framebuffer);
 
     const VkRenderPass &getVkRenderPass() const { return m_RenderPass; }
 
   private:
     VkRenderPass m_RenderPass;
+
+  private:
+    VkExtent2D ext_Extent;
 };
 
 } // namespace Vulkan

@@ -4,7 +4,9 @@
 
 namespace Vulkan {
 
-void RenderPass::init(const VkDevice &device, const VkFormat &format) {
+void RenderPass::init(const VkDevice &device, const VkFormat &format, const VkExtent2D &extent) {
+    ext_Extent = extent;
+
     VkAttachmentDescription colorAttachment{};
     colorAttachment.format = format;
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
@@ -34,6 +36,20 @@ void RenderPass::init(const VkDevice &device, const VkFormat &format) {
     if (vkCreateRenderPass(device, &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to create render pass.");
     }
+}
+
+VkRenderPassBeginInfo RenderPass::getBeginInfo(const VkFramebuffer &framebuffer) {
+    VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+    VkRenderPassBeginInfo renderPassInfo{};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = m_RenderPass;
+    renderPassInfo.framebuffer = framebuffer;
+    renderPassInfo.renderArea.offset = {0, 0};
+    renderPassInfo.renderArea.extent = ext_Extent;
+    renderPassInfo.clearValueCount = 1;
+    renderPassInfo.pClearValues = &clearColor;
+
+    return renderPassInfo;
 }
 
 void RenderPass::deinit(const VkDevice &device) {
