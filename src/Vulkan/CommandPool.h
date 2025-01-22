@@ -13,7 +13,11 @@ class CommandPool {
     void init(const Device &device);
     void deinit(const Device &device);
 
-    inline const VkCommandPool &getVkCommandPool() const { return m_CommandPool; } 
+    inline const VkCommandPool &getVkCommandPool() const { return m_CommandPool; }
+
+    VkCommandBuffer beginSingleTimeCommands(const VkDevice &device) const; 
+    void endSingleTimeCommands(VkCommandBuffer &commandBuffer, const Device &device) const;
+    void copyBuffer(const Device &device, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
   private:
     VkCommandPool m_CommandPool;
