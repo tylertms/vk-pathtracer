@@ -14,13 +14,16 @@ layout (location = 0) out vec4 outColor;
 
 void main() {
     ivec2 fragCoord = ivec2(gl_FragCoord);
-    vec4 fragColor = imageLoad(accumulationImage, fragCoord);
+    vec4 prevColor = imageLoad(accumulationImage, fragCoord);
     
-    if (scene.framesRendered < 1000) outColor = vec4(1, 1, 1, 1);
+    vec4 sampleColor;
+    if (scene.framesRendered < 100) sampleColor = vec4(1, 1, 1, 1);
     else {
-        outColor = vec4(0, 0, 0, 1);
+        sampleColor = vec4(0, 0, 0, 1);
     }
 
-    outColor = mix(fragColor, outColor, 1.f / (scene.framesRendered + 1));
+    outColor = mix(prevColor, sampleColor, 1.0f / (scene.framesRendered + 1));
+    
     imageStore(accumulationImage, fragCoord, outColor);
+
 }

@@ -25,13 +25,12 @@ Application::Application() {
 
     m_CommandPool.init(m_Device);
 
-    
     m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
 
     m_AccumulationImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
-    
+    m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
+
     m_Uniforms = std::vector<Uniform>(MAX_FRAMES_IN_FLIGHT);
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
     m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
@@ -46,7 +45,6 @@ Application::Application() {
         m_RenderFinishedSemaphores[i].init(device);
         m_InFlightFences[i].init(device, true);
     }
-
 }
 
 Application::~Application() {
@@ -74,8 +72,6 @@ Application::~Application() {
     for (int i = 0; i < m_DescriptorSets.size(); i++) {
         m_DescriptorSets[i].deinit(device);
     }
-    
-
 
     m_SwapChain.deinit(device);
     m_Device.deinit();
@@ -107,18 +103,38 @@ void Application::rebuild() {
 
     m_Device.waitIdle();
 
-    for (int i = 0; i < m_Framebuffers.size(); i++) {
+    /* ---------- DEINIT ---------- */
+    for (int i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].deinit(m_Device.getVkDevice());
-    }
 
+    m_AccumulationImageView.deinit(m_Device.getVkDevice());
     m_SwapChain.deinit(m_Device.getVkDevice());
+
+    m_DescriptorPool.deinit(m_Device.getVkDevice());
+    for (int i = 0; i < m_DescriptorSets.size(); i++)
+        m_DescriptorSets[i].deinit(m_Device.getVkDevice());
+    /* ---------- END DEINIT ---------- */
+
+    /* ---------- REINIT ---------- */
+    m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
+    for (int i = 0; i < m_DescriptorSets.size(); i++)
+        m_DescriptorSets[i].createLayout(m_Device.getVkDevice());
 
     m_SwapChain.init(m_Device, m_Surface.getVkSurface(), window);
     m_GraphicsPipeline.updateExtent(m_SwapChain.getExtent());
 
-    for (int i = 0; i < m_Framebuffers.size(); i++) {
+    m_AccumulationImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+    m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
+
+    for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
+
+    for (int i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
-    }
+    /* ---------- END REINIT ---------- */
+
+    framesRendered = 0;
 }
 
 void Application::drawFrame() {
@@ -180,10 +196,11 @@ void Application::drawFrame() {
         rebuild();
     } else if (result != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to present swapchain image.");
+    } else {
+        framesRendered++;
     }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-    framesRendered++;
 }
 
 } // namespace Vulkan
