@@ -27,6 +27,10 @@ Application::Application() {
 
     
     m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
+
+    m_AccumulationImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
+    m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
     
     m_Uniforms = std::vector<Uniform>(MAX_FRAMES_IN_FLIGHT);
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
@@ -37,11 +41,12 @@ Application::Application() {
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
         m_Uniforms[i].init(m_Device);
-        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_DescriptorPool.getVkDescriptorPool());
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
         m_InFlightFences[i].init(device, true);
     }
+
 }
 
 Application::~Application() {
@@ -56,7 +61,7 @@ Application::~Application() {
     for (int i = 0; i < m_Framebuffers.size(); i++) {
         m_Framebuffers[i].deinit(device);
     }
-
+    m_AccumulationImageView.deinit(device);
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(device);
 
@@ -69,6 +74,8 @@ Application::~Application() {
     for (int i = 0; i < m_DescriptorSets.size(); i++) {
         m_DescriptorSets[i].deinit(device);
     }
+    
+
 
     m_SwapChain.deinit(device);
     m_Device.deinit();
@@ -126,6 +133,9 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
+    m_Uniforms[currentFrame].updateFramesRendered(framesRendered);
+    m_Uniforms[currentFrame].submitUpdates();
+
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
 
     vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
@@ -173,6 +183,7 @@ void Application::drawFrame() {
     }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    framesRendered++;
 }
 
 } // namespace Vulkan

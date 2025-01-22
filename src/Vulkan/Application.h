@@ -33,6 +33,7 @@ class Application {
     /* ----------------------- */
     uint32_t MAX_FRAMES_IN_FLIGHT = 2;
     uint32_t currentFrame = 0;
+    uint32_t framesRendered = 0;
     /* ----------------------- */
     Window m_Window;
     Instance m_Instance;
@@ -49,6 +50,7 @@ class Application {
     DescriptorPool m_DescriptorPool;
     std::vector<DescriptorSet> m_DescriptorSets;
     std::vector<Uniform> m_Uniforms;
+    ImageView m_AccumulationImageView;
     /* ----------------------- */
 };
 
