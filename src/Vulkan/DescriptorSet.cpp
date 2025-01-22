@@ -64,7 +64,7 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     accumulationBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     accumulationBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding bindings[] = { uboLayoutBinding, accumulationBinding };
+    VkDescriptorSetLayoutBinding bindings[] = {uboLayoutBinding, accumulationBinding};
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

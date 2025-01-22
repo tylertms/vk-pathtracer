@@ -8,7 +8,7 @@ class Fence {
   public:
     NO_COPY(Fence);
     Fence() = default;
-    
+
     void init(const VkDevice &device, bool signaled);
     void deinit(const VkDevice &device);
 

@@ -8,7 +8,7 @@ class Surface {
   public:
     NO_COPY(Surface);
     Surface() = default;
-    
+
     VkSurfaceKHR init(const VkInstance &instance, GLFWwindow *window);
     void deinit();
 

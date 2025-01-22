@@ -23,7 +23,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFra
     if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to begin recording command buffer.");
     }
-    
+
     VkRenderPassBeginInfo renderPassInfo = graphicsPipeline.getRenderPass().getBeginInfo(framebuffer);
 
     vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);

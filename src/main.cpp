@@ -1,8 +1,8 @@
 #include "Vulkan/Application.h"
 
 int main() {
-  Vulkan::Application app;
-  app.run();
-  
-  return 0;
+    Vulkan::Application app;
+    app.run();
+
+    return 0;
 }

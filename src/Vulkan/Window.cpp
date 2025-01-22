@@ -26,7 +26,7 @@ GLFWwindow *Window::init() {
 }
 
 void Window::onResize(GLFWwindow *window, int width, int height) {
-    auto appWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+    auto appWindow = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
     appWindow->m_Resized = true;
 }
 

@@ -18,5 +18,4 @@ void Surface::deinit() {
     vkDestroySurfaceKHR(ext_Instance, m_Surface, nullptr);
 }
 
-
 } // namespace Vulkan

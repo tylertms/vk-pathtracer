@@ -27,7 +27,7 @@ void Instance::deinit() {
     if (g_EnabledValidationLayers) {
         destroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
     }
-    
+
     vkDestroyInstance(m_Instance, nullptr);
 }
 

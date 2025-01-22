@@ -10,7 +10,7 @@ class ShaderModule {
   public:
     NO_COPY(ShaderModule);
     ShaderModule() = default;
-    
+
     ShaderModule(const VkDevice &device, const std::string &filename, VkShaderStageFlagBits stageFlag);
     void deinit(const VkDevice &device);
 
