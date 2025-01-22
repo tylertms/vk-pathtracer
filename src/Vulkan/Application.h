@@ -2,6 +2,8 @@
 
 #include "CommandBuffer.h"
 #include "CommandPool.h"
+#include "DescriptorPool.h"
+#include "DescriptorSet.h"
 #include "Device.h"
 #include "Fence.h"
 #include "Framebuffer.h"
@@ -10,6 +12,7 @@
 #include "Semaphore.h"
 #include "Surface.h"
 #include "SwapChain.h"
+#include "Uniform.h"
 #include "VulkanApp.h"
 #include "Window.h"
 
@@ -43,6 +46,9 @@ class Application {
     std::vector<Semaphore> m_ImageAvailableSemaphores;
     std::vector<Semaphore> m_RenderFinishedSemaphores;
     std::vector<Fence> m_InFlightFences;
+    DescriptorPool m_DescriptorPool;
+    std::vector<DescriptorSet> m_DescriptorSets;
+    std::vector<Uniform> m_Uniforms;
     /* ----------------------- */
 };
 

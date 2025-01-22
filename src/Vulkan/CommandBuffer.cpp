@@ -14,7 +14,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFramebuffer &framebuffer) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
@@ -23,7 +23,6 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFra
     if (vkBeginCommandBuffer(m_CommandBuffer, &beginInfo) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to begin recording command buffer.");
     }
-
     
     VkRenderPassBeginInfo renderPassInfo = graphicsPipeline.getRenderPass().getBeginInfo(framebuffer);
 
@@ -37,6 +36,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const VkFra
     VkRect2D scissor = graphicsPipeline.getScissor();
     vkCmdSetScissor(m_CommandBuffer, 0, 1, &scissor);
 
+    vkCmdBindDescriptorSets(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
 
     vkCmdEndRenderPass(m_CommandBuffer);

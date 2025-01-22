@@ -1,5 +1,6 @@
 #pragma once
 
+#include "DescriptorSet.h"
 #include "RenderPass.h"
 #include "VulkanApp.h"
 
@@ -12,10 +13,11 @@ class GraphicsPipeline {
     NO_COPY(GraphicsPipeline);
     GraphicsPipeline() = default;
 
-    void init(const VkDevice &device, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent);
+    void init(const VkDevice &device, const VkDescriptorSetLayout &descriptorSetLayout, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent);
     void deinit(const VkDevice &device);
 
     inline const VkPipeline &getVkPipeline() const { return m_GraphicsPipeline; }
+    inline const VkPipelineLayout &getVkPipelineLayout() const { return m_PipelineLayout; }
     inline const RenderPass &getRenderPass() const { return m_RenderPass; }
     inline const VkRenderPass &getVkRenderPass() const { return m_RenderPass.getVkRenderPass(); }
 
@@ -42,7 +44,7 @@ class GraphicsPipeline {
     VkPipelineMultisampleStateCreateInfo getMultisampling() const;
     VkPipelineColorBlendAttachmentState getColorBlendAttachment() const;
     VkPipelineColorBlendStateCreateInfo getColorBlending(VkPipelineColorBlendAttachmentState &colorBlendAttachment) const;
-    VkPipelineLayoutCreateInfo getPipelineLayoutInfo() const;
+    VkPipelineLayoutCreateInfo getPipelineLayoutInfo(const VkDescriptorSetLayout &descriptorSetLayout) const;
 
   private:
     VkExtent2D ext_SwapChainExtent;

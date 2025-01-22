@@ -11,7 +11,12 @@ Application::Application() {
 
     m_SwapChain.init(m_Device, surface, window);
 
-    m_GraphicsPipeline.init(device, m_SwapChain.getFormat(), m_SwapChain.getExtent());
+    m_DescriptorSets = std::vector<DescriptorSet>(MAX_FRAMES_IN_FLIGHT);
+    for (int i = 0; i < m_DescriptorSets.size(); i++) {
+        m_DescriptorSets[i].createLayout(m_Device.getVkDevice());
+    }
+
+    m_GraphicsPipeline.init(device, m_DescriptorSets.front().getVkDescriptorSetLayout(), m_SwapChain.getFormat(), m_SwapChain.getExtent());
 
     m_Framebuffers = std::vector<Framebuffer>(m_SwapChain.getImageCount());
     for (int i = 0; i < m_Framebuffers.size(); i++) {
@@ -20,6 +25,10 @@ Application::Application() {
 
     m_CommandPool.init(m_Device);
 
+    
+    m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
+    
+    m_Uniforms = std::vector<Uniform>(MAX_FRAMES_IN_FLIGHT);
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
     m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
     m_RenderFinishedSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
@@ -27,6 +36,8 @@ Application::Application() {
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
+        m_Uniforms[i].init(m_Device);
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
         m_InFlightFences[i].init(device, true);
@@ -48,6 +59,17 @@ Application::~Application() {
 
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(device);
+
+    for (int i = 0; i < m_Uniforms.size(); i++) {
+        m_Uniforms[i].deinit(device);
+    }
+
+    m_DescriptorPool.deinit(device);
+
+    for (int i = 0; i < m_DescriptorSets.size(); i++) {
+        m_DescriptorSets[i].deinit(device);
+    }
+
     m_SwapChain.deinit(device);
     m_Device.deinit();
     m_Surface.deinit();
@@ -107,7 +129,7 @@ void Application::drawFrame() {
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
 
     vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Framebuffers[imageIndex].getVkFramebuffer());
+    m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[currentFrame].getVkDescriptorSet());
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

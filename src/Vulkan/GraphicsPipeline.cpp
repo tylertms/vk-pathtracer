@@ -4,17 +4,17 @@
 
 namespace Vulkan {
 
-void GraphicsPipeline::init(const VkDevice &device, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent) {
+void GraphicsPipeline::init(const VkDevice &device, const VkDescriptorSetLayout &descriptorSetLayout, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent) {
     ext_SwapChainExtent = swapChainExtent;
 
-    ShaderModule vertShader(device, "build/shaders_spv/display.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
-    ShaderModule fragShader(device, "build/shaders_spv/display.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
+    ShaderModule vertShader(device, "build/shaders_spv/Graphics.vert.spv", VK_SHADER_STAGE_VERTEX_BIT);
+    ShaderModule fragShader(device, "build/shaders_spv/Graphics.frag.spv", VK_SHADER_STAGE_FRAGMENT_BIT);
 
     VkPipelineShaderStageCreateInfo shaderStages[] = {
         vertShader.getPipelineStageCreateInfo(),
         fragShader.getPipelineStageCreateInfo()};
 
-    auto pipelineLayoutInfo = getPipelineLayoutInfo();
+    auto pipelineLayoutInfo = getPipelineLayoutInfo(descriptorSetLayout);
     if (vkCreatePipelineLayout(device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to create pipeline layout.");
     }
@@ -112,9 +112,6 @@ VkRect2D GraphicsPipeline::getScissor() const {
 }
 
 VkPipelineViewportStateCreateInfo GraphicsPipeline::getViewportState() const {
-    VkViewport viewport = getViewport();
-    VkRect2D scissor = getScissor();
-
     VkPipelineViewportStateCreateInfo viewportState{};
     viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewportState.viewportCount = 1;
@@ -182,11 +179,11 @@ VkPipelineColorBlendStateCreateInfo GraphicsPipeline::getColorBlending(VkPipelin
     return colorBlending;
 }
 
-VkPipelineLayoutCreateInfo GraphicsPipeline::getPipelineLayoutInfo() const {
+VkPipelineLayoutCreateInfo GraphicsPipeline::getPipelineLayoutInfo(const VkDescriptorSetLayout &descriptorSetLayout) const {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-    pipelineLayoutInfo.setLayoutCount = 0;
-    pipelineLayoutInfo.pSetLayouts = nullptr;
+    pipelineLayoutInfo.setLayoutCount = 1;
+    pipelineLayoutInfo.pSetLayouts = &descriptorSetLayout;
     pipelineLayoutInfo.pushConstantRangeCount = 0;
     pipelineLayoutInfo.pPushConstantRanges = nullptr;
 
