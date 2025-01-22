@@ -28,9 +28,11 @@ class Device {
   public:
     NO_COPY(Device);
     Device() = default;
-    
+
     VkDevice init(const VkInstance &instance, const VkSurfaceKHR &surface);
     void deinit();
+
+    void waitIdle();
 
     void pickPhysicalDevice();
     void createLogicalDevice();
@@ -49,8 +51,6 @@ class Device {
 
     VkQueue m_GraphicsQueue;
     VkQueue m_PresentQueue;
-
-    SwapChain m_SwapChain;
 
     int getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties);
     bool deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice);

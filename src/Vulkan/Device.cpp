@@ -21,6 +21,10 @@ void Device::deinit() {
     vkDestroyDevice(m_Device, nullptr);
 }
 
+void Device::waitIdle() {
+    vkDeviceWaitIdle(m_Device);
+}
+
 void Device::pickPhysicalDevice() {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(ext_Instance, &deviceCount, nullptr);
@@ -138,7 +142,7 @@ int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDevicePro
         return -1;
     }
 
-    SwapChain::SupportDetails swapChainSupport = m_SwapChain.querySupport(physicalDevice, ext_Surface);
+    SwapChain::SupportDetails swapChainSupport = SwapChain::querySupport(physicalDevice, ext_Surface);
     bool validSwapChain = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     if (!validSwapChain)
         return -1;
