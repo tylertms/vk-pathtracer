@@ -7,5 +7,6 @@ struct Camera {
 };
 
 struct Scene {
+    uint framesRendered;
     Camera cam;
 };

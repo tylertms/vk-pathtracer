@@ -13,6 +13,5 @@ layout (location = 1) out vec2 texCoord;
 */
 void main() {
     fragUV = 2. * vec2((gl_VertexIndex << 1) & 2, gl_VertexIndex & 2) - 1.;
-    texCoord = (fragUV + 1) / 2;
     gl_Position = vec4(fragUV, 0., 1.);
 }
