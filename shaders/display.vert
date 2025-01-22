@@ -1,7 +1,9 @@
 #version 460
 
+/* --------------------------------------*/
 layout (location = 0) out vec2 fragUV;
 layout (location = 1) out vec2 texCoord;
+/* --------------------------------------*/
 
 /*
  * Source: https://www.saschawillems.de/blog/2016/08/13/vulkan-tutorial-on-rendering-a-fullscreen-quad-without-buffers/
