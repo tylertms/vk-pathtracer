@@ -52,13 +52,13 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan glfw)
 set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders_spv")
 file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
-set(SHADER_SRCS display.vert display.frag)
+set(SHADER_SRCS "Graphics.vert" "Graphics.frag")
 
 foreach(SHADER ${SHADER_SRCS})
     add_custom_command(
         OUTPUT "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
-        COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/shaders/${SHADER}" -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
-        DEPENDS "${CMAKE_SOURCE_DIR}/shaders/${SHADER}"
+        COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
+        DEPENDS "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}"
         COMMENT "Compiling ${SHADER} to SPIR-V"
     )
     list(APPEND SPIRV_BINARY "${SHADER_OUTPUT_DIR}/${SHADER}.spv")
