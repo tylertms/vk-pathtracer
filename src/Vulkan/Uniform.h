@@ -3,6 +3,8 @@
 #include "Device.h"
 #include "VulkanApp.h"
 
+#include "glm/glm.hpp"
+
 namespace Vulkan {
 
 class Uniform {
@@ -15,12 +17,31 @@ class Uniform {
 
     inline const VkBuffer &getVkBuffer() const { return m_Buffer; }
 
+    void updateFramesRendered(uint32_t framesRendered) {
+        m_Instance.framesRendered = framesRendered;
+    }
+
+    void submitUpdates() {
+        memcpy(m_BufferMapped, &m_Instance, sizeof(Object));
+    }
+
   public:
-    typedef struct {
-        float test;
-    } Object;
+    struct Camera {
+        glm::vec3 lookFrom;
+        float vfov;
+        glm::vec3 lookAt;
+        float aperture;
+        float aspectRatio;
+    };
+
+    struct Object {
+        uint32_t framesRendered;
+        alignas(16) Camera cam;
+    };
 
   private:
+    Object m_Instance;
+
     VkBuffer m_Buffer;
     VkDeviceMemory m_BufferMemory;
     void *m_BufferMapped;
