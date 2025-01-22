@@ -26,6 +26,9 @@ class Device {
     };
 
   public:
+    NO_COPY(Device);
+    Device() = default;
+    
     VkDevice init(const VkInstance &instance, const VkSurfaceKHR &surface);
     void deinit();
 

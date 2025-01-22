@@ -8,6 +8,9 @@ namespace Vulkan {
 
 class Instance {
   public:
+    NO_COPY(Instance);
+    Instance() = default;
+    
     VkInstance init();
     void deinit();
 

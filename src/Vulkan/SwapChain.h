@@ -12,8 +12,11 @@ class Device;
 
 class SwapChain {
   public:
+    NO_COPY(SwapChain);
+    SwapChain() = default;
+    
     VkSwapchainKHR init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window);
-    void deinit(const VkDevice &device, std::vector<Framebuffer> &framebuffers);
+    void deinit(const VkDevice &device);
 
     struct SupportDetails {
         VkSurfaceCapabilitiesKHR capabilities;

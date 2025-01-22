@@ -6,6 +6,9 @@ namespace Vulkan {
 
 class RenderPass {
   public:
+    NO_COPY(RenderPass)
+    RenderPass() = default;
+    
     void init(const VkDevice &device, const VkFormat &format, const VkExtent2D &extent);
     void deinit(const VkDevice &device);
 

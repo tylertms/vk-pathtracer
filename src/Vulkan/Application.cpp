@@ -12,18 +12,17 @@ Application::Application() {
 
     m_GraphicsPipeline.init(m_VkDevice, m_SwapChain.getFormat(), m_SwapChain.getExtent());
 
-    m_Framebuffers.resize(m_SwapChain.getImageCount());
-
+    m_Framebuffers = std::vector<Framebuffer>(m_SwapChain.getImageCount());
     for (int i = 0; i < m_Framebuffers.size(); i++) {
         m_Framebuffers[i].init(m_VkDevice, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     }
 
     m_CommandPool.init(m_Device);
-
-    m_CommandBuffers.resize(MAX_FRAMES_IN_FLIGHT);
-    m_ImageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-    m_RenderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
-    m_InFlightFences.resize(MAX_FRAMES_IN_FLIGHT);
+        
+    m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
+    m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
+    m_RenderFinishedSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
+    m_InFlightFences = std::vector<Fence>(MAX_FRAMES_IN_FLIGHT);
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
@@ -40,9 +39,13 @@ Application::~Application() {
         m_InFlightFences[i].deinit(m_VkDevice);
     }
 
+    for (int i = 0; i < m_Framebuffers.size(); i++) {
+        m_Framebuffers[i].deinit(m_VkDevice);
+    }
+
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(m_VkDevice);
-    m_SwapChain.deinit(m_VkDevice, m_Framebuffers);
+    m_SwapChain.deinit(m_VkDevice);
     m_Device.deinit();
     m_Surface.deinit();
     m_Instance.deinit();
@@ -68,7 +71,7 @@ void Application::rebuild() {
 
     vkDeviceWaitIdle(m_VkDevice);
 
-    m_SwapChain.deinit(m_VkDevice, m_Framebuffers);
+    m_SwapChain.deinit(m_VkDevice);
     m_VkSwapChain = m_SwapChain.init(m_Device, m_VkSurface, m_GLFWwindow);
     m_GraphicsPipeline.updateExtent(m_SwapChain.getExtent());
 

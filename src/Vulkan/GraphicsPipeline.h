@@ -9,6 +9,9 @@ namespace Vulkan {
 
 class GraphicsPipeline {
   public:
+    NO_COPY(GraphicsPipeline);
+    GraphicsPipeline() = default;
+
     void init(const VkDevice &device, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent);
     void deinit(const VkDevice &device);
 

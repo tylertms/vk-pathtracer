@@ -7,6 +7,9 @@ namespace Vulkan {
 
 class Framebuffer {
   public:
+    NO_COPY(Framebuffer);
+    Framebuffer() = default;
+
     void init(const VkDevice &device, const VkRenderPass &renderPass, const VkImageView &imageView, const VkExtent2D &extent);
     void deinit(const VkDevice &device);
     

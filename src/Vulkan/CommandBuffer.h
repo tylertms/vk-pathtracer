@@ -9,6 +9,9 @@ namespace Vulkan {
 
 class CommandBuffer {
   public:
+    NO_COPY(CommandBuffer);
+    CommandBuffer() = default;
+
     void init(const Device &device, const CommandPool &commandPool);
 
     inline const VkCommandBuffer &getVkCommandBuffer() const { return m_CommandBuffer; }

@@ -6,6 +6,9 @@ namespace Vulkan {
 
 class Semaphore {
   public:
+    NO_COPY(Semaphore);
+    Semaphore() = default;
+    
     void init(const VkDevice &device);
     void deinit(const VkDevice &device);
 

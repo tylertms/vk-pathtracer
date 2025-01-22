@@ -6,6 +6,9 @@ namespace Vulkan {
 
 class Window {
   public:
+    NO_COPY(Window)
+    Window() = default;
+    
     GLFWwindow *init();
     void deinit();
 

@@ -7,6 +7,9 @@ namespace Vulkan {
 
 class CommandPool {
   public:
+    NO_COPY(CommandPool)
+    CommandPool() = default;
+
     void init(const Device &device);
     void deinit(const Device &device);
 

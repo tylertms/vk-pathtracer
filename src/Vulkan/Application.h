@@ -10,12 +10,15 @@
 #include "Semaphore.h"
 #include "Surface.h"
 #include "SwapChain.h"
+#include "VulkanApp.h"
 #include "Window.h"
 
 namespace Vulkan {
 
 class Application {
   public:
+    NO_COPY(Application);
+
     Application();
     ~Application();
 

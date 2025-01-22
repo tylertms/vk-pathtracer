@@ -28,7 +28,7 @@ VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFW
     m_Images.resize(m_ImageCount);
     vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &m_ImageCount, m_Images.data());
 
-    m_ImageViews.resize(m_ImageCount);
+    m_ImageViews = std::vector<ImageView>(m_ImageCount);
     for (int i = 0; i < m_ImageCount; i++) {
         m_ImageViews[i].init(device.getVkDevice(), m_Images[i], m_Format);
     }
@@ -36,13 +36,9 @@ VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFW
     return m_SwapChain;
 }
 
-void SwapChain::deinit(const VkDevice &device, std::vector<Framebuffer> &framebuffers) {
-    for (auto framebuffer : framebuffers) {
-        framebuffer.deinit(device);
-    }
-
-    for (auto imageView : m_ImageViews) {
-        imageView.deinit(device);
+void SwapChain::deinit(const VkDevice &device) {
+    for (int i = 0; i < m_ImageViews.size(); i++) {
+        m_ImageViews[i].deinit(device);
     }
 
     vkDestroySwapchainKHR(device, m_SwapChain, nullptr);
