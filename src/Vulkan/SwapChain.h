@@ -14,7 +14,7 @@ class SwapChain {
   public:
     NO_COPY(SwapChain);
     SwapChain() = default;
-    
+
     VkSwapchainKHR init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window);
     void deinit(const VkDevice &device);
 
@@ -24,7 +24,7 @@ class SwapChain {
         std::vector<VkPresentModeKHR> presentModes;
     };
 
-    SupportDetails querySupport(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface);
+    static SupportDetails querySupport(const VkPhysicalDevice &physicalDevice, const VkSurfaceKHR &surface);
 
     inline const VkSwapchainKHR &getVkSwapChain() const { return m_SwapChain; }
     inline const VkFormat &getFormat() const { return m_Format; }
