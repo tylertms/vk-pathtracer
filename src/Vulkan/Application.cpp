@@ -91,7 +91,7 @@ void Application::run() {
     m_Device.waitIdle();
 }
 
-void Application::rebuild() {
+void Application::onResize() {
     GLFWwindow *window = m_Window.getGlfwWindow();
     int width = 0, height = 0;
 
@@ -143,7 +143,7 @@ void Application::drawFrame() {
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(m_Device.getVkDevice(), m_SwapChain.getVkSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
-        rebuild();
+        onResize();
         return;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
@@ -193,7 +193,7 @@ void Application::drawFrame() {
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasResized()) {
         m_Window.clearResized();
-        rebuild();
+        onResize();
     } else if (result != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to present swapchain image.");
     } else {

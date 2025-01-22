@@ -26,7 +26,7 @@ class Application {
     ~Application();
 
     void run();
-    void rebuild();
+    void onResize();
     void drawFrame();
 
   private:
