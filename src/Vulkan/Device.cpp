@@ -70,13 +70,22 @@ void Device::createLogicalDevice() {
         queueCreateInfos.push_back(queueCreateInfo);
     }
 
-    VkPhysicalDeviceFeatures deviceFeatures{};
+    VkPhysicalDeviceFeatures sampleDeviceFeatures{};
+    vkGetPhysicalDeviceFeatures(m_PhysicalDevice, &sampleDeviceFeatures);
+
+    if (sampleDeviceFeatures.fragmentStoresAndAtomics != VK_TRUE) {
+        throw std::runtime_error("ERROR: Device does not support fragmentStoresAndAtomics, which is required for this application.");
+    }
+
+    VkPhysicalDeviceFeatures enabledFeatures{
+        .fragmentStoresAndAtomics = VK_TRUE};
+
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
 
-    createInfo.pEnabledFeatures = &deviceFeatures;
+    createInfo.pEnabledFeatures = &enabledFeatures;
     createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
