@@ -3,22 +3,23 @@
 namespace Vulkan {
 
 Application::Application() {
-    m_GLFWwindow = m_Window.init();
-    m_VkInstance = m_Instance.init();
+    GLFWwindow *window = m_Window.init();
+    VkInstance instance = m_Instance.init();
 
-    m_VkSurface = m_Surface.init(m_VkInstance, m_GLFWwindow);
-    m_VkDevice = m_Device.init(m_VkInstance, m_VkSurface);
-    m_VkSwapChain = m_SwapChain.init(m_Device, m_VkSurface, m_GLFWwindow);
+    VkSurfaceKHR surface = m_Surface.init(instance, window);
+    VkDevice device = m_Device.init(instance, surface);
 
-    m_GraphicsPipeline.init(m_VkDevice, m_SwapChain.getFormat(), m_SwapChain.getExtent());
+    m_SwapChain.init(m_Device, surface, window);
+
+    m_GraphicsPipeline.init(device, m_SwapChain.getFormat(), m_SwapChain.getExtent());
 
     m_Framebuffers = std::vector<Framebuffer>(m_SwapChain.getImageCount());
     for (int i = 0; i < m_Framebuffers.size(); i++) {
-        m_Framebuffers[i].init(m_VkDevice, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
+        m_Framebuffers[i].init(device, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     }
 
     m_CommandPool.init(m_Device);
-        
+
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
     m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
     m_RenderFinishedSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
@@ -26,26 +27,28 @@ Application::Application() {
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
-        m_ImageAvailableSemaphores[i].init(m_VkDevice);
-        m_RenderFinishedSemaphores[i].init(m_VkDevice);
-        m_InFlightFences[i].init(m_VkDevice, true);
+        m_ImageAvailableSemaphores[i].init(device);
+        m_RenderFinishedSemaphores[i].init(device);
+        m_InFlightFences[i].init(device, true);
     }
 }
 
 Application::~Application() {
+    VkDevice device = m_Device.getVkDevice();
+
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
-        m_ImageAvailableSemaphores[i].deinit(m_VkDevice);
-        m_RenderFinishedSemaphores[i].deinit(m_VkDevice);
-        m_InFlightFences[i].deinit(m_VkDevice);
+        m_ImageAvailableSemaphores[i].deinit(device);
+        m_RenderFinishedSemaphores[i].deinit(device);
+        m_InFlightFences[i].deinit(device);
     }
 
     for (int i = 0; i < m_Framebuffers.size(); i++) {
-        m_Framebuffers[i].deinit(m_VkDevice);
+        m_Framebuffers[i].deinit(device);
     }
 
     m_CommandPool.deinit(m_Device);
-    m_GraphicsPipeline.deinit(m_VkDevice);
-    m_SwapChain.deinit(m_VkDevice);
+    m_GraphicsPipeline.deinit(device);
+    m_SwapChain.deinit(device);
     m_Device.deinit();
     m_Surface.deinit();
     m_Instance.deinit();
@@ -53,38 +56,42 @@ Application::~Application() {
 }
 
 void Application::run() {
-    while (!glfwWindowShouldClose(m_GLFWwindow)) {
+    GLFWwindow *window = m_Window.getGlfwWindow();
+
+    while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         drawFrame();
     }
 
-    vkDeviceWaitIdle(m_VkDevice);
+    m_Device.waitIdle();
 }
 
 void Application::rebuild() {
+    GLFWwindow *window = m_Window.getGlfwWindow();
     int width = 0, height = 0;
-    glfwGetFramebufferSize(m_GLFWwindow, &width, &height);
+
+    glfwGetFramebufferSize(window, &width, &height);
     while (width == 0 || height == 0) {
-        glfwGetFramebufferSize(m_GLFWwindow, &width, &height);
+        glfwGetFramebufferSize(window, &width, &height);
         glfwWaitEvents();
     }
 
-    vkDeviceWaitIdle(m_VkDevice);
+    m_Device.waitIdle();
 
-    m_SwapChain.deinit(m_VkDevice);
-    m_VkSwapChain = m_SwapChain.init(m_Device, m_VkSurface, m_GLFWwindow);
+    m_SwapChain.deinit(m_Device.getVkDevice());
+    m_SwapChain.init(m_Device, m_Surface.getVkSurface(), window);
     m_GraphicsPipeline.updateExtent(m_SwapChain.getExtent());
 
     for (int i = 0; i < m_Framebuffers.size(); i++) {
-        m_Framebuffers[i].init(m_VkDevice, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
+        m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     }
 }
 
 void Application::drawFrame() {
-    vkWaitForFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
+    vkWaitForFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
 
     uint32_t imageIndex;
-    VkResult result = vkAcquireNextImageKHR(m_VkDevice, m_VkSwapChain, UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(m_Device.getVkDevice(), m_SwapChain.getVkSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         rebuild();
         return;
@@ -92,7 +99,7 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
-    vkResetFences(m_VkDevice, 1, &m_InFlightFences[currentFrame].getVkFence());
+    vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
 
     vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
     m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Framebuffers[imageIndex].getVkFramebuffer());
@@ -123,7 +130,7 @@ void Application::drawFrame() {
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
 
-    VkSwapchainKHR swapChains[] = {m_VkSwapChain};
+    VkSwapchainKHR swapChains[] = {m_SwapChain.getVkSwapChain()};
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
 
@@ -135,7 +142,7 @@ void Application::drawFrame() {
         m_Window.clearResized();
         rebuild();
     } else if (result != VK_SUCCESS) {
-        throw std::runtime_error("failed to present swap chain image!");
+        throw std::runtime_error("ERROR: Failed to present swapchain image.");
     }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;

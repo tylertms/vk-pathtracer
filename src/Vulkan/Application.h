@@ -44,12 +44,6 @@ class Application {
     std::vector<Semaphore> m_RenderFinishedSemaphores;
     std::vector<Fence> m_InFlightFences;
     /* ----------------------- */
-    GLFWwindow *m_GLFWwindow;
-    VkInstance m_VkInstance;
-    VkDevice m_VkDevice;
-    VkSurfaceKHR m_VkSurface;
-    VkSwapchainKHR m_VkSwapChain;
-    /* ----------------------- */
 };
 
 } // namespace Vulkan
