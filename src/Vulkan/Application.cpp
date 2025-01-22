@@ -78,7 +78,12 @@ void Application::rebuild() {
 
     m_Device.waitIdle();
 
+    for (int i = 0; i < m_Framebuffers.size(); i++) {
+        m_Framebuffers[i].deinit(m_Device.getVkDevice());
+    }
+
     m_SwapChain.deinit(m_Device.getVkDevice());
+
     m_SwapChain.init(m_Device, m_Surface.getVkSurface(), window);
     m_GraphicsPipeline.updateExtent(m_SwapChain.getExtent());
 
