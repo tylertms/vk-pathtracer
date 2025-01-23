@@ -33,7 +33,7 @@ void Device::pickPhysicalDevice() {
         throw std::runtime_error("ERROR: Vulkan not supported on any valid device on this system.");
     }
 
-    std::clog << "\nINFO: Found " << deviceCount << " device" << (deviceCount == 1 ? "" : "s") << ":\n";
+    std::clog << "INFO: Found " << deviceCount << " device" << (deviceCount == 1 ? "" : "s") << ":\n";
 
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(ext_Instance, &deviceCount, devices.data());
@@ -58,8 +58,8 @@ void Device::pickPhysicalDevice() {
         throw std::runtime_error("ERROR: Failed to find a GPU with Vulkan support.");
     }
 
-    std::clog << "\nINFO: Selected device [" << bestDeviceIndex << "]\n";
-    std::clog << "To override this, run the application with the flag '--device n'\n\n";
+    std::clog << "INFO: Selected device [" << bestDeviceIndex << "]\n";
+    //std::clog << "To override this, run the application with the flag '--device n'\n\n";
 }
 
 void Device::createLogicalDevice() {
