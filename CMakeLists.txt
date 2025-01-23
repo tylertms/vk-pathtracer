@@ -26,7 +26,7 @@ if(CMAKE_BUILD_TYPE MATCHES Debug)
     add_compile_options(-g -O0 -fsanitize=address -fno-omit-frame-pointer)
     add_link_options(-fsanitize=address)
 elseif(CMAKE_BUILD_TYPE MATCHES Release)
-    add_compile_options(-O3)
+    add_compile_options(-O3 -march=native)
     add_compile_definitions(PRIVATE NODEBUG=1)
 elseif(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo)
     add_compile_options(-O2 -g)
@@ -36,8 +36,8 @@ find_package(Vulkan REQUIRED)
 find_program(GLSLC glslc REQUIRED)
 
 include(FetchContent)
-FetchContent_Declare(glm GIT_REPOSITORY https://github.com/g-truc/glm.git GIT_TAG master)
-FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG master)
+FetchContent_Declare(glm GIT_REPOSITORY https://github.com/g-truc/glm.git GIT_TAG 1.0.1)
+FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.4)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
@@ -57,7 +57,7 @@ set(SHADER_SRCS "Graphics.vert" "Graphics.frag")
 foreach(SHADER ${SHADER_SRCS})
     add_custom_command(
         OUTPUT "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
-        COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
+        COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" -O -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
         DEPENDS "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}"
         COMMENT "Compiling ${SHADER} to SPIR-V"
     )
