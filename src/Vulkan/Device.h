@@ -54,7 +54,9 @@ class Device {
 
     int getScore(const VkPhysicalDevice &device, VkPhysicalDeviceProperties &properties);
     bool deviceSupportsExtensions(const VkPhysicalDevice &physicalDevice);
+
     const char *deviceString(const VkPhysicalDeviceType &type);
+    void logInfo(const VkPhysicalDeviceProperties &properties, int index);
 
   private:
     VkInstance ext_Instance;

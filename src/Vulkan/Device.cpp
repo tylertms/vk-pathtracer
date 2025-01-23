@@ -33,25 +33,33 @@ void Device::pickPhysicalDevice() {
         throw std::runtime_error("ERROR: Vulkan not supported on any valid device on this system.");
     }
 
+    std::clog << "\nINFO: Found " << deviceCount << " device" << (deviceCount == 1 ? "" : "s") << ":\n";
+
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(ext_Instance, &deviceCount, devices.data());
 
     int bestDeviceScore = -1;
+    int bestDeviceIndex = -1;
+
     VkPhysicalDeviceProperties properties, bestProperties;
-    for (const auto &device : devices) {
-        int score = getScore(device, properties);
+    for (int i = 0; i < deviceCount; i++) {
+        int score = getScore(devices[i], properties);
         if (score > bestDeviceScore) {
-            m_PhysicalDevice = device;
+            m_PhysicalDevice = devices[i];
             bestDeviceScore = score;
             bestProperties = properties;
+            bestDeviceIndex = i;
         }
+
+        logInfo(properties, i);
     }
 
     if (m_PhysicalDevice == VK_NULL_HANDLE) {
         throw std::runtime_error("ERROR: Failed to find a GPU with Vulkan support.");
     }
 
-    std::clog << "USING " << deviceString(bestProperties.deviceType) << ": [" << bestProperties.deviceName << "]" << std::endl;
+    std::clog << "\nINFO: Selected device [" << bestDeviceIndex << "]\n";
+    std::clog << "To override this, run the application with the flag '--device n'\n\n";
 }
 
 void Device::createLogicalDevice() {
@@ -135,14 +143,18 @@ const char *Device::deviceString(const VkPhysicalDeviceType &type) {
     case VK_PHYSICAL_DEVICE_TYPE_CPU:
         return "CPU";
     case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU:
-        return "INTEGRATED GPU";
+        return "Integrated GPU";
     case VK_PHYSICAL_DEVICE_TYPE_VIRTUAL_GPU:
-        return "VIRTUAL GPU";
+        return "Virtual GPU";
     case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:
-        return "DISCRETE GPU";
+        return "Discrete GPU";
     default:
-        return "UNKNOWN";
+        return "Unknown";
     }
+}
+
+void Device::logInfo(const VkPhysicalDeviceProperties &properties, int index) {
+    std::clog << "[" << index << "]: " << properties.deviceName << " - " << deviceString(properties.deviceType) << "\n";
 }
 
 int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDeviceProperties &properties) {
