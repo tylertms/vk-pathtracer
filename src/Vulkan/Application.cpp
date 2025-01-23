@@ -40,6 +40,7 @@ Application::Application() {
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
         m_Uniforms[i].init(m_Device);
+        m_Uniforms[i].setCam({ .aspectRatio = m_Window.getAspectRatio() });
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
@@ -130,6 +131,9 @@ void Application::onResize() {
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
+    for (int i = 0; i < m_Uniforms.size(); i++)
+        m_Uniforms[i].setCam({ .aspectRatio = (float)width / height });
+
     for (int i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
@@ -149,7 +153,7 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
-    m_Uniforms[currentFrame].updateFramesRendered(framesRendered);
+    m_Uniforms[currentFrame].setFramesRendered(framesRendered);
     m_Uniforms[currentFrame].submitUpdates();
     framesRendered++;
 
