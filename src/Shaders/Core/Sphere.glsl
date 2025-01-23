@@ -1,3 +1,6 @@
+#ifndef SPHERE_GLSL
+#define SPHERE_GLSL
+
 #include "Common.glsl"
 
 struct Sphere {
@@ -33,3 +36,5 @@ HitPayload rayHitSphere(Ray ray, Sphere sphere) {
 
   return hit;
 }
+
+#endif
