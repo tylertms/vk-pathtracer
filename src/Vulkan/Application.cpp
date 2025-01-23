@@ -151,6 +151,7 @@ void Application::drawFrame() {
 
     m_Uniforms[currentFrame].updateFramesRendered(framesRendered);
     m_Uniforms[currentFrame].submitUpdates();
+    framesRendered++;
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
 
@@ -196,8 +197,6 @@ void Application::drawFrame() {
         onResize();
     } else if (result != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to present swapchain image.");
-    } else {
-        framesRendered++;
     }
 
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
