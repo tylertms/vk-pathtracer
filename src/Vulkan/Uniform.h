@@ -3,7 +3,6 @@
 #include "Device.h"
 #include "Scene.h"
 #include "VulkanApp.h"
-#include <iostream>
 
 namespace Vulkan {
 

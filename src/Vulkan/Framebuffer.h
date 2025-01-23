@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ImageView.h"
 #include "VulkanApp.h"
 
 namespace Vulkan {

@@ -3,7 +3,6 @@
 #include "CommandPool.h"
 #include "GraphicsPipeline.h"
 #include "Interface.h"
-#include "RenderPass.h"
 #include "VulkanApp.h"
 
 namespace Vulkan {

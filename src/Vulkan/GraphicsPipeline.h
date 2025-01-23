@@ -1,6 +1,5 @@
 #pragma once
 
-#include "DescriptorSet.h"
 #include "RenderPass.h"
 #include "VulkanApp.h"
 

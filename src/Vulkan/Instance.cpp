@@ -1,7 +1,6 @@
 #include "Instance.h"
 #include "DebugMessenger.h"
 
-#include <iostream>
 #include <stdexcept>
 #include <vector>
 

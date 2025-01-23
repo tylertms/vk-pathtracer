@@ -1,7 +1,6 @@
 #pragma once
 
 #include "glm/glm.hpp"
-#include <iostream>
 
 #define MAX_SPHERES 8
 
