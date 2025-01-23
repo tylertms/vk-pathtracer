@@ -53,12 +53,13 @@ set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders_spv")
 file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
 set(SHADER_SRCS "Graphics.vert" "Graphics.frag")
+file(GLOB_RECURSE SHADER_DEPS "${CMAKE_SOURCE_DIR}/src/Shaders/*.glsl")
 
 foreach(SHADER ${SHADER_SRCS})
     add_custom_command(
         OUTPUT "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
         COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" -O -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
-        DEPENDS "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}"
+        DEPENDS "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" ${SHADER_DEPS}
         COMMENT "Compiling ${SHADER} to SPIR-V"
     )
     list(APPEND SPIRV_BINARY "${SHADER_OUTPUT_DIR}/${SHADER}.spv")
