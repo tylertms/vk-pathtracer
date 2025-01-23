@@ -59,7 +59,7 @@ void Device::pickPhysicalDevice() {
     }
 
     std::clog << "INFO: Selected device [" << bestDeviceIndex << "]\n";
-    //std::clog << "To override this, run the application with the flag '--device n'\n\n";
+    // std::clog << "To override this, run the application with the flag '--device n'\n\n";
 }
 
 void Device::createLogicalDevice() {

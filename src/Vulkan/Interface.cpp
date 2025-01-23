@@ -10,12 +10,14 @@
 namespace Vulkan {
 
 void Interface::init(const Device &device, const Instance &instance,
-    const Window &window, const DescriptorPool &descriptorPool,
-    const SwapChain &swapChain, const GraphicsPipeline &graphicsPipeline) {
+                     const Window &window, const DescriptorPool &descriptorPool,
+                     const SwapChain &swapChain,
+                     const GraphicsPipeline &graphicsPipeline) {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO(); (void)io;
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     ImGui::StyleColorsDark();
 
@@ -25,7 +27,9 @@ void Interface::init(const Device &device, const Instance &instance,
     info.PhysicalDevice = device.getVkPhysicalDevice();
     info.Device = device.getVkDevice();
     info.Queue = device.getGraphicsQueue();
-    info.QueueFamily = device.findQueueFamilies(device.getVkPhysicalDevice(), nullptr).graphicsFamily.value();
+    info.QueueFamily =
+        device.findQueueFamilies(device.getVkPhysicalDevice(), nullptr)
+            .graphicsFamily.value();
     info.PipelineCache = VK_NULL_HANDLE;
     info.DescriptorPool = descriptorPool.getVkDescriptorPool();
     info.Allocator = VK_NULL_HANDLE;
@@ -44,4 +48,20 @@ void Interface::deinit() {
     ImGui::DestroyContext();
 }
 
+void Interface::draw() const {
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    if (ImGui::Button("Reset Accumulation"))
+        ;
+
+    ImGui::Render();
+
+    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+    }
 }
+
+} // namespace Vulkan

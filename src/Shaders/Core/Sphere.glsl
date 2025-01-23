@@ -4,9 +4,9 @@
 #include "Common.glsl"
 
 struct Sphere {
-    vec3 center;
-    float radius;
-    Material material;
+  vec3 center;
+  float radius;
+  Material material;
 };
 
 HitPayload rayHitSphere(Ray ray, Sphere sphere) {

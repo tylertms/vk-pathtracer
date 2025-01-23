@@ -50,9 +50,8 @@ Application::Application() {
     m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
 
     m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
-    m_Scene.addSphere({ .center = glm::vec3(-1, 0, 0), .radius = 0.7, .material = { .color = glm::vec3(1), .emissionColor = glm::vec3(1, 0, 1), .emissionStrength = 8.f } });
-    m_Scene.addSphere({ .center = glm::vec3(1, 0, 0), .radius = 0.5, .material = { .color = glm::vec3(1), .emissionColor = glm::vec3(1), .emissionStrength = 0.f } });
-
+    m_Scene.addSphere({.center = glm::vec3(-1, 0, 0), .radius = 0.7, .material = {.color = glm::vec3(1), .emissionColor = glm::vec3(1), .emissionStrength = 8.f}});
+    m_Scene.addSphere({.center = glm::vec3(1, 0, 0), .radius = 0.5, .material = {.color = glm::vec3(1), .emissionColor = glm::vec3(1), .emissionStrength = 0.f}});
 }
 
 Application::~Application() {
@@ -171,7 +170,7 @@ void Application::drawFrame() {
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
 
     vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[currentFrame].getVkDescriptorSet());
+    m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[currentFrame].getVkDescriptorSet());
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

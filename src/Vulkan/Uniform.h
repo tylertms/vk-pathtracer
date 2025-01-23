@@ -1,9 +1,9 @@
 #pragma once
 
-#include <iostream>
 #include "Device.h"
-#include "VulkanApp.h"
 #include "Scene.h"
+#include "VulkanApp.h"
+#include <iostream>
 
 namespace Vulkan {
 

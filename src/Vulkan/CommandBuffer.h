@@ -2,6 +2,7 @@
 
 #include "CommandPool.h"
 #include "GraphicsPipeline.h"
+#include "Interface.h"
 #include "RenderPass.h"
 #include "VulkanApp.h"
 
@@ -15,7 +16,7 @@ class CommandBuffer {
     void init(const Device &device, const CommandPool &commandPool);
 
     inline const VkCommandBuffer &getVkCommandBuffer() const { return m_CommandBuffer; }
-    void record(const GraphicsPipeline &graphicsPipeline, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet);
+    void record(const GraphicsPipeline &graphicsPipeline, const Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet);
 
   private:
     VkCommandBuffer m_CommandBuffer;

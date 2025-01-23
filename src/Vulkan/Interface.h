@@ -15,10 +15,12 @@ class Interface {
     Interface() = default;
 
     void init(const Device &device, const Instance &instance,
-        const Window &window, const DescriptorPool &descriptorPool,
-        const SwapChain &swapChain, const GraphicsPipeline &graphicsPipeline);
+              const Window &window, const DescriptorPool &descriptorPool,
+              const SwapChain &swapChain, const GraphicsPipeline &graphicsPipeline);
 
     void deinit();
+
+    void draw() const;
 };
 
-}
+} // namespace Vulkan
