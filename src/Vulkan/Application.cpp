@@ -26,6 +26,7 @@ Application::Application() {
     m_CommandPool.init(m_Device);
 
     m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
+    m_ImGuiDescriptorPool.initImGui(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
 
     m_AccumulationImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
@@ -46,6 +47,8 @@ Application::Application() {
         m_InFlightFences[i].init(device, true);
     }
 
+    m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
+
     m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
     m_Scene.addSphere({ .center = glm::vec3(-1, 0, 0), .radius = 0.7, .material = { .color = glm::vec3(1), .emissionColor = glm::vec3(1, 0, 1), .emissionStrength = 8.f } });
     m_Scene.addSphere({ .center = glm::vec3(1, 0, 0), .radius = 0.5, .material = { .color = glm::vec3(1), .emissionColor = glm::vec3(1), .emissionStrength = 0.f } });
@@ -54,6 +57,8 @@ Application::Application() {
 
 Application::~Application() {
     VkDevice device = m_Device.getVkDevice();
+
+    m_Interface.deinit();
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_ImageAvailableSemaphores[i].deinit(device);
@@ -73,6 +78,7 @@ Application::~Application() {
     }
 
     m_DescriptorPool.deinit(device);
+    m_ImGuiDescriptorPool.deinit(device);
 
     for (int i = 0; i < m_DescriptorSets.size(); i++) {
         m_DescriptorSets[i].deinit(device);

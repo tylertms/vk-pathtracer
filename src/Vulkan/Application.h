@@ -9,6 +9,7 @@
 #include "Framebuffer.h"
 #include "GraphicsPipeline.h"
 #include "Instance.h"
+#include "Interface.h"
 #include "Semaphore.h"
 #include "Surface.h"
 #include "SwapChain.h"
@@ -24,6 +25,8 @@ class Application {
 
     Application();
     ~Application();
+
+    void setupInterface();
 
     void run();
     void onResize();
@@ -48,10 +51,12 @@ class Application {
     std::vector<Semaphore> m_RenderFinishedSemaphores;
     std::vector<Fence> m_InFlightFences;
     DescriptorPool m_DescriptorPool;
+    DescriptorPool m_ImGuiDescriptorPool;
     std::vector<DescriptorSet> m_DescriptorSets;
     std::vector<Uniform> m_Uniforms;
     ImageView m_AccumulationImageView;
     Scene m_Scene;
+    Interface m_Interface;
     /* ----------------------- */
 };
 
