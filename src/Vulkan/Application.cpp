@@ -39,13 +39,17 @@ Application::Application() {
 
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
-        m_Uniforms[i].init(m_Device);
-        m_Uniforms[i].setCam({ .aspectRatio = m_Window.getAspectRatio() });
+        m_Uniforms[i].init(m_Device, m_Scene.getObject());
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
         m_InFlightFences[i].init(device, true);
     }
+
+    m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
+    m_Scene.addSphere({ .center = glm::vec3(-1, 0, 0), .radius = 0.7, .material = { .color = glm::vec3(1), .emissionColor = glm::vec3(1, 0, 1), .emissionStrength = 8.f } });
+    m_Scene.addSphere({ .center = glm::vec3(1, 0, 0), .radius = 0.5, .material = { .color = glm::vec3(1), .emissionColor = glm::vec3(1), .emissionStrength = 0.f } });
+
 }
 
 Application::~Application() {
@@ -102,6 +106,8 @@ void Application::onResize() {
         glfwWaitEvents();
     }
 
+    m_Window.setWindowSize(width, height);
+
     m_Device.waitIdle();
 
     /* ---------- DEINIT ---------- */
@@ -131,8 +137,7 @@ void Application::onResize() {
     for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
-    for (int i = 0; i < m_Uniforms.size(); i++)
-        m_Uniforms[i].setCam({ .aspectRatio = (float)width / height });
+    m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
 
     for (int i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
@@ -153,7 +158,7 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
-    m_Uniforms[currentFrame].setFramesRendered(framesRendered);
+    m_Scene.setFramesRendered(framesRendered);
     m_Uniforms[currentFrame].submitUpdates();
     framesRendered++;
 
