@@ -7,6 +7,19 @@
 
 namespace Vulkan {
 
+struct Camera {
+    glm::vec3 lookFrom;
+    float vfov;
+    glm::vec3 lookAt;
+    float aperture;
+    float aspectRatio;
+};
+
+struct UniformObject {
+    uint32_t framesRendered;
+    alignas(16) Camera cam;
+};
+
 class Uniform {
   public:
     NO_COPY(Uniform);
@@ -17,30 +30,20 @@ class Uniform {
 
     inline const VkBuffer &getVkBuffer() const { return m_Buffer; }
 
-    void updateFramesRendered(uint32_t framesRendered) {
+    void setFramesRendered(uint32_t framesRendered) {
         m_Instance.framesRendered = framesRendered;
     }
 
-    void submitUpdates() {
-        memcpy(m_BufferMapped, &m_Instance, sizeof(Object));
+    void setCam(Camera cam) {
+        m_Instance.cam = cam;
     }
 
-  public:
-    struct Camera {
-        glm::vec3 lookFrom;
-        float vfov;
-        glm::vec3 lookAt;
-        float aperture;
-        float aspectRatio;
-    };
-
-    struct Object {
-        uint32_t framesRendered;
-        alignas(16) Camera cam;
-    };
+    void submitUpdates() {
+        memcpy(m_BufferMapped, &m_Instance, sizeof(UniformObject));
+    }
 
   private:
-    Object m_Instance;
+    UniformObject m_Instance;
 
     VkBuffer m_Buffer;
     VkDeviceMemory m_BufferMemory;
