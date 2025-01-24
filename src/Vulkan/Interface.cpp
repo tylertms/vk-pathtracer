@@ -65,13 +65,19 @@ void Interface::draw(Scene &scene) {
     if (ImGui::Button("Reset Accumulation")) scene.resetAccumulation();
     ImGui::Spacing();
 
-    if (ImGui::CollapsingHeader("Objects")) {
+
+    if (ImGui::Button("Add Sphere")) scene.addSphere();
+
+    ImGui::Spacing();
+
+    if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Indent();
         for (int i = 0; i < sceneObj->numSpheres; i++) {
             ImGui::PushID(i);
             ImGui::Text("Sphere %d", i + 1);
             if (drawSphereControl(sceneObj->spheres[i]))
                 scene.resetAccumulation();
+
             ImGui::PopID();
         }
         ImGui::Unindent();

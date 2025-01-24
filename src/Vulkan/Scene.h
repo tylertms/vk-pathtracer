@@ -25,8 +25,8 @@ struct Sphere {
 struct SceneObject {
     Camera cam;
     Sphere spheres[MAX_SPHERES];
-    uint32_t numSpheres;
-    uint32_t framesRendered;
+    uint32_t numSpheres = 0;
+    uint32_t framesRendered = 0;
 };
 
 namespace Vulkan {
@@ -48,8 +48,18 @@ class Scene {
     void setCam(const Camera &cam) { m_Instance.cam = cam; }
     void setCamAspectRatio(float aspectRatio) { m_Instance.cam.aspectRatio = aspectRatio; }
 
-    void addSphere(const Sphere sphere) {
-        m_Instance.spheres[m_Instance.numSpheres++] = sphere;
+    void addSphere() {
+        if (m_Instance.numSpheres == MAX_SPHERES) return;
+        m_Instance.spheres[m_Instance.numSpheres++] = (Sphere) {
+            .center = {0, 0, 0},
+            .radius = 0.5,
+            .material = {
+                .color = {1, 1, 1},
+                .emissionColor = {1, 1, 1},
+                .emissionStrength = 0.0
+            }
+        };
+        resetAccumulation();
     }
 
     void setNumSpheres(int numSpheres) {
