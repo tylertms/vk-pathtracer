@@ -29,9 +29,10 @@ void main() {
         totalLight += traceRay(ray, state);
     }
     totalLight /= SAMPLES_PER_PIXEL;
-    vec4 newColor = vec4(totalLight, 1);
 
+    vec4 newColor = vec4(totalLight, 1);
     vec4 prevColor = imageLoad(accumulationImage, texCoord);
     outColor = mix(prevColor, newColor, 1.0 / (scene.framesRendered + 1));
+
     imageStore(accumulationImage, texCoord, outColor);
 }
