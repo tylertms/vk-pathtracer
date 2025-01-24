@@ -1,5 +1,6 @@
 #include "Instance.h"
 #include "DebugMessenger.h"
+#include "vulkan/vulkan_core.h"
 
 #include <stdexcept>
 #include <vector>
@@ -11,7 +12,11 @@ VkInstance Instance::init() {
         throw std::runtime_error("ERROR: Validation layers not supported.");
     }
 
-    VkInstanceCreateInfo createInfo = getCreateInfo();
+    VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo{};
+    populateDebugMessengerCreateInfo(debugCreateInfo);
+
+    VkApplicationInfo appInfo = getAppInfo();
+    VkInstanceCreateInfo createInfo = getCreateInfo(appInfo, debugCreateInfo);
 
     if (vkCreateInstance(&createInfo, nullptr, &m_Instance) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to create instance.");
@@ -30,9 +35,7 @@ void Instance::deinit() {
     vkDestroyInstance(m_Instance, nullptr);
 }
 
-VkInstanceCreateInfo Instance::getCreateInfo() {
-    VkApplicationInfo appInfo = getAppInfo();
-
+VkInstanceCreateInfo Instance::getCreateInfo(VkApplicationInfo appInfo, VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo) {
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
@@ -42,8 +45,10 @@ VkInstanceCreateInfo Instance::getCreateInfo() {
     if (g_EnabledValidationLayers) {
         createInfo.enabledLayerCount = static_cast<uint32_t>(g_ValidationLayers.size());
         createInfo.ppEnabledLayerNames = g_ValidationLayers.data();
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
     } else {
         createInfo.enabledLayerCount = 0;
+        createInfo.pNext = nullptr;
     }
 
 #if __APPLE__
@@ -60,7 +65,7 @@ VkApplicationInfo Instance::getAppInfo() {
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = "NONE";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_3;
+    appInfo.apiVersion = VK_API_VERSION_1_0;
 
     return appInfo;
 }

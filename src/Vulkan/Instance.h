@@ -21,7 +21,7 @@ class Instance {
     VkDebugUtilsMessengerEXT m_DebugMessenger;
     std::vector<const char *> m_Extensions;
 
-    VkInstanceCreateInfo getCreateInfo();
+    VkInstanceCreateInfo getCreateInfo(VkApplicationInfo appInfo, VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo);
     VkApplicationInfo getAppInfo();
     void attachExtensions(VkInstanceCreateInfo &createInfo);
 };
