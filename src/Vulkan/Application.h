@@ -35,8 +35,8 @@ class Application {
   private:
     /* ----------------------- */
     uint32_t MAX_FRAMES_IN_FLIGHT = 1;
-    uint32_t currentFrame = 0;
-    uint32_t framesRendered = 0;
+    uint32_t m_CurrentFrame = 0;
+    uint32_t m_FramesRendered = 0;
     /* ----------------------- */
     Window m_Window;
     Instance m_Instance;

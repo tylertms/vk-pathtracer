@@ -50,8 +50,6 @@ Application::Application() {
     m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
 
     m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
-    m_Scene.addSphere({.center = {-1, 0, 0}, .radius = 0.7, .material = {.color = {1, 1, 1}, .emissionColor = {1, 1, 1}, .emissionStrength = 8.f}});
-    m_Scene.addSphere({.center = {1, 0, 0}, .radius = 0.5, .material = {.color = {1, 1, 1}, .emissionColor = {1, 1, 1}, .emissionStrength = 0.f}});
 }
 
 Application::~Application() {
@@ -148,14 +146,14 @@ void Application::onResize() {
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
 
-    framesRendered = 0;
+    m_FramesRendered = 0;
 }
 
 void Application::drawFrame() {
-    vkWaitForFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
+    vkWaitForFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
 
     uint32_t imageIndex;
-    VkResult result = vkAcquireNextImageKHR(m_Device.getVkDevice(), m_SwapChain.getVkSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[currentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(m_Device.getVkDevice(), m_SwapChain.getVkSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);
     if (result == VK_ERROR_OUT_OF_DATE_KHR) {
         onResize();
         return;
@@ -164,31 +162,31 @@ void Application::drawFrame() {
     }
 
     m_Scene.incrementFramesRendered();
-    m_Uniforms[currentFrame].submitUpdates();
-    framesRendered++;
+    m_Uniforms[m_CurrentFrame].submitUpdates();
+    m_FramesRendered++;
 
-    vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[currentFrame].getVkFence());
+    vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 
-    vkResetCommandBuffer(m_CommandBuffers[currentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[currentFrame].record(m_GraphicsPipeline, m_Scene, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[currentFrame].getVkDescriptorSet());
+    vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
+    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_Scene, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet());
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
-    VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[currentFrame].getVkSemaphore()};
+    VkSemaphore waitSemaphores[] = {m_ImageAvailableSemaphores[m_CurrentFrame].getVkSemaphore()};
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
 
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &m_CommandBuffers[currentFrame].getVkCommandBuffer();
+    submitInfo.pCommandBuffers = &m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer();
 
-    VkSemaphore signalSemaphores[] = {m_RenderFinishedSemaphores[currentFrame].getVkSemaphore()};
+    VkSemaphore signalSemaphores[] = {m_RenderFinishedSemaphores[m_CurrentFrame].getVkSemaphore()};
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    if (vkQueueSubmit(m_Device.getGraphicsQueue(), 1, &submitInfo, m_InFlightFences[currentFrame].getVkFence()) != VK_SUCCESS) {
+    if (vkQueueSubmit(m_Device.getGraphicsQueue(), 1, &submitInfo, m_InFlightFences[m_CurrentFrame].getVkFence()) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to submit draw command buffer.");
     }
 
@@ -213,7 +211,7 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to present swapchain image.");
     }
 
-    currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+    m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 } // namespace Vulkan
