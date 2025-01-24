@@ -36,18 +36,18 @@ find_package(Vulkan REQUIRED)
 find_program(GLSLC glslc REQUIRED)
 
 include(FetchContent)
-FetchContent_Declare(glm GIT_REPOSITORY https://github.com/g-truc/glm.git GIT_TAG 1.0.1)
 FetchContent_Declare(glfw GIT_REPOSITORY https://github.com/glfw/glfw.git GIT_TAG 3.4)
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(glm glfw)
+FetchContent_Declare(yaml-cpp GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git GIT_TAG 0.8.0)
+FetchContent_MakeAvailable(glfw yaml-cpp)
 
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp" "${CMAKE_SOURCE_DIR}/src/*.hpp")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${Vulkan_INCLUDE_DIRS} ${glm_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan glfw)
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${Vulkan_INCLUDE_DIRS})
+target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan glfw yaml-cpp::yaml-cpp)
 
 set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders_spv")
 file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
