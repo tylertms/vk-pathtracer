@@ -6,9 +6,9 @@
 #include "../External/ImGui/backends/imgui_impl_glfw.h"
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
+#include "Vulkan/Scene.h"
 
 #include <cmath>
-#include <iostream>
 
 namespace Vulkan {
 
@@ -53,12 +53,29 @@ void Interface::deinit() {
     ImGui::DestroyContext();
 }
 
-void Interface::draw() {
+void Interface::draw(Scene &scene) {
+    SceneObject *sceneObj = scene.getObject();
+
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
+    ImGui::Text("Frames: %d", sceneObj->framesRendered);
     ImGui::Text("FPS: %d", m_DisplayFPS);
+    if (ImGui::Button("Reset Accumulation")) scene.resetAccumulation();
+    ImGui::Spacing();
+
+    if (ImGui::CollapsingHeader("Objects")) {
+        ImGui::Indent();
+        for (int i = 0; i < sceneObj->numSpheres; i++) {
+            ImGui::PushID(i);
+            ImGui::Text("Sphere %d", i + 1);
+            if (drawSphereControl(sceneObj->spheres[i]))
+                scene.resetAccumulation();
+            ImGui::PopID();
+        }
+        ImGui::Unindent();
+    }
 
     ImGui::Render();
 
@@ -76,6 +93,16 @@ void Interface::draw() {
         m_FramesLastSecond = 0;
         m_TimeStart = m_TimeCurrent;
     }
+}
+
+bool Interface::drawSphereControl(Sphere &sphere) {
+    bool reset = false;
+    if(ImGui::DragFloat3("Position", sphere.center, 0.01)) reset = true;
+    if(ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
+    if(ImGui::ColorEdit3("Color", sphere.material.color)) reset = true;
+    if(ImGui::ColorEdit3("Emission Color", sphere.material.emissionColor)) reset = true;
+    if(ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
+    return reset;
 }
 
 } // namespace Vulkan

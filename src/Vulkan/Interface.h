@@ -4,6 +4,7 @@
 #include "Device.h"
 #include "GraphicsPipeline.h"
 #include "Instance.h"
+#include "Scene.h"
 #include "VulkanApp.h"
 #include "Window.h"
 
@@ -21,13 +22,14 @@ class Interface {
               const SwapChain &swapChain, const GraphicsPipeline &graphicsPipeline);
 
     void deinit();
-    void draw();
+    void draw(Scene &scene);
 
   private:
     uint32_t m_DisplayFPS;
     uint32_t m_FramesLastSecond;
     std::chrono::steady_clock::time_point m_TimeStart, m_TimeCurrent;
 
+    bool drawSphereControl(Sphere &sphere);
 };
 
 } // namespace Vulkan

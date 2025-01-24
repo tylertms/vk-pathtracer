@@ -15,7 +15,7 @@ class CommandBuffer {
     void init(const Device &device, const CommandPool &commandPool);
 
     inline const VkCommandBuffer &getVkCommandBuffer() const { return m_CommandBuffer; }
-    void record(const GraphicsPipeline &graphicsPipeline, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet);
+    void record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet);
 
   private:
     VkCommandBuffer m_CommandBuffer;

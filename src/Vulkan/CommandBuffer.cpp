@@ -18,7 +18,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
@@ -43,7 +43,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Interface &
     vkCmdBindDescriptorSets(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
 
-    interface.draw();
+    interface.draw(scene);
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer);
 
     vkCmdEndRenderPass(m_CommandBuffer);

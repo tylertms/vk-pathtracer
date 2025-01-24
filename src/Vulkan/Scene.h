@@ -1,25 +1,23 @@
 #pragma once
 
-#include "glm/glm.hpp"
-
 #define MAX_SPHERES 8
 
 struct Camera {
-    glm::vec3 lookFrom;
+    float lookFrom[3];
     float vfov;
-    glm::vec3 lookAt;
+    float lookAt[3];
     float aspectRatio;
 };
 
 struct Material {
-    glm::vec3 color;
+    float color[3];
     float emissionStrength;
-    glm::vec3 emissionColor;
+    float emissionColor[3];
     float padding;
 };
 
 struct Sphere {
-    glm::vec3 center;
+    float center[3];
     float radius;
     Material material;
 };
@@ -37,6 +35,14 @@ class Scene {
   public:
     void setFramesRendered(uint32_t framesRendered) {
         m_Instance.framesRendered = framesRendered;
+    }
+
+    void incrementFramesRendered() {
+        m_Instance.framesRendered++;
+    }
+
+    void resetAccumulation() {
+        m_Instance.framesRendered = -1;
     }
 
     void setCam(const Camera &cam) { m_Instance.cam = cam; }
