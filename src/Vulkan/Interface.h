@@ -7,6 +7,8 @@
 #include "VulkanApp.h"
 #include "Window.h"
 
+#include <chrono>
+
 namespace Vulkan {
 
 class Interface {
@@ -19,8 +21,13 @@ class Interface {
               const SwapChain &swapChain, const GraphicsPipeline &graphicsPipeline);
 
     void deinit();
+    void draw();
 
-    void draw() const;
+  private:
+    uint32_t m_DisplayFPS;
+    uint32_t m_FramesLastSecond;
+    std::chrono::steady_clock::time_point m_TimeStart, m_TimeCurrent;
+
 };
 
 } // namespace Vulkan

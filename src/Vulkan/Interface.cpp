@@ -7,6 +7,9 @@
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
 
+#include <cmath>
+#include <iostream>
+
 namespace Vulkan {
 
 void Interface::init(const Device &device, const Instance &instance,
@@ -40,6 +43,8 @@ void Interface::init(const Device &device, const Instance &instance,
 
     ImGui_ImplVulkan_Init(&info);
     ImGui_ImplVulkan_CreateFontsTexture();
+
+    m_TimeStart = std::chrono::high_resolution_clock::now();
 }
 
 void Interface::deinit() {
@@ -48,19 +53,28 @@ void Interface::deinit() {
     ImGui::DestroyContext();
 }
 
-void Interface::draw() const {
+void Interface::draw() {
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    if (ImGui::Button("Reset Accumulation"))
-        ;
+    ImGui::Text("FPS: %d", m_DisplayFPS);
 
     ImGui::Render();
 
     if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
+    }
+
+    m_TimeCurrent = std::chrono::high_resolution_clock::now();
+    float timeSinceStart = std::chrono::duration<float, std::milli>(m_TimeCurrent - m_TimeStart).count();
+    m_FramesLastSecond++;
+
+    if (timeSinceStart > 1000) {
+        m_DisplayFPS = floorf(1000.0 * m_FramesLastSecond / timeSinceStart);
+        m_FramesLastSecond = 0;
+        m_TimeStart = m_TimeCurrent;
     }
 }
 

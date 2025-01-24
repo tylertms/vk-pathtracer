@@ -18,7 +18,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, const Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
