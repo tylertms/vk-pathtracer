@@ -25,8 +25,8 @@ class Interface {
     void draw(Scene &scene);
 
   private:
-    uint32_t m_DisplayFPS;
-    uint32_t m_FramesLastSecond;
+    uint32_t m_DisplayFPS = 0;
+    uint32_t m_FramesLastSecond = 0;
     std::chrono::steady_clock::time_point m_TimeStart, m_TimeCurrent;
 
     bool drawSphereControl(Sphere &sphere);

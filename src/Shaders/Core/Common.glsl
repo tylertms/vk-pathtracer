@@ -1,7 +1,7 @@
 #ifndef COMMON_GLSL
 #define COMMON_GLSL
 
-#define SAMPLES_PER_PIXEL 10
+#define SAMPLES_PER_PIXEL 100
 #define MAX_BOUNCES 8
 #define MAX_SPHERES 8
 

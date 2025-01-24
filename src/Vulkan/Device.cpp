@@ -88,6 +88,10 @@ void Device::createLogicalDevice() {
     VkPhysicalDeviceFeatures enabledFeatures{
         .fragmentStoresAndAtomics = VK_TRUE};
 
+    VkPhysicalDeviceFragmentShaderInterlockFeaturesEXT fragmentShaderInterlockFeatures{};
+    fragmentShaderInterlockFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADER_INTERLOCK_FEATURES_EXT;
+    fragmentShaderInterlockFeatures.fragmentShaderPixelInterlock = VK_TRUE;
+
     VkDeviceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
@@ -96,6 +100,7 @@ void Device::createLogicalDevice() {
     createInfo.pEnabledFeatures = &enabledFeatures;
     createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+    createInfo.pNext = &fragmentShaderInterlockFeatures;
 
     if (vkCreateDevice(m_PhysicalDevice, &createInfo, nullptr, &m_Device) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to create logical device.");
