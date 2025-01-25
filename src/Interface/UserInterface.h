@@ -18,10 +18,10 @@ class UserInterface {
     UserInterface() = default;
 
     void init(const Vulkan::Device &device, const Vulkan::Instance &instance,
-                const Vulkan::Window &window,
-                const Vulkan::DescriptorPool &descriptorPool,
-                const Vulkan::SwapChain &swapChain,
-                const Vulkan::GraphicsPipeline &graphicsPipeline);
+              const Vulkan::Window &window,
+              const Vulkan::DescriptorPool &descriptorPool,
+              const Vulkan::SwapChain &swapChain,
+              const Vulkan::GraphicsPipeline &graphicsPipeline);
 
     void deinit();
     void draw(Vulkan::Scene &scene);
@@ -31,7 +31,8 @@ class UserInterface {
     uint32_t m_FramesLastSecond = 0;
     std::chrono::steady_clock::time_point m_TimeStart, m_TimeCurrent;
 
-    bool drawSphereControl(Sphere &sphere);
+    bool drawSphereControl(Vulkan::Sphere &sphere);
+    bool drawMeshControl(Vulkan::Mesh &mesh);
 };
 
 } // namespace Interface

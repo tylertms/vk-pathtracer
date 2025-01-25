@@ -3,15 +3,16 @@
 #include "../External/ImGui/backends/imgui_impl_glfw.h"
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
+#include "Loader.h"
 
 #include <cmath>
 
 namespace Interface {
 
 void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &instance,
-                     const Vulkan::Window &window, const Vulkan::DescriptorPool &descriptorPool,
-                     const Vulkan::SwapChain &swapChain,
-                     const Vulkan::GraphicsPipeline &graphicsPipeline) {
+                         const Vulkan::Window &window, const Vulkan::DescriptorPool &descriptorPool,
+                         const Vulkan::SwapChain &swapChain,
+                         const Vulkan::GraphicsPipeline &graphicsPipeline) {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -26,9 +27,7 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
     info.PhysicalDevice = device.getVkPhysicalDevice();
     info.Device = device.getVkDevice();
     info.Queue = device.getGraphicsQueue();
-    info.QueueFamily =
-        device.findQueueFamilies(device.getVkPhysicalDevice(), nullptr)
-            .graphicsFamily.value();
+    info.QueueFamily = device.findQueueFamilies(device.getVkPhysicalDevice(), nullptr).graphicsFamily.value();
     info.PipelineCache = VK_NULL_HANDLE;
     info.DescriptorPool = descriptorPool.getVkDescriptorPool();
     info.Allocator = VK_NULL_HANDLE;
@@ -50,7 +49,7 @@ void UserInterface::deinit() {
 }
 
 void UserInterface::draw(Vulkan::Scene &scene) {
-    SceneObject *sceneObj = scene.getObject();
+    Vulkan::SceneObject *sceneObj = scene.getObject();
 
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -58,11 +57,16 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
     ImGui::Text("Frames: %d", sceneObj->framesRendered);
     ImGui::Text("FPS: %d", m_DisplayFPS);
-    if (ImGui::Button("Reset Accumulation")) scene.resetAccumulation();
+    if (ImGui::Button("Reset Accumulation"))
+        scene.resetAccumulation();
     ImGui::Spacing();
 
-
-    if (ImGui::Button("Add Sphere")) scene.addSphere();
+    if (ImGui::Button("Add Sphere"))
+        scene.addSphere();
+    if (ImGui::Button("Load Mesh")) {
+        Loader m("assets/suzanne.glb");
+        scene.addMesh(m.getTriangles());
+    }
 
     ImGui::Spacing();
 
@@ -76,6 +80,15 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
             ImGui::PopID();
         }
+
+        for (int i = 0; i < sceneObj->numMeshes; i++) {
+            ImGui::PushID(sceneObj->numSpheres + i);
+            ImGui::Text("Mesh %d", i + 1);
+            if (drawMeshControl(sceneObj->meshes[i]))
+                scene.resetAccumulation();
+            ImGui::PopID();
+        }
+
         ImGui::Unindent();
     }
 
@@ -97,14 +110,30 @@ void UserInterface::draw(Vulkan::Scene &scene) {
     }
 }
 
-bool UserInterface::drawSphereControl(Sphere &sphere) {
+bool UserInterface::drawSphereControl(Vulkan::Sphere &sphere) {
     bool reset = false;
-    if(ImGui::DragFloat3("Position", sphere.center, 0.01)) reset = true;
-    if(ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
-    if(ImGui::ColorEdit3("Color", sphere.material.color)) reset = true;
-    if(ImGui::ColorEdit3("Emission Color", sphere.material.emissionColor)) reset = true;
-    if(ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
+    if (ImGui::DragFloat3("Position", sphere.center, 0.01))
+        reset = true;
+    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01))
+        reset = true;
+    if (ImGui::ColorEdit3("Color", sphere.material.color))
+        reset = true;
+    if (ImGui::ColorEdit3("Emission Color", sphere.material.emissionColor))
+        reset = true;
+    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01))
+        reset = true;
     return reset;
 }
 
-} // namespace Vulkan
+bool UserInterface::drawMeshControl(Vulkan::Mesh &mesh) {
+    bool reset = false;
+    if (ImGui::ColorEdit3("Color", mesh.material.color))
+        reset = true;
+    if (ImGui::ColorEdit3("Emission Color", mesh.material.emissionColor))
+        reset = true;
+    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01))
+        reset = true;
+    return reset;
+}
+
+} // namespace Interface
