@@ -45,7 +45,7 @@ VkInstanceCreateInfo Instance::getCreateInfo(VkApplicationInfo appInfo, VkDebugU
     if (g_EnabledValidationLayers) {
         createInfo.enabledLayerCount = static_cast<uint32_t>(g_ValidationLayers.size());
         createInfo.ppEnabledLayerNames = g_ValidationLayers.data();
-        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*) &debugCreateInfo;
+        createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT *)&debugCreateInfo;
     } else {
         createInfo.enabledLayerCount = 0;
         createInfo.pNext = nullptr;

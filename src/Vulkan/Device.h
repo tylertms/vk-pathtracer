@@ -14,8 +14,7 @@ namespace Vulkan {
 const std::vector<const char *> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
     VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME,
-    VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME
-};
+    VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME};
 
 class Device {
   public:
