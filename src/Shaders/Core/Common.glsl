@@ -1,9 +1,12 @@
 #ifndef CORE_COMMON_GLSL
 #define CORE_COMMON_GLSL
 
-#define SAMPLES_PER_PIXEL 100
+#define SAMPLES_PER_PIXEL 1
 #define MAX_BOUNCES 8
-#define MAX_SPHERES 8
+
+#define MAX_SPHERES 128
+#define MAX_TRIANGLES 10000
+#define MAX_MESHES 128
 
 #define EPSILON 1e-8
 
