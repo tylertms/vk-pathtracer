@@ -20,6 +20,13 @@ class Uniform {
         memcpy(m_BufferMapped, m_Instance, sizeof(SceneObject));
     }
 
+void submitFramesRendered() {
+    size_t offset = offsetof(SceneObject, framesRendered);
+    char* bufferPtr = static_cast<char*>(m_BufferMapped) + offset;
+    char* instancePtr = reinterpret_cast<char*>(m_Instance) + offset;
+    std::memcpy(bufferPtr, instancePtr, sizeof(uint32_t));
+}
+
   private:
     SceneObject *m_Instance;
 

@@ -145,8 +145,7 @@ void Application::onResize() {
     for (int i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
-
-    m_FramesRendered = 0;
+    m_Scene.setFramesRendered(0);
 }
 
 void Application::drawFrame() {
@@ -161,9 +160,13 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
+    if (m_Scene.resetOccurred()) {
+        for (auto &uniform : m_Uniforms)
+            uniform.submitUpdates();
+    }
+    
+    m_Uniforms[m_CurrentFrame].submitFramesRendered();
     m_Scene.incrementFramesRendered();
-    m_Uniforms[m_CurrentFrame].submitUpdates();
-    m_FramesRendered++;
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 

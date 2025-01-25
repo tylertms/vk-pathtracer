@@ -68,7 +68,14 @@ class Scene {
     }
 
     void resetAccumulation() {
-        m_Instance.framesRendered = -1;
+        m_Reset = true;
+        m_Instance.framesRendered = 0;
+    }
+
+    bool resetOccurred() {
+        bool reset = m_Reset;
+        m_Reset = false;
+        return reset;
     }
 
     void setCam(const Camera &cam) { m_Instance.cam = cam; }
@@ -111,6 +118,7 @@ class Scene {
 
   private:
     SceneObject m_Instance;
+    bool m_Reset;
 };
 
 } // namespace Vulkan
