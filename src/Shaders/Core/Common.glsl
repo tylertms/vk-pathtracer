@@ -1,9 +1,11 @@
-#ifndef COMMON_GLSL
-#define COMMON_GLSL
+#ifndef CORE_COMMON_GLSL
+#define CORE_COMMON_GLSL
 
 #define SAMPLES_PER_PIXEL 100
 #define MAX_BOUNCES 8
 #define MAX_SPHERES 8
+
+#define EPSILON 1e-8
 
 struct Camera {
     vec3 lookFrom;
@@ -27,7 +29,7 @@ struct HitPayload {
     bool didHit;
     vec3 point;
     vec3 normal;
-    float time;
+    float distance;
     Material material;
 };
 

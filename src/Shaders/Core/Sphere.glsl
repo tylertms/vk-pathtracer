@@ -1,40 +1,37 @@
-#ifndef SPHERE_GLSL
-#define SPHERE_GLSL
+#ifndef CORE_SPHERE_GLSL
+#define CORE_SPHERE_GLSL
 
 #include "Common.glsl"
 
 struct Sphere {
-  vec3 center;
-  float radius;
-  Material material;
+    vec3 center;
+    float radius;
+    Material material;
 };
 
 HitPayload rayHitSphere(Ray ray, Sphere sphere) {
-  HitPayload hit;
-  hit.didHit = false;
-  hit.time = 1e20;
-  hit.point = vec3(0.0);
-  hit.normal = vec3(0.0);
+    HitPayload hit;
+    hit.didHit = false;
 
-  vec3 offset = sphere.center - ray.origin;
-  float a = dot(ray.dir, ray.dir);
-  float h = dot(ray.dir, offset);
-  float c = dot(offset, offset) - sphere.radius * sphere.radius;
-  float discriminant = h * h - a * c;
+    vec3 offset = ray.origin - sphere.center;
 
-  float hasHit = step(0.0, discriminant);
-  float sqrtDiscriminant = sqrt(max(discriminant, 0.0));
-  float t = (h - sqrtDiscriminant) / a;
-  float validT = step(1e-6, t);
+    float a = dot(ray.dir, ray.dir);
+    float h = dot(offset, ray.dir);
+    float c = dot(offset, offset) - sphere.radius * sphere.radius;
 
-  float hitCondition = hasHit * validT;
+    float discriminant = h * h - a * c;
+    if (discriminant >= 0) {
+        float distance = (-h - sqrt(discriminant)) / a;
 
-  hit.didHit = hitCondition > 0.5;
-  hit.time = mix(hit.time, t, hitCondition);
-  hit.point = mix(hit.point, ray.origin + ray.dir * t, hitCondition);
-  hit.normal = mix(hit.normal, normalize(hit.point - sphere.center), hitCondition);
+        if (distance >= EPSILON) {
+            hit.didHit = true;
+            hit.distance = distance;
+            hit.point = ray.origin + ray.dir * distance;
+            hit.normal = normalize(hit.point - sphere.center);
+        }
+    }
 
-  return hit;
+    return hit;
 }
 
 #endif

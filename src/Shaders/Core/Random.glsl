@@ -1,0 +1,30 @@
+#ifndef CORE_RANDOM_GLSL
+#define CORE_RANDOM_GLSL
+
+// https://www.reedbeta.com/blog/hash-functions-for-gpu-rendering/
+float rand(inout uint state) {
+    state = state * 747796405u + 2891336453u;
+    uint word = ((state >> ((state >> 28u) + 4u)) ^ state) * 277803737u;
+    word = (word >> 22u) ^ word;
+    return word / 4294967295.0;
+}
+
+float randNormal(inout uint state) {
+    float theta = 2 * 3.14159265 * rand(state);
+    float rho = sqrt(-2 * log(rand(state)));
+    return rho * cos(theta);
+}
+
+vec3 randDir(inout uint state) {
+    float x = randNormal(state);
+    float y = randNormal(state);
+    float z = randNormal(state);
+    return normalize(vec3(x, y, z));
+}
+
+vec3 randHemisphereDir(vec3 normal, inout uint state) {
+    vec3 dir = randDir(state);
+    return dir * sign(dot(normal, dir));
+}
+
+#endif
