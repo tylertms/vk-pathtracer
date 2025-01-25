@@ -2,8 +2,9 @@
 
 #include "CommandPool.h"
 #include "GraphicsPipeline.h"
-#include "Interface.h"
 #include "VulkanApp.h"
+
+#include "../Interface/UserInterface.h"
 
 namespace Vulkan {
 
@@ -15,7 +16,7 @@ class CommandBuffer {
     void init(const Device &device, const CommandPool &commandPool);
 
     inline const VkCommandBuffer &getVkCommandBuffer() const { return m_CommandBuffer; }
-    void record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet);
+    void record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet);
 
   private:
     VkCommandBuffer m_CommandBuffer;

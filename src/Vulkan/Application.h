@@ -9,13 +9,14 @@
 #include "Framebuffer.h"
 #include "GraphicsPipeline.h"
 #include "Instance.h"
-#include "Interface.h"
 #include "Semaphore.h"
 #include "Surface.h"
 #include "SwapChain.h"
 #include "Uniform.h"
 #include "VulkanApp.h"
 #include "Window.h"
+
+#include "../Interface/UserInterface.h"
 
 namespace Vulkan {
 
@@ -56,7 +57,7 @@ class Application {
     std::vector<Uniform> m_Uniforms;
     ImageView m_AccumulationImageView;
     Scene m_Scene;
-    Interface m_Interface;
+    Interface::UserInterface m_Interface;
     /* ----------------------- */
 };
 

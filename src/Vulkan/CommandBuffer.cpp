@@ -1,5 +1,4 @@
 #include "CommandBuffer.h"
-#include "Interface.h"
 
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
@@ -18,7 +17,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;

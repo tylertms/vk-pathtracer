@@ -1,21 +1,17 @@
-#include "Interface.h"
-#include "DescriptorPool.h"
-#include "GraphicsPipeline.h"
-#include "SwapChain.h"
+#include "UserInterface.h"
 
 #include "../External/ImGui/backends/imgui_impl_glfw.h"
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
-#include "Vulkan/Scene.h"
 
 #include <cmath>
 
-namespace Vulkan {
+namespace Interface {
 
-void Interface::init(const Device &device, const Instance &instance,
-                     const Window &window, const DescriptorPool &descriptorPool,
-                     const SwapChain &swapChain,
-                     const GraphicsPipeline &graphicsPipeline) {
+void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &instance,
+                     const Vulkan::Window &window, const Vulkan::DescriptorPool &descriptorPool,
+                     const Vulkan::SwapChain &swapChain,
+                     const Vulkan::GraphicsPipeline &graphicsPipeline) {
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -47,13 +43,13 @@ void Interface::init(const Device &device, const Instance &instance,
     m_TimeStart = std::chrono::high_resolution_clock::now();
 }
 
-void Interface::deinit() {
+void UserInterface::deinit() {
     ImGui_ImplVulkan_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 }
 
-void Interface::draw(Scene &scene) {
+void UserInterface::draw(Vulkan::Scene &scene) {
     SceneObject *sceneObj = scene.getObject();
 
     ImGui_ImplVulkan_NewFrame();
@@ -101,7 +97,7 @@ void Interface::draw(Scene &scene) {
     }
 }
 
-bool Interface::drawSphereControl(Sphere &sphere) {
+bool UserInterface::drawSphereControl(Sphere &sphere) {
     bool reset = false;
     if(ImGui::DragFloat3("Position", sphere.center, 0.01)) reset = true;
     if(ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
