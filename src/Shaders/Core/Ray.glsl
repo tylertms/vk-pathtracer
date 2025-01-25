@@ -21,7 +21,7 @@ vec3 traceRay(Ray ray, inout uint state) {
     for (uint i = 0; i <= MAX_BOUNCES; i++) {
         HitPayload hit = rayHitScene(ray);
         if (!hit.didHit)
-        break;
+            break;
 
         ray.origin = hit.point;
         ray.dir = normalize(hit.normal + randDir(state));
