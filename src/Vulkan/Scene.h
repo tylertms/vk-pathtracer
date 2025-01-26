@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <cstdio>
+
 
 #define MAX_SPHERES 4
 #define MAX_TRIANGLES 2000
@@ -109,8 +109,10 @@ class Scene {
         m_Instance.meshes[m_Instance.numMeshes++] = mesh;
         m_Instance.numTriangles += count;
 
+        triangleBuffer.reserve(start + count);
         for (uint32_t i = 0; i < count; i++) {
             m_Instance.triangles[start + i] = ts[i];
+            triangleBuffer.push_back(ts[i]);
         }
 
         //memcpy(m_Instance.triangles + start, ts.data(), count * sizeof(Triangle));
@@ -124,14 +126,14 @@ class Scene {
         const glm::vec3& translation
     ) {
         glm::mat4 transform = glm::mat4(1.0f);
+        transform = glm::translate(transform, translation);
+
+        transform = glm::rotate(transform, glm::radians(rotationDegrees.z), glm::vec3(0, 0, 1));
+        transform = glm::rotate(transform, glm::radians(rotationDegrees.y), glm::vec3(0, 1, 0));
+        transform = glm::rotate(transform, glm::radians(rotationDegrees.x), glm::vec3(1, 0, 0));
 
         transform = glm::scale(transform, scaleFactors);
 
-        transform = glm::rotate(transform, glm::radians(rotationDegrees.x), glm::vec3(1, 0, 0));
-        transform = glm::rotate(transform, glm::radians(rotationDegrees.y), glm::vec3(0, 1, 0));
-        transform = glm::rotate(transform, glm::radians(rotationDegrees.z), glm::vec3(0, 0, 1));
-
-        transform = glm::translate(transform, translation);
 
         return transform;
     }
@@ -153,12 +155,12 @@ class Scene {
         glm::mat4 transformation = createTransformationMatrix(scale, rotation, translation);
 
         for (uint32_t i = mesh.startIndex; i < mesh.startIndex + mesh.triangleCount; i++) {
-            glm::vec3 _posA = applyTransformation(glm::make_vec3(m_Instance.triangles[i].posA), transformation);
-            glm::vec3 _posB = applyTransformation(glm::make_vec3(m_Instance.triangles[i].posB), transformation);
-            glm::vec3 _posC = applyTransformation(glm::make_vec3(m_Instance.triangles[i].posC), transformation);
-            glm::vec3 _normA = applyTransformation(glm::make_vec3(m_Instance.triangles[i].normA), transformation);
-            glm::vec3 _normB = applyTransformation(glm::make_vec3(m_Instance.triangles[i].normB), transformation);
-            glm::vec3 _normC = applyTransformation(glm::make_vec3(m_Instance.triangles[i].normC), transformation);
+            glm::vec3 _posA = applyTransformation(glm::make_vec3(triangleBuffer[i].posA), transformation);
+            glm::vec3 _posB = applyTransformation(glm::make_vec3(triangleBuffer[i].posB), transformation);
+            glm::vec3 _posC = applyTransformation(glm::make_vec3(triangleBuffer[i].posC), transformation);
+            glm::vec3 _normA = applyTransformation(glm::make_vec3(triangleBuffer[i].normA), transformation);
+            glm::vec3 _normB = applyTransformation(glm::make_vec3(triangleBuffer[i].normB), transformation);
+            glm::vec3 _normC = applyTransformation(glm::make_vec3(triangleBuffer[i].normC), transformation);
 
             memcpy(m_Instance.triangles[i].posA, &_posA, 12);
             memcpy(m_Instance.triangles[i].posB, &_posB, 12);
@@ -179,6 +181,7 @@ class Scene {
 
   private:
     SceneObject m_Instance;
+    std::vector<Vulkan::Triangle> triangleBuffer;
     bool m_Reset = true;
 };
 

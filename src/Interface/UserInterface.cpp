@@ -83,7 +83,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
         for (uint32_t i = 0; i < sceneObj->numMeshes; i++) {
             ImGui::PushID(sceneObj->numSpheres + i);
-            ImGui::Text("Mesh %d", i + 1);
+            ImGui::Text("Mesh %d - %d triangles", i + 1, sceneObj->meshes[i].triangleCount);
             if (drawMeshControl(sceneObj->meshes[i]))
                 scene.updateMesh(sceneObj->meshes[i]);
             ImGui::PopID();
@@ -122,7 +122,9 @@ bool UserInterface::drawSphereControl(Vulkan::Sphere &sphere) {
 
 bool UserInterface::drawMeshControl(Vulkan::Mesh &mesh) {
     bool reset = false;
-    if (ImGui::DragFloat3("Translation", mesh.rotation, 0.01)) reset = true;
+    if (ImGui::DragFloat3("Translation", mesh.translation, 0.01)) reset = true;
+    if (ImGui::DragFloat3("Scale", mesh.scale, 0.01)) reset = true;
+    if (ImGui::DragFloat3("Rotation", mesh.rotation, 0.1)) reset = true;
     if (ImGui::ColorEdit3("Color", mesh.material.color)) reset = true;
     if (ImGui::ColorEdit3("Emission Color", mesh.material.emissionColor)) reset = true;
     if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
