@@ -4,8 +4,11 @@
 #include "Common.glsl"
 
 struct Mesh {
+    vec3 translation;
     uint triangleCount;
+    vec3 scale;
     uint startIndex;
+    vec3 rotation;
     Material material;
 };
 

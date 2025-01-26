@@ -85,7 +85,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
             ImGui::PushID(sceneObj->numSpheres + i);
             ImGui::Text("Mesh %d", i + 1);
             if (drawMeshControl(sceneObj->meshes[i]))
-                scene.resetAccumulation();
+                scene.updateMesh(sceneObj->meshes[i]);
             ImGui::PopID();
         }
 
@@ -112,27 +112,20 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
 bool UserInterface::drawSphereControl(Vulkan::Sphere &sphere) {
     bool reset = false;
-    if (ImGui::DragFloat3("Position", sphere.center, 0.01))
-        reset = true;
-    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01))
-        reset = true;
-    if (ImGui::ColorEdit3("Color", sphere.material.color))
-        reset = true;
-    if (ImGui::ColorEdit3("Emission Color", sphere.material.emissionColor))
-        reset = true;
-    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01))
-        reset = true;
+    if (ImGui::DragFloat3("Position", sphere.center, 0.01)) reset = true;
+    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
+    if (ImGui::ColorEdit3("Color", sphere.material.color)) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", sphere.material.emissionColor)) reset = true;
+    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
     return reset;
 }
 
 bool UserInterface::drawMeshControl(Vulkan::Mesh &mesh) {
     bool reset = false;
-    if (ImGui::ColorEdit3("Color", mesh.material.color))
-        reset = true;
-    if (ImGui::ColorEdit3("Emission Color", mesh.material.emissionColor))
-        reset = true;
-    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01))
-        reset = true;
+    if (ImGui::DragFloat3("Translation", mesh.rotation, 0.01)) reset = true;
+    if (ImGui::ColorEdit3("Color", mesh.material.color)) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", mesh.material.emissionColor)) reset = true;
+    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
     return reset;
 }
 
