@@ -4,8 +4,8 @@
 
 namespace Vulkan {
 
-void Uniform::init(const Device &device, SceneObject *uniform) {
-    VkDeviceSize bufferSize = sizeof(SceneObject);
+void Uniform::init(const Device &device, VKPT::SceneObject *uniform) {
+    VkDeviceSize bufferSize = sizeof(VKPT::SceneObject);
     m_Instance = uniform;
 
     createBuffer(device, bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_Buffer, m_BufferMemory);

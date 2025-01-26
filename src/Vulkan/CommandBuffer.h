@@ -4,7 +4,7 @@
 #include "GraphicsPipeline.h"
 #include "VulkanApp.h"
 
-#include "../Interface/UserInterface.h"
+#include "../Core/Interface/UserInterface.h"
 
 namespace Vulkan {
 

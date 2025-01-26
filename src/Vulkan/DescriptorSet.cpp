@@ -22,7 +22,7 @@ void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, co
     VkDescriptorBufferInfo bufferInfo{};
     bufferInfo.buffer = uniform.getVkBuffer();
     bufferInfo.offset = 0;
-    bufferInfo.range = sizeof(SceneObject);
+    bufferInfo.range = sizeof(VKPT::SceneObject);
 
     VkDescriptorImageInfo imageInfo{};
     imageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;

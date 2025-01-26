@@ -16,7 +16,7 @@
 #include "VulkanApp.h"
 #include "Window.h"
 
-#include "../Interface/UserInterface.h"
+#include "../Core/Interface/UserInterface.h"
 
 namespace Vulkan {
 

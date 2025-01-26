@@ -3,13 +3,11 @@
 #extension GL_ARB_fragment_shader_interlock : require
 /* --------------------------------------*/
 #include "Core/Common.glsl"
-#include "Core/Sphere.glsl"
-#include "Core/Triangle.glsl"
-#include "Core/Mesh.glsl"
+#include "../Core/Types/SceneObject.h"
 /* --------------------------------------*/
 layout(pixel_interlock_unordered) in;
 layout (location = 0) in vec2 fragUV;
-layout (binding = 0, std140) readonly uniform Scene {
+layout (binding = 0, std140) readonly uniform SceneObject {
     Camera camera;
     Sphere spheres[MAX_SPHERES];
     Triangle triangles[MAX_TRIANGLES];
@@ -19,7 +17,6 @@ layout (binding = 0, std140) readonly uniform Scene {
     uint numMeshes;
     uint framesRendered;
 } scene;
-
 layout (binding = 1, rgba32f) coherent uniform image2D accumulationImage;
 /* --------------------------------------*/
 layout (location = 0) out vec4 outColor;
