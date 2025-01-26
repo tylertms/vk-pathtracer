@@ -1,7 +1,25 @@
-#ifndef CORE_TRIANGLE_GLSL
-#define CORE_TRIANGLE_GLSL
+#ifndef CORE_OBJECTS_TRIANGLE_H
+#define CORE_OBJECTS_TRIANGLE_H
 
-#include "Common.glsl"
+#ifdef __cplusplus
+/* ---------- C++ ---------- */
+#include <glm/glm.hpp>
+using namespace glm;
+
+namespace VKPT {
+struct alignas(16) Triangle {
+    alignas(16) vec3 posA;
+    alignas(16) vec3 posB;
+    alignas(16) vec3 posC;
+    alignas(16) vec3 normA;
+    alignas(16) vec3 normB;
+    alignas(16) vec3 normC;
+};
+}
+
+/* ---------- C++ ---------- */
+#else
+/* ---------- GLSL ---------- */
 
 struct Triangle {
     vec3 posA;
@@ -35,4 +53,6 @@ HitPayload rayHitTriangle(Ray ray, Triangle tri) {
     return hit;
 }
 
+/* ---------- GLSL ---------- */
+#endif
 #endif

@@ -1,11 +1,7 @@
 #ifndef CORE_SCENE_GLSL
 #define CORE_SCENE_GLSL
 
-#include "Common.glsl"
-#include "Sphere.glsl"
-#include "Triangle.glsl"
-#include "Mesh.glsl"
-#include "AABB.glsl"
+#include "../../Core/Types/AABB.h"
 
 HitPayload rayHitScene(Ray ray) {
     HitPayload hit, temp;
@@ -21,7 +17,7 @@ HitPayload rayHitScene(Ray ray) {
     }
 
     for (int i = 0; i < scene.numMeshes; i++) {
-        float hitAABB = rayHitAABB(ray, scene.meshes[i]);
+        float hitAABB = rayHitAABB(ray, scene.meshes[i].bounds);
         if (hitAABB >= hit.distance) continue;
 
         for (int t = 0; t < scene.meshes[i].triangleCount; t++) {
