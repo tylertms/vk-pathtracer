@@ -1,13 +1,12 @@
+#include "GLTFLoader.h"
 
-#include "Loader.h"
-#include <cstring>
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-namespace Interface {
+namespace Loader {
 
-Loader::Loader(const std::string &filename) {
+GLTFLoader::GLTFLoader(const std::string &filename) {
     if (!LoadModel(filename)) {
         std::cerr << "Failed to load glTF model: " << filename << std::endl;
         return;
@@ -73,44 +72,36 @@ Loader::Loader(const std::string &filename) {
                 unsigned int indexB = indices[i + 1];
                 unsigned int indexC = indices[i + 2];
 
-                float posA[3] = {
-                    positions[3 * indexA],
-                    positions[3 * indexA + 1],
-                    positions[3 * indexA + 2]};
-                float posB[3] = {
-                    positions[3 * indexB],
-                    positions[3 * indexB + 1],
-                    positions[3 * indexB + 2]};
-                float posC[3] = {
-                    positions[3 * indexC],
-                    positions[3 * indexC + 1],
-                    positions[3 * indexC + 2]};
+                VKPT::Triangle triangle;
 
-                float normA[3] = {
-                    normals[3 * indexA],
-                    normals[3 * indexA + 1],
-                    normals[3 * indexA + 2]};
-                float normB[3] = {
-                    normals[3 * indexB],
-                    normals[3 * indexB + 1],
-                    normals[3 * indexB + 2]};
-                float normC[3] = {
-                    normals[3 * indexC],
-                    normals[3 * indexC + 1],
-                    normals[3 * indexC + 2]};
+                triangle.posA.x = positions[3 * indexA];
+                triangle.posA.y = positions[3 * indexA + 1];
+                triangle.posA.z = positions[3 * indexA + 2];
 
-                Vulkan::Triangle triangle;
-                std::memcpy(triangle.posA, posA, sizeof(float) * 3);
-                std::memcpy(triangle.posB, posB, sizeof(float) * 3);
-                std::memcpy(triangle.posC, posC, sizeof(float) * 3);
-                std::memcpy(triangle.normA, normA, sizeof(float) * 3);
-                std::memcpy(triangle.normB, normB, sizeof(float) * 3);
-                std::memcpy(triangle.normC, normC, sizeof(float) * 3);
+                triangle.posB.x = positions[3 * indexB];
+                triangle.posB.y = positions[3 * indexB + 1];
+                triangle.posB.z = positions[3 * indexB + 2];
+
+                triangle.posC.x = positions[3 * indexC];
+                triangle.posC.y = positions[3 * indexC + 1];
+                triangle.posC.z = positions[3 * indexC + 2];
+
+                triangle.normA.x = normals[3 * indexA];
+                triangle.normA.y = normals[3 * indexA + 1];
+                triangle.normA.z = normals[3 * indexA + 2];
+
+                triangle.normB.x = normals[3 * indexB];
+                triangle.normB.y = normals[3 * indexB + 1];
+                triangle.normB.z = normals[3 * indexB + 2];
+
+                triangle.normC.x = normals[3 * indexC];
+                triangle.normC.y = normals[3 * indexC + 1];
+                triangle.normC.z = normals[3 * indexC + 2];
 
                 m_Triangles.push_back(triangle);
             }
 
-            Vulkan::Mesh meshStruct;
+            VKPT::Mesh meshStruct;
             meshStruct.triangleCount = triangleCount;
             meshStruct.startIndex = startIndex;
 
@@ -119,7 +110,7 @@ Loader::Loader(const std::string &filename) {
     }
 }
 
-bool Loader::LoadModel(const std::string &filename) {
+bool GLTFLoader::LoadModel(const std::string &filename) {
     tinygltf::TinyGLTF loader;
     bool isBinary = filename.find(".glb") != std::string::npos;
 
@@ -146,4 +137,4 @@ bool Loader::LoadModel(const std::string &filename) {
     return true;
 }
 
-} // namespace Interface
+} // namespace Loader
