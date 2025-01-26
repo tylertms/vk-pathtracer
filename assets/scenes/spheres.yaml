@@ -1,0 +1,11 @@
+---
+Objects:
+- Mesh:
+    File: "../models/suzanne.glb"
+    Translation: [0.0, 0.37, -0.09]
+    Scale: [1.0, 1.0, 1.0]
+    Rotation: [153.3, 26.5, 14.7]
+    Material:
+      Color: [1.0, 1.0, 1.0]
+      EmissionColor: [1.0, 1.0, 1.0]
+      EmissionStrength: 1.0
