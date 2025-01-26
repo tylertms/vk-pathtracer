@@ -5,11 +5,12 @@
 #include "Sphere.glsl"
 #include "Triangle.glsl"
 #include "Mesh.glsl"
+#include "AABB.glsl"
 
 HitPayload rayHitScene(Ray ray) {
     HitPayload hit, temp;
     hit.didHit = false;
-    hit.distance = 1e20;
+    hit.distance = 1.#INF;
 
     for (int i = 0; i < scene.numSpheres; i++) {
         temp = rayHitSphere(ray, scene.spheres[i]);
@@ -20,6 +21,9 @@ HitPayload rayHitScene(Ray ray) {
     }
 
     for (int i = 0; i < scene.numMeshes; i++) {
+        float hitAABB = rayHitAABB(ray, scene.meshes[i]);
+        if (hitAABB >= hit.distance) continue;
+
         for (int t = 0; t < scene.meshes[i].triangleCount; t++) {
             uint index = scene.meshes[i].startIndex + t;
             temp = rayHitTriangle(ray, scene.triangles[index]);

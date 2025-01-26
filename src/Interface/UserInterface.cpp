@@ -64,7 +64,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
     if (ImGui::Button("Add Sphere"))
         scene.addSphere();
     if (ImGui::Button("Load Mesh")) {
-        Loader m("assets/untitled.glb");
+        Loader m("assets/smooth.glb");
         scene.addMesh(m.getTriangles());
     }
 

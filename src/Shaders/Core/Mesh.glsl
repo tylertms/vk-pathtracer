@@ -9,6 +9,8 @@ struct Mesh {
     vec3 scale;
     uint startIndex;
     vec3 rotation;
+    vec3 boundsMin;
+    vec3 boundsMax;
     Material material;
 };
 

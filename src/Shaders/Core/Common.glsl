@@ -8,7 +8,7 @@
 #define MAX_TRIANGLES 2000
 #define MAX_MESHES 4
 
-#define EPSILON 1e-8
+#define EPSILON 1e-5
 
 struct Camera {
     vec3 lookFrom;
@@ -20,6 +20,7 @@ struct Camera {
 struct Ray {
     vec3 origin;
     vec3 dir;
+    vec3 inv;
 };
 
 struct Material {

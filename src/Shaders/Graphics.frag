@@ -44,7 +44,9 @@ void main() {
 
     beginInvocationInterlockARB();
     vec4 prevColor = imageLoad(accumulationImage, texCoord);
-    outColor = mix(prevColor, newColor, 1.0 / (scene.framesRendered + 1));
-    imageStore(accumulationImage, texCoord, outColor);
+    newColor = mix(prevColor, newColor, 1.0 / (scene.framesRendered + 1));
+    imageStore(accumulationImage, texCoord, newColor);
     endInvocationInterlockARB();
+
+    outColor = sqrt(newColor);
 }

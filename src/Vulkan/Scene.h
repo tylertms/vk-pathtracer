@@ -50,7 +50,11 @@ struct Mesh {
     float scale[3] = { 1.0, 1.0, 1.0 };
     uint32_t startIndex;
     float rotation[3] = { 0.0, 0.0, 0.0 };
-    uint32_t padding;
+    uint32_t pad1;
+    float boundsMin[3] = { FLT_MAX, FLT_MAX, FLT_MAX };
+    uint32_t pad2;
+    float boundsMax[3] = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+    uint32_t pad3;
     Material material;
 };
 
@@ -106,14 +110,27 @@ class Scene {
         mesh.triangleCount = count;
         mesh.startIndex = start;
 
-        m_Instance.meshes[m_Instance.numMeshes++] = mesh;
-        m_Instance.numTriangles += count;
+        glm::vec3 boundsMin = { FLT_MAX, FLT_MAX, FLT_MAX };
+        glm::vec3 boundsMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
         triangleBuffer.reserve(start + count);
         for (uint32_t i = 0; i < count; i++) {
             m_Instance.triangles[start + i] = ts[i];
             triangleBuffer.push_back(ts[i]);
+
+            glm::vec3 _posA = glm::make_vec3(ts[i].posA);
+            glm::vec3 _posB = glm::make_vec3(ts[i].posB);
+            glm::vec3 _posC = glm::make_vec3(ts[i].posC);
+
+            boundsMin = glm::min(boundsMin, glm::min(_posA, glm::min(_posB, _posC)));
+            boundsMax = glm::max(boundsMax, glm::max(_posA, glm::max(_posB, _posC)));
         }
+
+        memcpy(mesh.boundsMin, &boundsMin, 12);
+        memcpy(mesh.boundsMax, &boundsMax, 12);
+
+        m_Instance.meshes[m_Instance.numMeshes++] = mesh;
+        m_Instance.numTriangles += count;
 
         //memcpy(m_Instance.triangles + start, ts.data(), count * sizeof(Triangle));
 
@@ -134,7 +151,6 @@ class Scene {
 
         transform = glm::scale(transform, scaleFactors);
 
-
         return transform;
     }
 
@@ -147,13 +163,16 @@ class Scene {
         return glm::vec3(transformedVec);
     }
 
-    void updateMesh(Mesh mesh) {
+    void updateMesh(Mesh &mesh) {
         auto scale = glm::make_vec3(mesh.scale);
         auto rotation = glm::make_vec3(mesh.rotation);
         auto translation = glm::make_vec3(mesh.translation);
 
         glm::mat4 transformation = createTransformationMatrix(scale, rotation, translation);
 
+        glm::vec3 boundsMin = { FLT_MAX, FLT_MAX, FLT_MAX };
+        glm::vec3 boundsMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+        
         for (uint32_t i = mesh.startIndex; i < mesh.startIndex + mesh.triangleCount; i++) {
             glm::vec3 _posA = applyTransformation(glm::make_vec3(triangleBuffer[i].posA), transformation);
             glm::vec3 _posB = applyTransformation(glm::make_vec3(triangleBuffer[i].posB), transformation);
@@ -162,6 +181,9 @@ class Scene {
             glm::vec3 _normB = applyTransformation(glm::make_vec3(triangleBuffer[i].normB), transformation);
             glm::vec3 _normC = applyTransformation(glm::make_vec3(triangleBuffer[i].normC), transformation);
 
+            boundsMin = glm::min(boundsMin, glm::min(_posA, glm::min(_posB, _posC)));
+            boundsMax = glm::max(boundsMax, glm::max(_posA, glm::max(_posB, _posC)));
+
             memcpy(m_Instance.triangles[i].posA, &_posA, 12);
             memcpy(m_Instance.triangles[i].posB, &_posB, 12);
             memcpy(m_Instance.triangles[i].posC, &_posC, 12);
@@ -169,6 +191,9 @@ class Scene {
             memcpy(m_Instance.triangles[i].normB, &_normB, 12);
             memcpy(m_Instance.triangles[i].normC, &_normC, 12);
         }
+
+        memcpy(mesh.boundsMin, &boundsMin, 12);
+        memcpy(mesh.boundsMax, &boundsMax, 12);
 
         resetAccumulation();
     }

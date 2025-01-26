@@ -10,6 +10,7 @@ Ray generateRay(vec2 uv, float aspectRatio) {
     Ray ray;
     ray.origin = vec3(0, 0, -6);
     ray.dir = normalize(vec3(uv, -2) - ray.origin);
+    ray.inv = 1.0 / ray.dir;
 
     return ray;
 }
@@ -25,6 +26,7 @@ vec3 traceRay(Ray ray, inout uint state) {
 
         ray.origin = hit.point;
         ray.dir = normalize(hit.normal + randDir(state));
+        ray.inv = 1.0 / ray.dir;
 
         vec3 emittedLight = hit.material.emissionColor * hit.material.emissionStrength;
         incomingLight += emittedLight * rayColor;
