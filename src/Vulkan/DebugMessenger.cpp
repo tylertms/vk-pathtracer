@@ -1,4 +1,6 @@
 #include "DebugMessenger.h"
+
+#include <cstring>
 #include <iostream>
 
 namespace Vulkan {

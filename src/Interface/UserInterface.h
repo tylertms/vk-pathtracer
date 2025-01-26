@@ -29,7 +29,7 @@ class UserInterface {
   private:
     uint32_t m_DisplayFPS = 0;
     uint32_t m_FramesLastSecond = 0;
-    std::chrono::steady_clock::time_point m_TimeStart, m_TimeCurrent;
+    std::chrono::high_resolution_clock::time_point m_TimeStart, m_TimeCurrent;
 
     bool drawSphereControl(Vulkan::Sphere &sphere);
     bool drawMeshControl(Vulkan::Mesh &mesh);

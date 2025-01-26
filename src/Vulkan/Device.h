@@ -3,7 +3,6 @@
 #include "SwapChain.h"
 #include "VulkanApp.h"
 #include "vulkan/vulkan_core.h"
-
 #include <vulkan/vulkan_beta.h>
 
 #include <optional>
@@ -13,8 +12,11 @@ namespace Vulkan {
 
 const std::vector<const char *> deviceExtensions = {
     VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+#ifdef __APPLE__
     VK_KHR_PORTABILITY_SUBSET_EXTENSION_NAME,
-    VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME};
+#endif
+    VK_EXT_FRAGMENT_SHADER_INTERLOCK_EXTENSION_NAME
+};
 
 class Device {
   public:

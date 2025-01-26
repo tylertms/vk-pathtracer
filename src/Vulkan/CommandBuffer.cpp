@@ -3,6 +3,8 @@
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
 
+#include <stdexcept>
+
 namespace Vulkan {
 
 void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {

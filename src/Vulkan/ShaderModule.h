@@ -2,6 +2,7 @@
 
 #include "VulkanApp.h"
 
+#include <string>
 #include <vector>
 
 namespace Vulkan {

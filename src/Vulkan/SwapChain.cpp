@@ -2,6 +2,10 @@
 
 #include "Device.h"
 
+#include <algorithm>
+#include <limits>
+#include <stdexcept>
+
 namespace Vulkan {
 
 VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFWwindow *window) {
@@ -29,7 +33,7 @@ VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFW
     vkGetSwapchainImagesKHR(device.getVkDevice(), m_SwapChain, &m_ImageCount, m_Images.data());
 
     m_ImageViews = std::vector<ImageView>(m_ImageCount);
-    for (int i = 0; i < m_ImageCount; i++) {
+    for (uint32_t i = 0; i < m_ImageCount; i++) {
         m_ImageViews[i].init(device.getVkDevice(), m_Images[i], m_Format);
     }
 
@@ -37,7 +41,7 @@ VkSwapchainKHR SwapChain::init(Device &device, const VkSurfaceKHR &surface, GLFW
 }
 
 void SwapChain::deinit(const VkDevice &device) {
-    for (int i = 0; i < m_ImageViews.size(); i++) {
+    for (uint32_t i = 0; i < m_ImageViews.size(); i++) {
         m_ImageViews[i].deinit(device);
     }
 

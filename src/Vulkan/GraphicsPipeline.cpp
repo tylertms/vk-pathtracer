@@ -2,6 +2,8 @@
 
 #include "ShaderModule.h"
 
+#include <stdexcept>
+
 namespace Vulkan {
 
 void GraphicsPipeline::init(const VkDevice &device, const VkDescriptorSetLayout &descriptorSetLayout, const VkFormat &swapChainFormat, const VkExtent2D &swapChainExtent) {

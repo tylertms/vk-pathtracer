@@ -64,7 +64,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
     if (ImGui::Button("Add Sphere"))
         scene.addSphere();
     if (ImGui::Button("Load Mesh")) {
-        Loader m("assets/suzanne.glb");
+        Loader m("assets/untitled.glb");
         scene.addMesh(m.getTriangles());
     }
 
@@ -72,7 +72,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
     if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
         ImGui::Indent();
-        for (int i = 0; i < sceneObj->numSpheres; i++) {
+        for (uint32_t i = 0; i < sceneObj->numSpheres; i++) {
             ImGui::PushID(i);
             ImGui::Text("Sphere %d", i + 1);
             if (drawSphereControl(sceneObj->spheres[i]))
@@ -81,7 +81,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
             ImGui::PopID();
         }
 
-        for (int i = 0; i < sceneObj->numMeshes; i++) {
+        for (uint32_t i = 0; i < sceneObj->numMeshes; i++) {
             ImGui::PushID(sceneObj->numSpheres + i);
             ImGui::Text("Mesh %d", i + 1);
             if (drawMeshControl(sceneObj->meshes[i]))

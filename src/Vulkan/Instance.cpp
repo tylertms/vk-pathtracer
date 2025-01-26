@@ -83,8 +83,9 @@ void Instance::attachExtensions(VkInstanceCreateInfo &createInfo) {
 #if __APPLE__
     createInfo.flags |= VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR;
     m_Extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
-    m_Extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 #endif
+
+    m_Extensions.push_back(VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME);
 
     if (g_EnabledValidationLayers) {
         m_Extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);

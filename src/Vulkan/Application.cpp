@@ -1,5 +1,7 @@
 #include "Application.h"
 
+#include <stdexcept>
+
 namespace Vulkan {
 
 Application::Application() {
@@ -12,14 +14,14 @@ Application::Application() {
     m_SwapChain.init(m_Device, surface, window);
 
     m_DescriptorSets = std::vector<DescriptorSet>(MAX_FRAMES_IN_FLIGHT);
-    for (int i = 0; i < m_DescriptorSets.size(); i++) {
+    for (uint32_t i = 0; i < m_DescriptorSets.size(); i++) {
         m_DescriptorSets[i].createLayout(m_Device.getVkDevice());
     }
 
     m_GraphicsPipeline.init(device, m_DescriptorSets.front().getVkDescriptorSetLayout(), m_SwapChain.getFormat(), m_SwapChain.getExtent());
 
     m_Framebuffers = std::vector<Framebuffer>(m_SwapChain.getImageCount());
-    for (int i = 0; i < m_Framebuffers.size(); i++) {
+    for (uint32_t i = 0; i < m_Framebuffers.size(); i++) {
         m_Framebuffers[i].init(device, m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     }
 
@@ -38,7 +40,7 @@ Application::Application() {
     m_RenderFinishedSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
     m_InFlightFences = std::vector<Fence>(MAX_FRAMES_IN_FLIGHT);
 
-    for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
         m_Uniforms[i].init(m_Device, m_Scene.getObject());
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
@@ -57,27 +59,27 @@ Application::~Application() {
 
     m_Interface.deinit();
 
-    for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_ImageAvailableSemaphores[i].deinit(device);
         m_RenderFinishedSemaphores[i].deinit(device);
         m_InFlightFences[i].deinit(device);
     }
 
-    for (int i = 0; i < m_Framebuffers.size(); i++) {
+    for (uint32_t i = 0; i < m_Framebuffers.size(); i++) {
         m_Framebuffers[i].deinit(device);
     }
     m_AccumulationImageView.deinit(device);
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(device);
 
-    for (int i = 0; i < m_Uniforms.size(); i++) {
+    for (uint32_t i = 0; i < m_Uniforms.size(); i++) {
         m_Uniforms[i].deinit(device);
     }
 
     m_DescriptorPool.deinit(device);
     m_ImGuiDescriptorPool.deinit(device);
 
-    for (int i = 0; i < m_DescriptorSets.size(); i++) {
+    for (uint32_t i = 0; i < m_DescriptorSets.size(); i++) {
         m_DescriptorSets[i].deinit(device);
     }
 
@@ -114,20 +116,20 @@ void Application::onResize() {
     m_Device.waitIdle();
 
     /* ---------- DEINIT ---------- */
-    for (int i = 0; i < m_Framebuffers.size(); i++)
+    for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].deinit(m_Device.getVkDevice());
 
     m_AccumulationImageView.deinit(m_Device.getVkDevice());
     m_SwapChain.deinit(m_Device.getVkDevice());
 
     m_DescriptorPool.deinit(m_Device.getVkDevice());
-    for (int i = 0; i < m_DescriptorSets.size(); i++)
+    for (uint32_t i = 0; i < m_DescriptorSets.size(); i++)
         m_DescriptorSets[i].deinit(m_Device.getVkDevice());
     /* ---------- END DEINIT ---------- */
 
     /* ---------- REINIT ---------- */
     m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
-    for (int i = 0; i < m_DescriptorSets.size(); i++)
+    for (uint32_t i = 0; i < m_DescriptorSets.size(); i++)
         m_DescriptorSets[i].createLayout(m_Device.getVkDevice());
 
     m_SwapChain.init(m_Device, m_Surface.getVkSurface(), window);
@@ -137,12 +139,12 @@ void Application::onResize() {
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
     m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
 
-    for (int i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
+    for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
     m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
 
-    for (int i = 0; i < m_Framebuffers.size(); i++)
+    for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
     m_Scene.setFramesRendered(0);

@@ -7,10 +7,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cstdio>
 
-#define MAX_SPHERES 128
-#define MAX_TRIANGLES 10000
-#define MAX_MESHES 128
+#define MAX_SPHERES 4
+#define MAX_TRIANGLES 2000
+#define MAX_MESHES 4
 
 namespace Vulkan {
 
@@ -99,7 +100,7 @@ class Scene {
 
         uint32_t start = m_Instance.numTriangles;
         uint32_t count = (uint32_t)ts.size();
-        if (start + count >= MAX_TRIANGLES) return;
+        if (start + count > MAX_TRIANGLES) return;
 
         Mesh mesh;
         mesh.triangleCount = count;
@@ -151,7 +152,7 @@ class Scene {
 
         glm::mat4 transformation = createTransformationMatrix(scale, rotation, translation);
 
-        for (int i = mesh.startIndex; i < mesh.startIndex + mesh.triangleCount; i++) {
+        for (uint32_t i = mesh.startIndex; i < mesh.startIndex + mesh.triangleCount; i++) {
             glm::vec3 _posA = applyTransformation(glm::make_vec3(m_Instance.triangles[i].posA), transformation);
             glm::vec3 _posB = applyTransformation(glm::make_vec3(m_Instance.triangles[i].posB), transformation);
             glm::vec3 _posC = applyTransformation(glm::make_vec3(m_Instance.triangles[i].posC), transformation);

@@ -42,7 +42,7 @@ void Device::pickPhysicalDevice() {
     int bestDeviceIndex = -1;
 
     VkPhysicalDeviceProperties properties, bestProperties;
-    for (int i = 0; i < deviceCount; i++) {
+    for (uint32_t i = 0; i < deviceCount; i++) {
         int score = getScore(devices[i], properties);
         if (score > bestDeviceScore) {
             m_PhysicalDevice = devices[i];
@@ -165,17 +165,21 @@ void Device::logInfo(const VkPhysicalDeviceProperties &properties, int index) {
 int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDeviceProperties &properties) {
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice, ext_Surface);
     if (!indices.isComplete() || !deviceSupportsExtensions(physicalDevice)) {
+        printf("NO INDICES\n");
         return -1;
     }
 
     SwapChain::SupportDetails swapChainSupport = SwapChain::querySupport(physicalDevice, ext_Surface);
     bool validSwapChain = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
-    if (!validSwapChain)
+    if (!validSwapChain) {
+        printf("NO VALID SWAPCHAIN\n");
         return -1;
+    }
 
     VkPhysicalDeviceFeatures features;
     vkGetPhysicalDeviceProperties(physicalDevice, &properties);
     vkGetPhysicalDeviceFeatures(physicalDevice, &features);
+
 
     // List of valid device types, higher index is better
     const VkPhysicalDeviceType deviceTypes[4] = {
@@ -189,6 +193,7 @@ int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDevicePro
             return i;
         }
     }
+    printf("COULDN'T FIND DEVICE TYPE\n");
 
     return -1;
 }

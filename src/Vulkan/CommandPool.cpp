@@ -1,5 +1,7 @@
 #include "CommandPool.h"
 
+#include <stdexcept>
+
 namespace Vulkan {
 
 void CommandPool::init(const Device &device) {
