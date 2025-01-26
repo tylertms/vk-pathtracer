@@ -1,9 +1,9 @@
 #include "UserInterface.h"
 
-#include "../External/ImGui/backends/imgui_impl_glfw.h"
-#include "../External/ImGui/backends/imgui_impl_vulkan.h"
-#include "../External/ImGui/imgui.h"
-#include "Loader.h"
+#include "../../External/ImGui/backends/imgui_impl_glfw.h"
+#include "../../External/ImGui/backends/imgui_impl_vulkan.h"
+#include "../../External/ImGui/imgui.h"
+#include "../Loader/GLTFLoader.h"
 
 #include <cmath>
 
@@ -49,7 +49,7 @@ void UserInterface::deinit() {
 }
 
 void UserInterface::draw(Vulkan::Scene &scene) {
-    Vulkan::SceneObject *sceneObj = scene.getObject();
+    VKPT::SceneObject *sceneObj = scene.getObject();
 
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -63,8 +63,12 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
     if (ImGui::Button("Add Sphere"))
         scene.addSphere();
+    if (ImGui::Button("Load Scene")) {
+        scene.triangleBuffer.clear();
+        scene.loadSceneFromFile("assets/scenes/monkey.yaml");
+    }
     if (ImGui::Button("Load Mesh")) {
-        Loader m("assets/smooth.glb");
+        Loader::GLTFLoader m("assets/models/suzanne.glb");
         scene.addMesh(m.getTriangles());
     }
 
@@ -85,7 +89,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
             ImGui::PushID(sceneObj->numSpheres + i);
             ImGui::Text("Mesh %d - %d triangles", i + 1, sceneObj->meshes[i].triangleCount);
             if (drawMeshControl(sceneObj->meshes[i]))
-                scene.updateMesh(sceneObj->meshes[i]);
+                scene.applyMeshProperties(sceneObj->meshes[i]);
             ImGui::PopID();
         }
 
@@ -110,23 +114,24 @@ void UserInterface::draw(Vulkan::Scene &scene) {
     }
 }
 
-bool UserInterface::drawSphereControl(Vulkan::Sphere &sphere) {
+bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
     bool reset = false;
-    if (ImGui::DragFloat3("Position", sphere.center, 0.01)) reset = true;
+
+    if (ImGui::DragFloat3("Position", (float*)(&sphere.center), 0.01)) reset = true;
     if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
-    if (ImGui::ColorEdit3("Color", sphere.material.color)) reset = true;
-    if (ImGui::ColorEdit3("Emission Color", sphere.material.emissionColor)) reset = true;
+    if (ImGui::ColorEdit3("Color", (float*)(&sphere.material.color))) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float*)(&sphere.material.emissionColor))) reset = true;
     if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
     return reset;
 }
 
-bool UserInterface::drawMeshControl(Vulkan::Mesh &mesh) {
+bool UserInterface::drawMeshControl(VKPT::Mesh &mesh) {
     bool reset = false;
-    if (ImGui::DragFloat3("Translation", mesh.translation, 0.01)) reset = true;
-    if (ImGui::DragFloat3("Scale", mesh.scale, 0.01)) reset = true;
-    if (ImGui::DragFloat3("Rotation", mesh.rotation, 0.1)) reset = true;
-    if (ImGui::ColorEdit3("Color", mesh.material.color)) reset = true;
-    if (ImGui::ColorEdit3("Emission Color", mesh.material.emissionColor)) reset = true;
+    if (ImGui::DragFloat3("Translation", (float *)(&mesh.translation), 0.01)) reset = true;
+    if (ImGui::DragFloat3("Scale", (float *)(&mesh.scale), 0.01)) reset = true;
+    if (ImGui::DragFloat3("Rotation", (float *)(&mesh.rotation), 0.1)) reset = true;
+        if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
+        if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
     if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
     return reset;
 }

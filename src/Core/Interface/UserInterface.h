@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../Vulkan/DescriptorPool.h"
-#include "../Vulkan/Device.h"
-#include "../Vulkan/GraphicsPipeline.h"
-#include "../Vulkan/Instance.h"
-#include "../Vulkan/Scene.h"
-#include "../Vulkan/VulkanApp.h"
-#include "../Vulkan/Window.h"
+#include "../../Vulkan/DescriptorPool.h"
+#include "../../Vulkan/Device.h"
+#include "../../Vulkan/GraphicsPipeline.h"
+#include "../../Vulkan/Instance.h"
+#include "../../Vulkan/SceneManager.h"
+#include "../../Vulkan/VulkanApp.h"
+#include "../../Vulkan/Window.h"
 
 #include <chrono>
 
@@ -31,8 +31,8 @@ class UserInterface {
     uint32_t m_FramesLastSecond = 0;
     std::chrono::high_resolution_clock::time_point m_TimeStart, m_TimeCurrent;
 
-    bool drawSphereControl(Vulkan::Sphere &sphere);
-    bool drawMeshControl(Vulkan::Mesh &mesh);
+    bool drawSphereControl(VKPT::Sphere &sphere);
+    bool drawMeshControl(VKPT::Mesh &mesh);
 };
 
 } // namespace Interface
