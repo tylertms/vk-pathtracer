@@ -16,7 +16,7 @@ class ImageView {
     void deinit(const VkDevice &device);
 
     void createImage(const Device &device, VkExtent2D extent, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
-    void createSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice);
+    void createSampler(const Device &device);
     void transitionImageLayout(const Device &device, const CommandPool &commandPool, VkImageLayout oldLayout, VkImageLayout newLayout);
 
     inline const VkImage &getVkImage() const { return m_Image; }
