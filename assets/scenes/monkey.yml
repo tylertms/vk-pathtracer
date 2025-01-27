@@ -1,0 +1,57 @@
+Objects:
+  - Mesh:
+      Translation:
+        - 0
+        - 0.370000005
+        - -0.0900000036
+      Scale:
+        - 1
+        - 1
+        - 1
+      Rotation:
+        - 153.300003
+        - 26.5
+        - 14.6999998
+      Material:
+        Color:
+          - 1
+          - 1
+          - 1
+        EmissionColor:
+          - 1
+          - 1
+          - 1
+        EmissionStrength: 0
+      File: ../models/suzanne.glb
+  - Sphere:
+      Center:
+        - 42.2099991
+        - 0
+        - -15.54
+      Radius: 34.5999985
+      Material:
+        Color:
+          - 1
+          - 1
+          - 1
+        EmissionColor:
+          - 1
+          - 1
+          - 1
+        EmissionStrength: 1.60000002
+  - Sphere:
+      Center:
+        - 0
+        - 41.2900009
+        - 0
+      Radius: 40.3899994
+      Material:
+        Color:
+          - 0.529999971
+          - 1
+          - 0.5
+        EmissionColor:
+          - 1
+          - 1
+          - 1
+        EmissionStrength: 0
