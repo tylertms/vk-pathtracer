@@ -65,9 +65,14 @@ void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
     ImGui::Begin("Statistics");
     ImGui::Text("Frames: %d", sceneObj->framesRendered);
 
-    float avg = 0;
-    for (float time : m_FrameTimes) avg += time;
-    avg /= m_FrameTimes.size();
+    float total = 0;
+    int count = 0;
+    while (total < 1000 && count < m_FrameTimes.size() - 1) {
+        total += m_FrameTimes[m_FrameTimes.size() - count - 1];
+        count++;
+    }
+    float avg = total / count;
+
     ImGui::Text("Average: %6.2fms", avg);
 
     ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, avg * 2, ImVec2(160.0f, 40.0f));
