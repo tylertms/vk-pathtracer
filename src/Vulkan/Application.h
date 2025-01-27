@@ -34,6 +34,10 @@ class Application {
     void onResize();
     void drawFrame();
 
+    ImVec2 position = { 0, 0 };
+    ImVec2 extent = { 0, 0 };
+    ImVec2 avail = { 0, 0 };
+
   private:
     /* ----------------------- */
     uint32_t MAX_FRAMES_IN_FLIGHT = 2;

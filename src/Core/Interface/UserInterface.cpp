@@ -1,9 +1,5 @@
 #include "UserInterface.h"
 
-#include "../../External/ImGui/backends/imgui_impl_glfw.h"
-#include "../../External/ImGui/backends/imgui_impl_vulkan.h"
-#include "../../External/ImGui/imgui.h"
-
 #include "../Loader/FilePicker.h"
 #include "../Loader/GLTFLoader.h"
 
@@ -147,7 +143,7 @@ void UserInterface::setupDockspace() {
     ImGui::End();
 }
 
-void UserInterface::draw(Vulkan::SceneManager &sceneManager) {
+void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent, ImVec2 &avail) {
     m_TimeCurrent = std::chrono::high_resolution_clock::now();
     float frameTime = std::chrono::duration<float, std::milli>(m_TimeCurrent - m_TimeStart).count();
 
@@ -171,6 +167,12 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager) {
     if (m_ShowStats) {
         drawStats(sceneManager);
     }
+
+    ImGui::Begin("Viewport");
+    position = ImGui::GetWindowPos();
+    extent = ImGui::GetWindowSize();
+    avail = ImGui::GetContentRegionAvail();
+    ImGui::End();
 
     ImGui::Render();
 }

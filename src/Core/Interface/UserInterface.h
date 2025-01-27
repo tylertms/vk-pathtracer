@@ -8,6 +8,10 @@
 #include "../../Vulkan/VulkanApp.h"
 #include "../../Vulkan/Window.h"
 
+#include "../../External/ImGui/backends/imgui_impl_glfw.h"
+#include "../../External/ImGui/backends/imgui_impl_vulkan.h"
+#include "../../External/ImGui/imgui.h"
+
 #include <chrono>
 
 namespace Interface {
@@ -25,7 +29,7 @@ class UserInterface {
 
     void deinit();
 
-    void draw(Vulkan::SceneManager &sceneManager);
+    void draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent, ImVec2 &avai);
 
   private:
     bool m_ShowSceneControl = false;

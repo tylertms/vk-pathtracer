@@ -20,7 +20,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet, ImVec2 &position, ImVec2 &extent, ImVec2 &avail) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
@@ -37,6 +37,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManage
     vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipeline());
 
     VkViewport viewport = graphicsPipeline.getViewport();
+
     vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
 
     VkRect2D scissor = graphicsPipeline.getScissor();
@@ -45,7 +46,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManage
     vkCmdBindDescriptorSets(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
 
-    interface.draw(sceneManager);
+    interface.draw(sceneManager, position, extent, avail);
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer);
 
     vkCmdEndRenderPass(m_CommandBuffer);

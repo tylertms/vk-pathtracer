@@ -74,7 +74,10 @@ Application::~Application() {
     for (uint32_t i = 0; i < m_Framebuffers.size(); i++) {
         m_Framebuffers[i].deinit(device);
     }
+
     m_AccumulationImageView.deinit(device);
+    m_OutputImageView.deinit(device);
+
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(device);
 
@@ -185,8 +188,17 @@ void Application::drawFrame() {
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 
+    if (extent.x == 0 && extent.y == 0) {
+        printf("GATHERING VIEWPORT INFO\n");
+        vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
+        m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), position, extent, avail);
+    }
+
     vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet());
+    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), position, extent, avail);
+    //printf("Position: x: %f, y: %f\n", position.x, position.y);
+    //printf("Extent: x: %f, y: %f\n", extent.x, extent.y);
+    //printf("Avail: x: %f, y: %f\n", avail.x, avail.y);
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
