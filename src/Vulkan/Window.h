@@ -31,7 +31,7 @@ class Window {
     GLFWwindow *m_Window;
     bool m_Resized = false;
 
-    uint32_t m_Width = 800;
+    uint32_t m_Width = 1200;
     uint32_t m_Height = 600;
 };
 
