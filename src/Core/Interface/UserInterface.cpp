@@ -104,7 +104,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
             sceneManager.saveToFile(pickFilePath(VKPT_SCENE, VKPT_SAVE));
         }
 
-        if (ImGui::BeginMenu("Window")) {
+        if (ImGui::BeginMenu("View")) {
             ImGui::Checkbox("Show Scene Control", &m_ShowSceneControl);
             ImGui::Checkbox("Show Statistics", &m_ShowStats);
             ImGui::EndMenu();
