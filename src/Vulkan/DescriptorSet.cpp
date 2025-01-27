@@ -9,7 +9,7 @@ void DescriptorSet::deinit(const VkDevice &device) {
     vkDestroyDescriptorSetLayout(device, m_DescriptorSetLayout, nullptr);
 }
 
-void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulator, const ImageView &output, const VkDescriptorPool &descriptorPool) {
+void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulationImageView, const ImageView &outputImageView, const VkDescriptorPool &descriptorPool) {
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
@@ -27,12 +27,12 @@ void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, co
 
     VkDescriptorImageInfo accumulatorImageInfo{};
     accumulatorImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-    accumulatorImageInfo.imageView = accumulator.getVkImageView();
+    accumulatorImageInfo.imageView = accumulationImageView.getVkImageView();
     accumulatorImageInfo.sampler = nullptr;
 
     VkDescriptorImageInfo outputImageInfo{};
     outputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-    outputImageInfo.imageView = output.getVkImageView();
+    outputImageInfo.imageView = outputImageView.getVkImageView();
     outputImageInfo.sampler = nullptr;
 
     VkWriteDescriptorSet descriptorWrites[3]{};

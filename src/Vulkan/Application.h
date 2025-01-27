@@ -56,6 +56,7 @@ class Application {
     std::vector<DescriptorSet> m_DescriptorSets;
     std::vector<Uniform> m_Uniforms;
     ImageView m_AccumulationImageView;
+    ImageView m_OutputImageView;
     SceneManager m_SceneManager;
     Interface::UserInterface m_Interface;
     /* ----------------------- */
