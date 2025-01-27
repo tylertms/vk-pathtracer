@@ -36,8 +36,13 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManage
 
     vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipeline());
 
-    VkViewport viewport = graphicsPipeline.getViewport();
-
+    VkViewport viewport; // = graphicsPipeline.getViewport();
+    viewport.x = position.x;
+    viewport.y = position.y;
+    viewport.minDepth = 0.0f;
+    viewport.maxDepth = 1.0f;
+    viewport.width = max(1.0f, extent.x);
+    viewport.height = max(1.0f, extent.y);
     vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
 
     VkRect2D scissor = graphicsPipeline.getScissor();
