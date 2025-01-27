@@ -1,10 +1,13 @@
 #include "SceneLoader.h"
 #include "GLTFLoader.h"
 
+#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <vector>
 #include <yaml-cpp/yaml.h>
+
+namespace fs = std::filesystem;
 
 namespace Loader {
 
@@ -29,7 +32,12 @@ void loadSceneFromYAML(const std::string &filename, std::vector<std::string> &mo
         if (object["Mesh"]) {
             VKPT::Mesh mesh = object["Mesh"].as<VKPT::Mesh>();
             if (sceneObj.numMeshes < MAX_MESHES) {
-                Loader::GLTFLoader loader(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
+                std::string loadpath = object["Mesh"]["File"].as<std::string>();
+                if (fs::path(loadpath).is_relative()) {
+                    loadpath = std::string(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
+                }
+                Loader::GLTFLoader loader(loadpath);
+
                 modelPaths.push_back(object["Mesh"]["File"].as<std::string>());
                 std::vector<VKPT::Triangle> triangles = loader.getTriangles();
 
