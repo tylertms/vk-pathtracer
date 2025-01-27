@@ -148,6 +148,7 @@ void Application::onResize() {
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
     m_SceneManager.setFramesRendered(0);
+    m_SceneManager.setCamAspectRatio(m_Window.getAspectRatio());
 }
 
 void Application::drawFrame() {
