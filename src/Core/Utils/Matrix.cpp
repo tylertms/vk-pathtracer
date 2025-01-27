@@ -1,5 +1,7 @@
 #include "Matrix.h"
 
+namespace VKPT {
+
 glm::mat4 createTransformationMatrix(
     const glm::vec3& scaleFactors,
     const glm::vec3& rotationDegrees,
@@ -24,4 +26,6 @@ glm::vec3 applyTransformation(
     glm::vec4 homogenousVec = glm::vec4(vec, 1.0f);
     glm::vec4 transformedVec = transform * homogenousVec;
     return glm::vec3(transformedVec);
+}
+
 }

@@ -110,18 +110,18 @@ void SceneManager::applyMeshProperties(VKPT::Mesh &mesh) {
     auto rotation = mesh.rotation;
     auto translation = mesh.translation;
 
-    glm::mat4 transformation = createTransformationMatrix(scale, rotation, translation);
+    glm::mat4 transformation = VKPT::createTransformationMatrix(scale, rotation, translation);
 
     glm::vec3 boundsMin = { FLT_MAX, FLT_MAX, FLT_MAX };
     glm::vec3 boundsMax = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
     for (uint32_t i = mesh.startIndex; i < mesh.startIndex + mesh.triangleCount; i++) {
-        glm::vec3 _posA = applyTransformation(triangleBuffer[i].posA, transformation);
-        glm::vec3 _posB = applyTransformation(triangleBuffer[i].posB, transformation);
-        glm::vec3 _posC = applyTransformation(triangleBuffer[i].posC, transformation);
-        glm::vec3 _normA = applyTransformation(triangleBuffer[i].normA, transformation);
-        glm::vec3 _normB = applyTransformation(triangleBuffer[i].normB, transformation);
-        glm::vec3 _normC = applyTransformation(triangleBuffer[i].normC, transformation);
+        glm::vec3 _posA = VKPT::applyTransformation(triangleBuffer[i].posA, transformation);
+        glm::vec3 _posB = VKPT::applyTransformation(triangleBuffer[i].posB, transformation);
+        glm::vec3 _posC = VKPT::applyTransformation(triangleBuffer[i].posC, transformation);
+        glm::vec3 _normA = VKPT::applyTransformation(triangleBuffer[i].normA, transformation);
+        glm::vec3 _normB = VKPT::applyTransformation(triangleBuffer[i].normB, transformation);
+        glm::vec3 _normC = VKPT::applyTransformation(triangleBuffer[i].normC, transformation);
 
         boundsMin = glm::min(boundsMin, glm::min(_posA, glm::min(_posB, _posC)));
         boundsMax = glm::max(boundsMax, glm::max(_posA, glm::max(_posB, _posC)));

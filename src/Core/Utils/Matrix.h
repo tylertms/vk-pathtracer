@@ -4,6 +4,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+namespace VKPT {
+
 glm::mat4 createTransformationMatrix(
     const glm::vec3& scaleFactors,
     const glm::vec3& rotationDegrees,
@@ -14,3 +16,5 @@ glm::vec3 applyTransformation(
     const glm::vec3& vec,
     const glm::mat4& transform
 );
+
+}
