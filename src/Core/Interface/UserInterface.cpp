@@ -70,7 +70,7 @@ void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
     avg /= m_FrameTimes.size();
     ImGui::Text("Average: %6.2fms", avg);
 
-    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, 200.0, ImVec2(160.0f, 40.0f));
+    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, avg * 2, ImVec2(160.0f, 40.0f));
 
     if (ImGui::Button("Reset Accumulation"))
         sceneManager.resetAccumulation();
