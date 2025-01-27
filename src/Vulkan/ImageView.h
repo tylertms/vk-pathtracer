@@ -16,15 +16,19 @@ class ImageView {
     void deinit(const VkDevice &device);
 
     void createImage(const Device &device, VkExtent2D extent, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
+    void createSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice);
     void transitionImageLayout(const Device &device, const CommandPool &commandPool, VkImageLayout oldLayout, VkImageLayout newLayout);
 
     inline const VkImage &getVkImage() const { return m_Image; }
     inline const VkImageView &getVkImageView() const { return m_ImageView; }
+    inline const VkSampler &getVkSampler() const { return m_Sampler; }
+    inline const VkDeviceMemory &getVkDeviceMemory() const { return m_ImageMemory; }
 
   private:
     VkImageView m_ImageView = nullptr;
     VkImage m_Image = nullptr;
     VkDeviceMemory m_ImageMemory = nullptr;
+    VkSampler m_Sampler = nullptr;
 
     VkFormat m_Format;
 };

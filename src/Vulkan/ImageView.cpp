@@ -2,6 +2,7 @@
 
 #include "CommandPool.h"
 #include "Device.h"
+#include "vulkan/vulkan_core.h"
 
 #include <stdexcept>
 
@@ -32,6 +33,7 @@ void ImageView::deinit(const VkDevice &device) {
     vkDestroyImageView(device, m_ImageView, nullptr);
     vkDestroyImage(device, m_Image, nullptr);
     vkFreeMemory(device, m_ImageMemory, nullptr);
+    vkDestroySampler(device, m_Sampler, nullptr);
 }
 
 void ImageView::createImage(const Device &device, VkExtent2D extent, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties) {
@@ -65,10 +67,34 @@ void ImageView::createImage(const Device &device, VkExtent2D extent, VkFormat fo
     allocInfo.memoryTypeIndex = findMemoryType(device.getVkPhysicalDevice(), memRequirements.memoryTypeBits, properties);
 
     if (vkAllocateMemory(device.getVkDevice(), &allocInfo, nullptr, &m_ImageMemory) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate image memory!");
+        throw std::runtime_error("ERROR: Failed to allocate image memory.");
     }
 
     vkBindImageMemory(device.getVkDevice(), m_Image, m_ImageMemory, 0);
+}
+
+void ImageView::createSampler(const VkDevice &device, const VkPhysicalDevice &physicalDevice) {
+    VkPhysicalDeviceProperties properties{};
+    vkGetPhysicalDeviceProperties(physicalDevice, &properties);
+
+    VkSamplerCreateInfo samplerInfo{};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_LINEAR;
+    samplerInfo.minFilter = VK_FILTER_LINEAR;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+    samplerInfo.anisotropyEnable = VK_FALSE;
+    samplerInfo.maxAnisotropy = 1.0f;
+    samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+    samplerInfo.unnormalizedCoordinates = VK_FALSE;
+    samplerInfo.compareEnable = VK_FALSE;
+    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+    if (vkCreateSampler(device, &samplerInfo, nullptr, &m_Sampler) != VK_SUCCESS) {
+        throw std::runtime_error("ERROR: Failed to create texture sampler!");
+    }
 }
 
 void ImageView::transitionImageLayout(const Device &device, const CommandPool &commandPool, VkImageLayout oldLayout, VkImageLayout newLayout) {
