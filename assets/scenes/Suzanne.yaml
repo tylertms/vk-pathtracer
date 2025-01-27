@@ -47,9 +47,9 @@ Objects:
       Radius: 40.3899994
       Material:
         Color:
-          - 0.529999971
-          - 1
-          - 0.5
+          - 0.0302940905
+          - 0.504902005
+          - 0
         EmissionColor:
           - 1
           - 1
