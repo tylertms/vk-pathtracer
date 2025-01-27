@@ -42,7 +42,7 @@ Application::Application() {
 
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
-        m_Uniforms[i].init(m_Device, m_Scene.getObject());
+        m_Uniforms[i].init(m_Device, m_SceneManager.getObject());
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
@@ -51,7 +51,7 @@ Application::Application() {
 
     m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
 
-    m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
+    m_SceneManager.setCamAspectRatio(m_Window.getAspectRatio());
 }
 
 Application::~Application() {
@@ -142,12 +142,12 @@ void Application::onResize() {
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
-    m_Scene.setCamAspectRatio(m_Window.getAspectRatio());
+    m_SceneManager.setCamAspectRatio(m_Window.getAspectRatio());
 
     for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
-    m_Scene.setFramesRendered(0);
+    m_SceneManager.setFramesRendered(0);
 }
 
 void Application::drawFrame() {
@@ -162,18 +162,18 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
-    if (m_Scene.resetOccurred()) {
+    if (m_SceneManager.resetOccurred()) {
         for (auto &uniform : m_Uniforms)
             uniform.submitUpdates();
     }
-    
+
     m_Uniforms[m_CurrentFrame].submitFramesRendered();
-    m_Scene.incrementFramesRendered();
+    m_SceneManager.incrementFramesRendered();
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 
     vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_Scene, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet());
+    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet());
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

@@ -11,7 +11,7 @@
 
 namespace Vulkan {
 
-class Scene {
+class SceneManager {
   public:
     void setFramesRendered(uint32_t framesRendered);
     void incrementFramesRendered();
@@ -22,7 +22,8 @@ class Scene {
     void setCam(const VKPT::Camera &cam);
     void setCamAspectRatio(float aspectRatio);
 
-    void loadSceneFromFile(const std::string filename);
+    void loadFromFile(const std::string filename);
+    void saveToFile(const std::string filename);
 
     void addSphere();
     void setNumSpheres(int numSpheres);
@@ -32,6 +33,7 @@ class Scene {
 
     inline VKPT::SceneObject *getObject() { return &m_Instance; }
 
+    std::vector<std::string> modelPaths;
     std::vector<VKPT::Triangle> triangleBuffer;
 
   private:

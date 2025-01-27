@@ -3,7 +3,9 @@
 #include "../../External/ImGui/backends/imgui_impl_glfw.h"
 #include "../../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../../External/ImGui/imgui.h"
+
 #include "../Loader/GLTFLoader.h"
+#include "../Loader/FilePicker.h"
 
 #include <cmath>
 
@@ -48,8 +50,8 @@ void UserInterface::deinit() {
     ImGui::DestroyContext();
 }
 
-void UserInterface::draw(Vulkan::Scene &scene) {
-    VKPT::SceneObject *sceneObj = scene.getObject();
+void UserInterface::draw(Vulkan::SceneManager &sceneManager) {
+    VKPT::SceneObject *sceneObj = sceneManager.getObject();
 
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
@@ -57,19 +59,26 @@ void UserInterface::draw(Vulkan::Scene &scene) {
 
     ImGui::Text("Frames: %d", sceneObj->framesRendered);
     ImGui::Text("FPS: %d", m_DisplayFPS);
+
     if (ImGui::Button("Reset Accumulation"))
-        scene.resetAccumulation();
+        sceneManager.resetAccumulation();
+
     ImGui::Spacing();
 
     if (ImGui::Button("Add Sphere"))
-        scene.addSphere();
+        sceneManager.addSphere();
+
     if (ImGui::Button("Load Scene")) {
-        scene.triangleBuffer.clear();
-        scene.loadSceneFromFile("assets/scenes/monkey.yaml");
+        sceneManager.loadFromFile(pickFilePath(VKPT_SCENE, VKPT_LOAD));
     }
+
+    if (ImGui::Button("Save Scene")) {
+        sceneManager.saveToFile(pickFilePath(VKPT_SCENE, VKPT_SAVE));
+    }
+
     if (ImGui::Button("Load Mesh")) {
-        Loader::GLTFLoader m("assets/models/suzanne.glb");
-        scene.addMesh(m.getTriangles());
+        Loader::GLTFLoader loader(VKPT_MODEL);
+        sceneManager.addMesh(loader.getTriangles());
     }
 
     ImGui::Spacing();
@@ -80,7 +89,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
             ImGui::PushID(i);
             ImGui::Text("Sphere %d", i + 1);
             if (drawSphereControl(sceneObj->spheres[i]))
-                scene.resetAccumulation();
+                sceneManager.resetAccumulation();
 
             ImGui::PopID();
         }
@@ -89,7 +98,7 @@ void UserInterface::draw(Vulkan::Scene &scene) {
             ImGui::PushID(sceneObj->numSpheres + i);
             ImGui::Text("Mesh %d - %d triangles", i + 1, sceneObj->meshes[i].triangleCount);
             if (drawMeshControl(sceneObj->meshes[i]))
-                scene.applyMeshProperties(sceneObj->meshes[i]);
+                sceneManager.applyMeshProperties(sceneObj->meshes[i]);
             ImGui::PopID();
         }
 

@@ -2,6 +2,7 @@
 
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
+#include "SceneManager.h"
 
 #include <stdexcept>
 
@@ -19,7 +20,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Scene &scene, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
@@ -44,7 +45,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, Scene &scen
     vkCmdBindDescriptorSets(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
 
-    interface.draw(scene);
+    interface.draw(sceneManager);
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer);
 
     vkCmdEndRenderPass(m_CommandBuffer);

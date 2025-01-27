@@ -24,7 +24,7 @@ class UserInterface {
               const Vulkan::GraphicsPipeline &graphicsPipeline);
 
     void deinit();
-    void draw(Vulkan::Scene &scene);
+    void draw(Vulkan::SceneManager &sceneManager);
 
   private:
     uint32_t m_DisplayFPS = 0;

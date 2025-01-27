@@ -9,6 +9,7 @@
 #include "Framebuffer.h"
 #include "GraphicsPipeline.h"
 #include "Instance.h"
+#include "SceneManager.h"
 #include "Semaphore.h"
 #include "Surface.h"
 #include "SwapChain.h"
@@ -55,7 +56,7 @@ class Application {
     std::vector<DescriptorSet> m_DescriptorSets;
     std::vector<Uniform> m_Uniforms;
     ImageView m_AccumulationImageView;
-    Scene m_Scene;
+    SceneManager m_SceneManager;
     Interface::UserInterface m_Interface;
     /* ----------------------- */
 };

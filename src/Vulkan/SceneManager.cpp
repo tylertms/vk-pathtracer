@@ -1,25 +1,26 @@
 #include "SceneManager.h"
+#include <vector>
 
 
 namespace Vulkan {
 
 /* ----------- FRAMES ----------- */
-void Scene::setFramesRendered(uint32_t framesRendered) {
+void SceneManager::setFramesRendered(uint32_t framesRendered) {
     m_Instance.framesRendered = framesRendered;
 }
 
-void Scene::incrementFramesRendered() {
+void SceneManager::incrementFramesRendered() {
     m_Instance.framesRendered++;
 }
 /* ----------------------------- */
 
 /* ----------- RESET ----------- */
-void Scene::resetAccumulation() {
+void SceneManager::resetAccumulation() {
     m_Reset = true;
     m_Instance.framesRendered = 0;
 }
 
-bool Scene::resetOccurred() {
+bool SceneManager::resetOccurred() {
     bool reset = m_Reset;
     m_Reset = false;
     return reset;
@@ -27,22 +28,24 @@ bool Scene::resetOccurred() {
 /* ----------------------------- */
 
 /* ----------- CAMERA ----------- */
-void Scene::setCam(const VKPT::Camera &cam) {
+void SceneManager::setCam(const VKPT::Camera &cam) {
     m_Instance.camera = cam;
 }
-void Scene::setCamAspectRatio(float aspectRatio) {
+void SceneManager::setCamAspectRatio(float aspectRatio) {
     m_Instance.camera.aspectRatio = aspectRatio;
 }
 /* ----------------------------- */
 
 /* ----------- SCENE ----------- */
-void Scene::loadSceneFromFile(const std::string filename) {
+void SceneManager::loadFromFile(const std::string filename) {
+    if (filename.empty()) return;
+
     triangleBuffer.clear();
     m_Instance.numTriangles = 0;
     m_Instance.numMeshes = 0;
     m_Instance.numSpheres = 0;
 
-    Loader::loadSceneFromYAML(filename, m_Instance, triangleBuffer);
+    Loader::loadSceneFromYAML(filename, modelPaths, m_Instance, triangleBuffer);
 
     for (uint32_t i = 0; i < m_Instance.numMeshes; i++) {
         applyMeshProperties(m_Instance.meshes[i]);
@@ -50,22 +53,27 @@ void Scene::loadSceneFromFile(const std::string filename) {
 
     resetAccumulation();
 }
+
+void SceneManager::saveToFile(const std::string filename) {
+    if (filename.empty()) return;
+    Loader::saveSceneToYAML(filename, m_Instance, modelPaths);
+}
 /* ----------------------------- */
 
 /* ----------- SPHERE ----------- */
-void Scene::addSphere() {
+void SceneManager::addSphere() {
     if (m_Instance.numSpheres == MAX_SPHERES) return;
     m_Instance.spheres[m_Instance.numSpheres++] = (VKPT::Sphere){};
     resetAccumulation();
 }
 
-void Scene::setNumSpheres(int numSpheres) {
+void SceneManager::setNumSpheres(int numSpheres) {
     m_Instance.numSpheres = numSpheres;
 }
 /* ----------------------------- */
 
 /* ----------- MESH ----------- */
-void Scene::addMesh(const std::vector<VKPT::Triangle> &triangles) {
+void SceneManager::addMesh(const std::vector<VKPT::Triangle> &triangles) {
     if (m_Instance.numMeshes == MAX_MESHES) return;
 
     uint32_t start = m_Instance.numTriangles;
@@ -90,7 +98,7 @@ void Scene::addMesh(const std::vector<VKPT::Triangle> &triangles) {
     resetAccumulation();
 }
 
-void Scene::applyMeshProperties(VKPT::Mesh &mesh) {
+void SceneManager::applyMeshProperties(VKPT::Mesh &mesh) {
     auto scale = mesh.scale;
     auto rotation = mesh.rotation;
     auto translation = mesh.translation;
