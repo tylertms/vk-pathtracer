@@ -1,4 +1,5 @@
 #include "GLTFLoader.h"
+#include "FilePicker.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -6,7 +7,11 @@
 
 namespace Loader {
 
+GLTFLoader::GLTFLoader(VKPT_FILE_TYPE type) : GLTFLoader(pickFilePath(type, VKPT_LOAD)) {}
+
 GLTFLoader::GLTFLoader(const std::string &filename) {
+    if (filename.empty()) return;
+
     if (!LoadModel(filename)) {
         std::cerr << "Failed to load glTF model: " << filename << std::endl;
         return;

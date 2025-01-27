@@ -1,5 +1,6 @@
 #pragma once
 
+#include "FilePicker.h"
 #include "../../External/tiny_gltf/tiny_gltf.h"
 #include "../Types/SceneObject.h"
 
@@ -11,7 +12,9 @@ namespace Loader {
 
 class GLTFLoader {
   public:
+    GLTFLoader(VKPT_FILE_TYPE type);
     GLTFLoader(const std::string &filename);
+
     const std::vector<VKPT::Triangle> &getTriangles() const { return m_Triangles; }
     const std::vector<VKPT::Mesh> &getMeshes() const { return m_Meshes; }
 
