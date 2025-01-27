@@ -4,10 +4,9 @@
 #include "../../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../../External/ImGui/imgui.h"
 
-#include "../Loader/GLTFLoader.h"
 #include "../Loader/FilePicker.h"
+#include "../Loader/GLTFLoader.h"
 
-#include <cmath>
 
 namespace Interface {
 
@@ -20,8 +19,18 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     ImGui::StyleColorsDark();
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.WindowRounding = 5;
+    style.GrabRounding = 5;
+    style.FrameRounding = 5;
+    style.FrameBorderSize = 0;
+    style.WindowBorderSize = 0;
+    style.DockingSeparatorSize = 1;
+
+    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.059f, 0.059f, 0.059f, 0.247f);
 
     ImGui_ImplGlfw_InitForVulkan(window.getGlfwWindow(), true);
     ImGui_ImplVulkan_InitInfo info{};
@@ -42,6 +51,7 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
     ImGui_ImplVulkan_CreateFontsTexture();
 
     m_TimeStart = std::chrono::high_resolution_clock::now();
+    m_FrameTimes.resize(100, 0);
 }
 
 void UserInterface::deinit() {
@@ -50,98 +60,180 @@ void UserInterface::deinit() {
     ImGui::DestroyContext();
 }
 
-void UserInterface::draw(Vulkan::SceneManager &sceneManager) {
+void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
     VKPT::SceneObject *sceneObj = sceneManager.getObject();
+    ImGui::Begin("Statistics");
+    ImGui::Text("Frames: %d", sceneObj->framesRendered);
+
+    float avg = 0;
+    for (float time : m_FrameTimes) avg += time;
+    avg /= m_FrameTimes.size();
+    ImGui::Text("Average: %6.2fms", avg);
+
+    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, 200.0, ImVec2(160.0f, 40.0f));
+
+    if (ImGui::Button("Reset Accumulation"))
+        sceneManager.resetAccumulation();
+
+    ImGui::End();
+}
+
+void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("New")) {
+            if (ImGui::MenuItem("Sphere")) {
+                sceneManager.addSphere();
+                m_ShowSceneControl = true;
+            }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Load")) {
+            if (ImGui::MenuItem("Scene")) {
+                sceneManager.loadFromFile(pickFilePath(VKPT_SCENE, VKPT_LOAD));
+                m_ShowSceneControl = true;
+            }
+            if (ImGui::MenuItem("Model")) {
+                sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
+                m_ShowSceneControl = true;
+            }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::MenuItem("Save")) {
+            sceneManager.saveToFile(pickFilePath(VKPT_SCENE, VKPT_SAVE));
+        }
+
+        if (ImGui::BeginMenu("Window")) {
+            ImGui::Checkbox("Show Scene Control", &m_ShowSceneControl);
+            ImGui::Checkbox("Show Statistics", &m_ShowStats);
+            ImGui::EndMenu();
+        }
+
+        ImGui::EndMainMenuBar();
+    }
+}
+
+void UserInterface::setupDockspace() {
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+    const ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->Pos);
+    ImGui::SetNextWindowSize(viewport->Size);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+    ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
+    ImGui::Begin("DockSpace", nullptr, window_flags);
+
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor(2);
+
+    ImGuiID dockspace_id = ImGui::GetID("Dockspace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+    ImGui::End();
+}
+
+void UserInterface::draw(Vulkan::SceneManager &sceneManager) {
+    m_TimeCurrent = std::chrono::high_resolution_clock::now();
+    float frameTime = std::chrono::duration<float, std::milli>(m_TimeCurrent - m_TimeStart).count();
+
+    m_FrameTimes.push_back(frameTime);
+    if (m_FrameTimes.size() > 100)
+        m_FrameTimes.erase(m_FrameTimes.begin());
+
+    m_TimeStart = m_TimeCurrent;
 
     ImGui_ImplVulkan_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::Text("Frames: %d", sceneObj->framesRendered);
-    ImGui::Text("FPS: %d", m_DisplayFPS);
+    setupDockspace();
+    drawMenuBar(sceneManager);
 
-    if (ImGui::Button("Reset Accumulation"))
-        sceneManager.resetAccumulation();
-
-    ImGui::Spacing();
-
-    if (ImGui::Button("Add Sphere"))
-        sceneManager.addSphere();
-
-    if (ImGui::Button("Load Scene")) {
-        sceneManager.loadFromFile(pickFilePath(VKPT_SCENE, VKPT_LOAD));
+    if (m_ShowSceneControl) {
+        drawSceneControl(sceneManager);
     }
 
-    if (ImGui::Button("Save Scene")) {
-        sceneManager.saveToFile(pickFilePath(VKPT_SCENE, VKPT_SAVE));
-    }
-
-    if (ImGui::Button("Load Mesh")) {
-        Loader::GLTFLoader loader(VKPT_MODEL);
-        sceneManager.addMesh(loader.getTriangles());
-    }
-
-    ImGui::Spacing();
-
-    if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) {
-        ImGui::Indent();
-        for (uint32_t i = 0; i < sceneObj->numSpheres; i++) {
-            ImGui::PushID(i);
-            ImGui::Text("Sphere %d", i + 1);
-            if (drawSphereControl(sceneObj->spheres[i]))
-                sceneManager.resetAccumulation();
-
-            ImGui::PopID();
-        }
-
-        for (uint32_t i = 0; i < sceneObj->numMeshes; i++) {
-            ImGui::PushID(sceneObj->numSpheres + i);
-            ImGui::Text("Mesh %d - %d triangles", i + 1, sceneObj->meshes[i].triangleCount);
-            if (drawMeshControl(sceneObj->meshes[i]))
-                sceneManager.applyMeshProperties(sceneObj->meshes[i]);
-            ImGui::PopID();
-        }
-
-        ImGui::Unindent();
+    if (m_ShowStats) {
+        drawStats(sceneManager);
     }
 
     ImGui::Render();
+}
 
-    if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
+bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
+    VKPT::SceneObject *sceneObj = sceneManager.getObject();
+
+    ImGui::Begin("Scene Control");
+
+    for (int i = 0; i < sceneObj->numSpheres; i++) {
+        ImGui::PushID("##sphere");
+        ImGui::PushID(i);
+        if (ImGui::CollapsingHeader("Sphere")) {
+            if (drawSphereControl(sceneObj->spheres[i])) {
+                sceneManager.resetAccumulation();
+            }
+        }
+        ImGui::PopID();
+        ImGui::PopID();
     }
 
-    m_TimeCurrent = std::chrono::high_resolution_clock::now();
-    float timeSinceStart = std::chrono::duration<float, std::milli>(m_TimeCurrent - m_TimeStart).count();
-    m_FramesLastSecond++;
-
-    if (timeSinceStart > 1000) {
-        m_DisplayFPS = floorf(1000.0 * m_FramesLastSecond / timeSinceStart);
-        m_FramesLastSecond = 0;
-        m_TimeStart = m_TimeCurrent;
+    for (int i = 0; i < sceneObj->numMeshes; i++) {
+        ImGui::PushID("##mesh");
+        ImGui::PushID(i);
+        if (ImGui::CollapsingHeader("Mesh")) {
+            if (drawMeshControl(sceneObj->meshes[i])) {
+                sceneManager.resetAccumulation();
+                sceneManager.applyMeshProperties(sceneObj->meshes[i]);
+            }
+        }
+        ImGui::PopID();
+        ImGui::PopID();
     }
+
+    ImGui::End();
+    return true;
 }
 
 bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
     bool reset = false;
 
-    if (ImGui::DragFloat3("Position", (float*)(&sphere.center), 0.01)) reset = true;
-    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
-    if (ImGui::ColorEdit3("Color", (float*)(&sphere.material.color))) reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float*)(&sphere.material.emissionColor))) reset = true;
-    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
+    if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01))
+        reset = true;
+    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01))
+        reset = true;
+    if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color)))
+        reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor)))
+        reset = true;
+    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01))
+        reset = true;
     return reset;
 }
 
 bool UserInterface::drawMeshControl(VKPT::Mesh &mesh) {
     bool reset = false;
-    if (ImGui::DragFloat3("Translation", (float *)(&mesh.translation), 0.01)) reset = true;
-    if (ImGui::DragFloat3("Scale", (float *)(&mesh.scale), 0.01)) reset = true;
-    if (ImGui::DragFloat3("Rotation", (float *)(&mesh.rotation), 0.1)) reset = true;
-        if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
-        if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
-    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
+    if (ImGui::DragFloat3("Translation", (float *)(&mesh.translation), 0.01))
+        reset = true;
+    if (ImGui::DragFloat3("Scale", (float *)(&mesh.scale), 0.01))
+        reset = true;
+    if (ImGui::DragFloat3("Rotation", (float *)(&mesh.rotation), 0.1))
+        reset = true;
+    if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color)))
+        reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor)))
+        reset = true;
+    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01))
+        reset = true;
     return reset;
 }
 

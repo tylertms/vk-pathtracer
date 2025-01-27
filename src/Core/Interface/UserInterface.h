@@ -24,13 +24,20 @@ class UserInterface {
               const Vulkan::GraphicsPipeline &graphicsPipeline);
 
     void deinit();
+
     void draw(Vulkan::SceneManager &sceneManager);
 
   private:
-    uint32_t m_DisplayFPS = 0;
-    uint32_t m_FramesLastSecond = 0;
+    bool m_ShowSceneControl = false;
+    bool m_ShowStats = true;
+
+    std::vector<float> m_FrameTimes;
     std::chrono::high_resolution_clock::time_point m_TimeStart, m_TimeCurrent;
 
+    void drawStats(Vulkan::SceneManager &sceneManager);
+    void drawMenuBar(Vulkan::SceneManager &sceneManager);
+    void setupDockspace();
+    bool drawSceneControl(Vulkan::SceneManager &sceneManager);
     bool drawSphereControl(VKPT::Sphere &sphere);
     bool drawMeshControl(VKPT::Mesh &mesh);
 };
