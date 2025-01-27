@@ -7,7 +7,9 @@
 
 #include "../Core/Types/SceneObject.h"
 #include "../Core/Utils/Matrix.h"
+
 #include "../Core/Loader/SceneLoader.h"
+#include "../Core/Loader/GLTFLoader.h"
 
 namespace Vulkan {
 
@@ -28,7 +30,7 @@ class SceneManager {
     void addSphere();
     void setNumSpheres(int numSpheres);
 
-    void addMesh(const std::vector<VKPT::Triangle> &triangles);
+    void addMesh(const std::string filename);
     void applyMeshProperties(VKPT::Mesh &mesh);
 
     inline VKPT::SceneObject *getObject() { return &m_Instance; }

@@ -1,7 +1,6 @@
 #include "SceneManager.h"
 #include <vector>
 
-
 namespace Vulkan {
 
 /* ----------- FRAMES ----------- */
@@ -30,9 +29,11 @@ bool SceneManager::resetOccurred() {
 /* ----------- CAMERA ----------- */
 void SceneManager::setCam(const VKPT::Camera &cam) {
     m_Instance.camera = cam;
+    resetAccumulation();
 }
 void SceneManager::setCamAspectRatio(float aspectRatio) {
     m_Instance.camera.aspectRatio = aspectRatio;
+    resetAccumulation();
 }
 /* ----------------------------- */
 
@@ -41,6 +42,7 @@ void SceneManager::loadFromFile(const std::string filename) {
     if (filename.empty()) return;
 
     triangleBuffer.clear();
+    modelPaths.clear();
     m_Instance.numTriangles = 0;
     m_Instance.numMeshes = 0;
     m_Instance.numSpheres = 0;
@@ -73,8 +75,12 @@ void SceneManager::setNumSpheres(int numSpheres) {
 /* ----------------------------- */
 
 /* ----------- MESH ----------- */
-void SceneManager::addMesh(const std::vector<VKPT::Triangle> &triangles) {
+void SceneManager::addMesh(const std::string filename) {
+    if (filename.empty()) return;
     if (m_Instance.numMeshes == MAX_MESHES) return;
+
+    Loader::GLTFLoader loader(filename);
+    std::vector<VKPT::Triangle> triangles = loader.getTriangles();
 
     uint32_t start = m_Instance.numTriangles;
     uint32_t count = (uint32_t)triangles.size();
@@ -94,6 +100,7 @@ void SceneManager::addMesh(const std::vector<VKPT::Triangle> &triangles) {
     m_Instance.numTriangles += count;
 
     applyMeshProperties(mesh);
+    modelPaths.push_back(filename);
 
     resetAccumulation();
 }
