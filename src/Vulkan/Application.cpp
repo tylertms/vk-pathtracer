@@ -163,7 +163,8 @@ void Application::onResize() {
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
     m_SceneManager.setFramesRendered(0);
-    m_SceneManager.setCamAspectRatio(m_Window.getAspectRatio());
+    m_SceneManager.setCamAspectRatio((float)extent.x / extent.y);
+    m_SceneManager.resetAccumulation();
 }
 
 void Application::drawFrame() {
@@ -189,16 +190,23 @@ void Application::drawFrame() {
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 
     if (extent.x == 0 && extent.y == 0) {
-        printf("GATHERING VIEWPORT INFO\n");
         vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-        m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), position, extent, avail);
+        m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), position, extent);
     }
 
+    ImVec2 previousPosition = position;
+    ImVec2 previousExtent = extent;
+
     vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), position, extent, avail);
-    //printf("Position: x: %f, y: %f\n", position.x, position.y);
-    //printf("Extent: x: %f, y: %f\n", extent.x, extent.y);
-    //printf("Avail: x: %f, y: %f\n", avail.x, avail.y);
+    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), position, extent);
+
+    bool positionChanged = position.x != previousPosition.x || position.y != previousPosition.y;
+    bool extentChanged = extent.x != previousExtent.x || extent.y != previousExtent.y;
+
+    if (positionChanged || extentChanged) {
+        m_SceneManager.setCamAspectRatio((float)extent.x / extent.y);
+        m_SceneManager.resetAccumulation();
+    }
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

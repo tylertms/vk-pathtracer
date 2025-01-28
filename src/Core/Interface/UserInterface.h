@@ -29,10 +29,10 @@ class UserInterface {
 
     void deinit();
 
-    void draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent, ImVec2 &avai);
+    void draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent);
 
   private:
-    bool m_ShowSceneControl = false;
+    bool m_ShowSceneControl = true;
     bool m_ShowStats = true;
 
     std::vector<float> m_FrameTimes;

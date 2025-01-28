@@ -3,6 +3,7 @@
 #include "../External/ImGui/backends/imgui_impl_vulkan.h"
 #include "../External/ImGui/imgui.h"
 #include "SceneManager.h"
+#include "vulkan/vulkan_core.h"
 
 #include <stdexcept>
 
@@ -20,7 +21,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet, ImVec2 &position, ImVec2 &extent, ImVec2 &avail) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet, ImVec2 &position, ImVec2 &extent) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
@@ -32,11 +33,15 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManage
 
     VkRenderPassBeginInfo renderPassInfo = graphicsPipeline.getRenderPass().getBeginInfo(framebuffer);
 
+    VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+    renderPassInfo.clearValueCount = 1;
+    renderPassInfo.pClearValues = &clearColor;
+
     vkCmdBeginRenderPass(m_CommandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
     vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipeline());
 
-    VkViewport viewport; // = graphicsPipeline.getViewport();
+    VkViewport viewport;
     viewport.x = position.x;
     viewport.y = position.y;
     viewport.minDepth = 0.0f;
@@ -51,7 +56,7 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManage
     vkCmdBindDescriptorSets(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipelineLayout(), 0, 1, &descriptorSet, 0, nullptr);
     vkCmdDraw(m_CommandBuffer, 3, 1, 0, 0);
 
-    interface.draw(sceneManager, position, extent, avail);
+    interface.draw(sceneManager, position, extent);
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), m_CommandBuffer);
 
     vkCmdEndRenderPass(m_CommandBuffer);
