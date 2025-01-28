@@ -26,7 +26,7 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
     style.WindowBorderSize = 0;
     style.DockingSeparatorSize = 1;
 
-    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.059f, 0.059f, 0.059f, 0.247f);
+    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.059f, 0.059f, 0.059f, 0.0f);
 
     ImGui_ImplGlfw_InitForVulkan(window.getGlfwWindow(), true);
     ImGui_ImplVulkan_InitInfo info{};
@@ -81,10 +81,9 @@ void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
 
 void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
     if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("New")) {
+        if (ImGui::BeginMenu("Add")) {
             if (ImGui::MenuItem("Sphere")) {
                 sceneManager.addSphere();
-                m_ShowSceneControl = true;
             }
             ImGui::EndMenu();
         }
@@ -92,11 +91,9 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
         if (ImGui::BeginMenu("Load")) {
             if (ImGui::MenuItem("Scene")) {
                 sceneManager.loadFromFile(pickFilePath(VKPT_SCENE, VKPT_LOAD));
-                m_ShowSceneControl = true;
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
-                m_ShowSceneControl = true;
             }
             ImGui::EndMenu();
         }
@@ -143,7 +140,7 @@ void UserInterface::setupDockspace() {
     ImGui::End();
 }
 
-void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent, ImVec2 &avail) {
+void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent) {
     m_TimeCurrent = std::chrono::high_resolution_clock::now();
     float frameTime = std::chrono::duration<float, std::milli>(m_TimeCurrent - m_TimeStart).count();
 
@@ -171,7 +168,6 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
     ImGui::Begin("Viewport");
     position = ImGui::GetWindowPos();
     extent = ImGui::GetWindowSize();
-    avail = ImGui::GetContentRegionAvail();
     ImGui::End();
 
     ImGui::Render();
@@ -214,33 +210,27 @@ bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
 bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
     bool reset = false;
 
-    if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01))
-        reset = true;
-    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01))
-        reset = true;
-    if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color)))
-        reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor)))
-        reset = true;
-    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01))
-        reset = true;
+    if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01)) reset = true;
+    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
+    if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color))) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor))) reset = true;
+    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
+    ImGui::Spacing();
+
     return reset;
 }
 
 bool UserInterface::drawMeshControl(VKPT::Mesh &mesh) {
     bool reset = false;
-    if (ImGui::DragFloat3("Translation", (float *)(&mesh.translation), 0.01))
-        reset = true;
-    if (ImGui::DragFloat3("Scale", (float *)(&mesh.scale), 0.01))
-        reset = true;
-    if (ImGui::DragFloat3("Rotation", (float *)(&mesh.rotation), 0.1))
-        reset = true;
-    if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color)))
-        reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor)))
-        reset = true;
-    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01))
-        reset = true;
+
+    if (ImGui::DragFloat3("Translation", (float *)(&mesh.translation), 0.01)) reset = true;
+    if (ImGui::DragFloat3("Scale", (float *)(&mesh.scale), 0.01)) reset = true;
+    if (ImGui::DragFloat3("Rotation", (float *)(&mesh.rotation), 0.1)) reset = true;
+    if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
+    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
+    ImGui::Spacing();
+
     return reset;
 }
 
