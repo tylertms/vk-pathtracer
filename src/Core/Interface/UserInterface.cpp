@@ -29,7 +29,6 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
 
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0, 0, 0, 0);
     style.Colors[ImGuiCol_FrameBg] = ImVec4(0.14, 0.14, 0.14, 1.0);
-    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.14, 0.14, 0.14, 1.0);
 
     ImGui_ImplGlfw_InitForVulkan(window.getGlfwWindow(), true);
     ImGui_ImplVulkan_InitInfo info{};
