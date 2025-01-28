@@ -35,11 +35,6 @@ Application::Application() {
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
     m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
 
-    m_OutputImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    m_OutputImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
-    m_OutputImageView.createSampler(m_Device);
-    m_OutputImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
-
     m_Uniforms = std::vector<Uniform>(MAX_FRAMES_IN_FLIGHT);
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
     m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
@@ -49,7 +44,7 @@ Application::Application() {
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
         m_Uniforms[i].init(m_Device, m_SceneManager.getObject());
-        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_OutputImageView, m_DescriptorPool.getVkDescriptorPool());
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
         m_InFlightFences[i].init(device, true);
@@ -76,7 +71,6 @@ Application::~Application() {
     }
 
     m_AccumulationImageView.deinit(device);
-    m_OutputImageView.deinit(device);
 
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(device);
@@ -129,7 +123,6 @@ void Application::onResize() {
         m_Framebuffers[i].deinit(m_Device.getVkDevice());
 
     m_AccumulationImageView.deinit(m_Device.getVkDevice());
-    m_OutputImageView.deinit(m_Device.getVkDevice());
     m_SwapChain.deinit(m_Device.getVkDevice());
 
     m_DescriptorPool.deinit(m_Device.getVkDevice());
@@ -149,13 +142,8 @@ void Application::onResize() {
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
     m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
 
-    m_OutputImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_B8G8R8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    m_OutputImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
-    m_OutputImageView.createSampler(m_Device);
-    m_OutputImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
-
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_OutputImageView, m_DescriptorPool.getVkDescriptorPool());
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_Uniforms[i], m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
     m_SceneManager.setCamAspectRatio(m_Window.getAspectRatio());
 

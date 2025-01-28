@@ -11,7 +11,7 @@ class DescriptorSet {
     DescriptorSet() = default;
 
     void createLayout(const VkDevice &device);
-    void createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulationImageView, const ImageView &outputImageView, const VkDescriptorPool &descriptorPool);
+    void createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulationImageView, const VkDescriptorPool &descriptorPool);
 
     void deinit(const VkDevice &device);
 

@@ -18,7 +18,7 @@ layout (binding = 0, std140) readonly uniform SceneObject {
     uint framesRendered;
 } scene;
 layout (binding = 1, rgba32f) coherent uniform image2D accumulationImage;
-layout (binding = 2, rgba8) coherent uniform image2D outputImage;
+
 /* --------------------------------------*/
 layout (location = 0) out vec4 outColor;
 /* --------------------------------------*/
@@ -47,5 +47,4 @@ void main() {
     endInvocationInterlockARB();
 
     outColor = sqrt(newColor);
-    imageStore(outputImage, texCoord, outColor);
 }

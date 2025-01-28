@@ -1,7 +1,6 @@
 #include "UserInterface.h"
 
 #include "../Loader/FilePicker.h"
-#include "../Loader/GLTFLoader.h"
 
 
 namespace Interface {

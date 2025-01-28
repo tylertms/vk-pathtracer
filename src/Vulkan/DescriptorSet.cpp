@@ -9,7 +9,7 @@ void DescriptorSet::deinit(const VkDevice &device) {
     vkDestroyDescriptorSetLayout(device, m_DescriptorSetLayout, nullptr);
 }
 
-void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulationImageView, const ImageView &outputImageView, const VkDescriptorPool &descriptorPool) {
+void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulationImageView, const VkDescriptorPool &descriptorPool) {
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
@@ -30,12 +30,7 @@ void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, co
     accumulatorImageInfo.imageView = accumulationImageView.getVkImageView();
     accumulatorImageInfo.sampler = nullptr;
 
-    VkDescriptorImageInfo outputImageInfo{};
-    outputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-    outputImageInfo.imageView = outputImageView.getVkImageView();
-    outputImageInfo.sampler = nullptr;
-
-    VkWriteDescriptorSet descriptorWrites[3]{};
+    VkWriteDescriptorSet descriptorWrites[2]{};
     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrites[0].dstSet = m_DescriptorSet;
     descriptorWrites[0].dstBinding = 0;
@@ -52,15 +47,7 @@ void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, co
     descriptorWrites[1].descriptorCount = 1;
     descriptorWrites[1].pImageInfo = &accumulatorImageInfo;
 
-    descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrites[2].dstSet = m_DescriptorSet;
-    descriptorWrites[2].dstBinding = 2;
-    descriptorWrites[2].dstArrayElement = 0;
-    descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-    descriptorWrites[2].descriptorCount = 1;
-    descriptorWrites[2].pImageInfo = &outputImageInfo;
-
-    vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, nullptr);
+    vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, nullptr);
 }
 
 void DescriptorSet::createLayout(const VkDevice &device) {
@@ -78,18 +65,11 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     accumulationBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     accumulationBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding outputBinding{};
-    outputBinding.binding = 2;
-    outputBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
-    outputBinding.descriptorCount = 1;
-    outputBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-    outputBinding.pImmutableSamplers = nullptr;
-
-    VkDescriptorSetLayoutBinding bindings[] = {uboLayoutBinding, accumulationBinding, outputBinding};
+    VkDescriptorSetLayoutBinding bindings[] = {uboLayoutBinding, accumulationBinding};
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 3;
+    layoutInfo.bindingCount = 2;
     layoutInfo.pBindings = bindings;
 
     if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
