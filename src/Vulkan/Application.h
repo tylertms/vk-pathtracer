@@ -36,11 +36,10 @@ class Application {
 
     ImVec2 position = { 0, 0 };
     ImVec2 extent = { 0, 0 };
-    ImVec2 avail = { 0, 0 };
 
   private:
     /* ----------------------- */
-    uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+    uint32_t MAX_FRAMES_IN_FLIGHT = 1;
     uint32_t m_CurrentFrame = 0;
     /* ----------------------- */
     Window m_Window;
