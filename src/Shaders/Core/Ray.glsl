@@ -4,6 +4,8 @@
 #include "Common.glsl"
 #include "Random.glsl"
 
+//#define DEBUG_NORMAL
+
 Ray generateRay(vec2 uv, float aspectRatio) {
     uv.x *= aspectRatio;
 
@@ -23,6 +25,10 @@ vec3 traceRay(Ray ray, inout uint state) {
         HitPayload hit = rayHitScene(ray);
         if (!hit.didHit)
             break;
+
+#ifdef DEBUG_NORMAL
+        return hit.normal * vec3(1, 1, -1);
+#endif
 
         ray.origin = hit.point;
         ray.dir = normalize(hit.normal + randDir(state));
