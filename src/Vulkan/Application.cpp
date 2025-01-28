@@ -151,7 +151,7 @@ void Application::onResize() {
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
     m_SceneManager.setFramesRendered(0);
-    m_SceneManager.setCamAspectRatio((float)extent.x / extent.y);
+    m_SceneManager.setCamAspectRatio((float)m_Extent.x / m_Extent.y);
     m_SceneManager.resetAccumulation();
 }
 
@@ -177,22 +177,22 @@ void Application::drawFrame() {
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 
-    if (extent.x == 0 && extent.y == 0) {
+    if (m_Extent.x == 0 && m_Extent.y == 0) {
         vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-        m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), m_Window, position, extent);
+        m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), m_Window, m_Position, m_Extent);
     }
 
-    ImVec2 previousPosition = position;
-    ImVec2 previousExtent = extent;
+    ImVec2 previousPosition = m_Position;
+    ImVec2 previousExtent = m_Extent;
 
     vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), m_Window, position, extent);
+    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), m_Window, m_Position, m_Extent);
 
-    bool positionChanged = position.x != previousPosition.x || position.y != previousPosition.y;
-    bool extentChanged = extent.x != previousExtent.x || extent.y != previousExtent.y;
+    bool positionChanged = m_Position.x != previousPosition.x || m_Position.y != previousPosition.y;
+    bool extentChanged = m_Extent.x != previousExtent.x || m_Extent.y != previousExtent.y;
 
     if (positionChanged || extentChanged) {
-        m_SceneManager.setCamAspectRatio((float)extent.x / extent.y);
+        m_SceneManager.setCamAspectRatio((float)m_Extent.x / m_Extent.y);
         m_SceneManager.resetAccumulation();
     }
 
