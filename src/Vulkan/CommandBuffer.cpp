@@ -21,7 +21,7 @@ void CommandBuffer::init(const Device &device, const CommandPool &commandPool) {
     }
 }
 
-void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet, ImVec2 &position, ImVec2 &extent) {
+void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManager &sceneManager, Interface::UserInterface &interface, const VkFramebuffer &framebuffer, const VkDescriptorSet &descriptorSet, const Window &window, ImVec2 &position, ImVec2 &extent) {
     VkCommandBufferBeginInfo beginInfo{};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = 0;
@@ -41,13 +41,16 @@ void CommandBuffer::record(const GraphicsPipeline &graphicsPipeline, SceneManage
 
     vkCmdBindPipeline(m_CommandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline.getVkPipeline());
 
+    float scaleX, scaleY;
+    glfwGetWindowContentScale(window.getGlfwWindow(), &scaleX, &scaleY);
+
     VkViewport viewport;
-    viewport.x = position.x;
-    viewport.y = position.y;
+    viewport.x = position.x * scaleX;
+    viewport.y = position.y * scaleY;
     viewport.minDepth = 0.0f;
     viewport.maxDepth = 1.0f;
-    viewport.width = max(1.0f, extent.x);
-    viewport.height = max(1.0f, extent.y);
+    viewport.width = max(1.0f, extent.x * scaleX);
+    viewport.height = max(1.0f, extent.y * scaleY);
     vkCmdSetViewport(m_CommandBuffer, 0, 1, &viewport);
 
     VkRect2D scissor = graphicsPipeline.getScissor();
