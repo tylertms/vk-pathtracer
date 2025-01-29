@@ -7,9 +7,9 @@
 
 namespace VKPT {
 
-void computeInverseMatrix(glm::mat4 &worldLocal, glm::mat4 &localWorld,
+void computeInverseMatrix(glm::mat4 &worldLocalTransform, glm::mat4 &localWorldTransform,
     const glm::vec3 &translation, const glm::vec3 &rotationEuler, const glm::vec3 &scale);
 
-void computeInverseMatrix(glm::mat4 &worldLocal, glm::mat4 &localWorld, const glm::mat3 matrix);
+void computeInverseMatrix(glm::mat4 &worldLocalTransform, glm::mat4 &localWorldTransform, const glm::mat3 matrix);
 
 }
