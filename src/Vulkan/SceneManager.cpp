@@ -25,6 +25,7 @@ void SceneManager::deinit(const VkDevice &device) {
 void SceneManager::reset() {
     sceneData.numMeshes = 0;
     sceneData.numSpheres = 0;
+    sceneData.numTriangles = 0;
     modelPaths.clear();
     meshTransforms.clear();
 }
