@@ -165,14 +165,12 @@ void Device::logInfo(const VkPhysicalDeviceProperties &properties, int index) {
 int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDeviceProperties &properties) {
     QueueFamilyIndices indices = findQueueFamilies(physicalDevice, ext_Surface);
     if (!indices.isComplete() || !deviceSupportsExtensions(physicalDevice)) {
-        printf("NO INDICES\n");
         return -1;
     }
 
     SwapChain::SupportDetails swapChainSupport = SwapChain::querySupport(physicalDevice, ext_Surface);
     bool validSwapChain = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
     if (!validSwapChain) {
-        printf("NO VALID SWAPCHAIN\n");
         return -1;
     }
 
@@ -193,7 +191,6 @@ int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDevicePro
             return i;
         }
     }
-    printf("COULDN'T FIND DEVICE TYPE\n");
 
     return -1;
 }
