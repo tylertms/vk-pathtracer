@@ -30,20 +30,21 @@ class SceneManager {
     void resetAccumulation();
     bool resetOccurred();
     void submitUniformUpdates();
-    void submitStorageUpdatesIfNeeded();
+
+    void uploadPartialStorageBuffer();
+    void uploadFullStorageBuffer();
 
     void addSphere();
     void addMesh(const std::string filename);
+    void updateMeshTransforms();
 
     VKPT::SceneData sceneData;
-    VKPT::StorageBuffer sceneStorage;
+    VKPT::StorageBuffer *sceneStorage;
 
     std::vector<std::string> modelPaths;
     std::vector<glm::mat3> meshTransforms;
 
   private:
-    bool m_Reset = false;
-
     VkBuffer m_UniformBuffer;
     VkDeviceMemory m_UniformBufferMemory;
     void *m_UniformBufferMapped;
