@@ -2,7 +2,6 @@
 #include "vulkan/vulkan_core.h"
 
 #include <stdexcept>
-#include <sys/_types/_dev_t.h>
 
 namespace Vulkan {
 

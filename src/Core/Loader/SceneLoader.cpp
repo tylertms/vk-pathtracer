@@ -26,7 +26,7 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
 
     if (!config["Objects"] || !config["Objects"].IsSequence()) return;
 
-    for (int i = 0; i < config["Objects"].size(); i++) {
+    for (uint32_t i = 0; i < config["Objects"].size(); i++) {
         YAML::Node object = config["Objects"][i];
 
         if (object["Mesh"]) {

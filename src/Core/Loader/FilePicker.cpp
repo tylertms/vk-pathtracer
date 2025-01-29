@@ -1,5 +1,8 @@
 #include "FilePicker.h"
+
 #include "nfd.h"
+
+#include <stdexcept>
 
 const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
     nfdu8char_t *outPath = nullptr;

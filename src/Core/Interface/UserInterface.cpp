@@ -65,7 +65,7 @@ void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
     ImGui::Text("Frames: %d", sceneManager.sceneData.framesRendered);
 
     float total = 0;
-    int count = 0;
+    uint32_t count = 0;
     while (total < 1000 && count < m_FrameTimes.size() - 1) {
         total += m_FrameTimes[m_FrameTimes.size() - count - 1];
         count++;
@@ -182,7 +182,7 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
 bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
     ImGui::Begin("Scene Control");
 
-    for (int i = 0; i < sceneManager.sceneData.numSpheres; i++) {
+    for (uint32_t i = 0; i < sceneManager.sceneData.numSpheres; i++) {
         ImGui::PushID("##sphere");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Sphere")) {
@@ -194,7 +194,7 @@ bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PopID();
     }
 
-    for (int i = 0; i < sceneManager.sceneData.numMeshes; i++) {
+    for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         ImGui::PushID("##mesh");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Mesh")) {
