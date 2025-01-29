@@ -1,0 +1,50 @@
+Objects:
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [0, 1.20000005, 0, -180, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 0, 0]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [-1.20000005, 0, 0, 0, 0, -90, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [0, 0, 1.20000005, -90, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [0, 0, 0]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0.870000005
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [0, -1.20000005, 0, 0, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [0, 1, 0]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [1.20000005, 0, 0, 0, 0, 90, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 0, 0]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [0.00999999978, 0.200000003, -2, 90, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [0.860759497, 0.860759497, 0.860759497]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/suzanne.glb
+      Transform: [-0.0599999987, 0.340000004, 0, 162.300003, 14.6000004, 0.100000001, 0.800000012, 0.800000012, 0.800000012]
