@@ -1,7 +1,7 @@
 #include "FilePicker.h"
 #include "nfd.h"
 
-std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
+const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
     nfdu8char_t *outPath = nullptr;
 
     nfdu8filteritem_t filters[1];
@@ -20,6 +20,7 @@ std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
 
     nfdsavedialogu8args_t saveArgs = {0};
     saveArgs.filterList = filters;
+    saveArgs.defaultName = "Untitled.yaml";
     saveArgs.filterCount = 1;
 
     std::string path;

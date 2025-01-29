@@ -14,4 +14,4 @@ enum VKPT_FILE_ACTION {
     VKPT_LOAD
 };
 
-std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION);
+const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION);
