@@ -22,6 +22,7 @@ class SceneManager {
 
     void init(const Device &device);
     void deinit(const VkDevice &device);
+    void reset();
 
     inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
     inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
@@ -33,7 +34,6 @@ class SceneManager {
 
     void addSphere();
     void addMesh(const std::string filename);
-    void addMesh(const std::string filename, const glm::mat3 transform);
 
     VKPT::SceneData sceneData;
     VKPT::StorageBuffer sceneStorage;

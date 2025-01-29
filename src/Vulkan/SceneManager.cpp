@@ -21,6 +21,13 @@ void SceneManager::deinit(const VkDevice &device) {
     vkDestroyBuffer(device, m_StorageBuffer, nullptr);
     vkFreeMemory(device, m_StorageBufferMemory, nullptr);
 }
+
+void SceneManager::reset() {
+    sceneData.numMeshes = 0;
+    sceneData.numSpheres = 0;
+    modelPaths.clear();
+    meshTransforms.clear();
+}
 /* ----------------------------- */
 
 /* ----------- MEMORY ----------- */
@@ -31,7 +38,7 @@ void SceneManager::submitUniformUpdates() {
 void SceneManager::submitStorageUpdatesIfNeeded() {
     if (!m_Reset) return;
     m_Reset = false;
-    memcpy(m_StorageBufferMapped, &sceneStorage, sizeof(sceneStorage)); printf("SUBMITTING\n");
+    memcpy(m_StorageBufferMapped, &sceneStorage, sizeof(sceneStorage));
 }
 /* ----------------------------- */
 
@@ -63,13 +70,6 @@ void SceneManager::addSphere() {
 
 /* ----------- MESH ----------- */
 void SceneManager::addMesh(const std::string filename) {
-    glm::mat3 defaultTransform = 0;
-    defaultTransform[2] = { 1, 1, 1 };
-
-    addMesh(filename, defaultTransform);
-}
-
-void SceneManager::addMesh(const std::string filename, const glm::mat3 transform) {
     if (filename.empty()) return;
     Loader::GLTFLoader loader(filename);
 
@@ -81,7 +81,10 @@ void SceneManager::addMesh(const std::string filename, const glm::mat3 transform
         sceneStorage.meshes[sceneData.numMeshes++] = mesh;
     }
 
-    meshTransforms.push_back(transform);
+    glm::mat3 defaultTransform = 0;
+    defaultTransform[2] = { 1, 1, 1 };
+
+    meshTransforms.push_back(defaultTransform);
     modelPaths.push_back(filename);
     m_Reset = true;
 }

@@ -26,8 +26,7 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
 
     if (!config["Objects"] || !config["Objects"].IsSequence()) return;
 
-    sceneManager.sceneData.numMeshes = 0;
-    sceneManager.sceneData.numSpheres = 0;
+    sceneManager.reset();
 
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
         YAML::Node object = config["Objects"][i];
@@ -40,7 +39,18 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
                 loadpath = std::string(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
             }
 
-            sceneManager.addMesh(loadpath, transform);
+            VKPT::Mesh mesh = object["Mesh"].as<VKPT::Mesh>();
+            uint32_t startMeshCount = sceneManager.sceneData.numMeshes;
+
+            sceneManager.addMesh(loadpath);
+
+            uint32_t meshCount = sceneManager.sceneData.numMeshes - startMeshCount;
+            for (uint32_t i = 0; i < meshCount; i++) {
+                uint32_t index = startMeshCount + i;
+                sceneManager.sceneStorage.meshes[index].material = mesh.material;
+                sceneManager.meshTransforms[index] = transform;
+            }
+
 
         } else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
