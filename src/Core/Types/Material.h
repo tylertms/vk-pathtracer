@@ -14,6 +14,7 @@ struct alignas(16) Material {
     vec3 color = { 1.0, 1.0, 1.0 };
     float emissionStrength = 0.0;
     vec3 emissionColor = { 1.0, 1.0, 1.0 };
+    float roughness = 1.0;
 };
 }
 
@@ -25,6 +26,7 @@ struct convert<VKPT::Material> {
         node["Color"] = rhs.color;
         node["EmissionColor"] = rhs.emissionColor;
         node["EmissionStrength"] = rhs.emissionStrength;
+        node["Roughness"] = rhs.roughness;
         return node;
     }
 
@@ -49,6 +51,10 @@ struct convert<VKPT::Material> {
             rhs.emissionStrength = node["EmissionStrength"].as<float>();
         }
 
+        if (node["Roughness"]) {
+            rhs.roughness = node["Roughness"].as<float>();
+        }
+
         return true;
     }
 };
@@ -62,6 +68,7 @@ struct Material {
     vec3 color;
     float emissionStrength;
     vec3 emissionColor;
+    float roughness;
 };
 
 /* ---------- GLSL ---------- */

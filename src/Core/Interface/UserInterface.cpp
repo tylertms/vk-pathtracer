@@ -217,6 +217,7 @@ bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
     if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01)) reset = true;
     if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
     if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color))) reset = true;
+    if (ImGui::DragFloat("Roughness", &sphere.material.roughness, 0.01, 0.0, 1.0)) reset = true;
     if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor))) reset = true;
     if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
     ImGui::Spacing();
@@ -232,6 +233,7 @@ bool UserInterface::drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t
     if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.1)) reset = true;
     if (ImGui::DragFloat3("Scale", (float *)(&sceneManager.meshTransforms[index][2]), 0.01)) reset = true;
     if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
+    if (ImGui::DragFloat("Roughness", &mesh.material.roughness, 0.01, 0.0, 1.0)) reset = true;
     if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
     if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
     ImGui::Spacing();

@@ -31,7 +31,10 @@ vec3 traceRay(Ray ray, inout uint state) {
 #endif
 
         ray.origin = hit.point;
-        ray.dir = normalize(hit.normal + randDir(state));
+
+        vec3 diffuseDir = normalize(hit.normal + randDir(state));
+        vec3 specularDir = reflect(ray.dir, hit.normal);
+        ray.dir = mix(specularDir, diffuseDir, hit.material.roughness);
         ray.inv = 1.0 / ray.dir;
 
         vec3 emittedLight = hit.material.emissionColor * hit.material.emissionStrength;
