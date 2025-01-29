@@ -45,7 +45,6 @@ class SceneManager {
     VkDeviceMemory m_UniformBufferMemory;
     void *m_UniformBufferMapped;
 
-    bool m_StorageChanged = false;
     VkBuffer m_StorageBuffer;
     VkDeviceMemory m_StorageBufferMemory;
     void *m_StorageBufferMapped;

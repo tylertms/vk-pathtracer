@@ -29,8 +29,8 @@ void SceneManager::submitUniformUpdates() {
 }
 
 void SceneManager::submitStorageUpdatesIfNeeded() {
-    if (!m_StorageChanged) return;
-    m_StorageChanged = false;
+    if (!m_Reset) return;
+    m_Reset = false;
     memcpy(m_StorageBufferMapped, &sceneStorage, sizeof(sceneStorage)); printf("SUBMITTING\n");
 }
 /* ----------------------------- */
@@ -52,9 +52,8 @@ bool SceneManager::resetOccurred() {
 /* ----------- SPHERE ----------- */
 void SceneManager::addSphere() {
     sceneData.numSpheres++;
-    m_StorageChanged = true;
+    m_Reset = true;
 }
-
 /* ----------------------------- */
 
 /* ----------- MESH ----------- */
@@ -71,9 +70,8 @@ void SceneManager::addMesh(const std::string filename) {
     }
 
     modelPaths.push_back(filename);
-    m_StorageChanged = true;
+    m_Reset = true;
 }
-
 /* ----------------------------- */
 
 } // namespace Vulkan

@@ -4,8 +4,6 @@
 #include "Common.glsl"
 #include "Random.glsl"
 
-//#define DEBUG_NORMAL
-
 Ray generateRay(vec2 uv, float aspectRatio) {
     uv.x *= aspectRatio;
 
