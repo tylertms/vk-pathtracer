@@ -1,7 +1,7 @@
 #include "UserInterface.h"
 
-#include "../Loader/FilePicker.h"
-#include "../Loader/SceneLoader.h"
+#include "../IO/FilePicker.h"
+#include "../IO/SceneLoader.h"
 
 namespace Interface {
 
@@ -198,7 +198,7 @@ bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PushID("##mesh");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Mesh")) {
-            if (drawMeshControl(sceneManager.sceneStorage.meshes[i])) {
+            if (drawMeshControl(sceneManager, i)) {
                 sceneManager.resetAccumulation();
             }
         }
@@ -223,12 +223,13 @@ bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
     return reset;
 }
 
-bool UserInterface::drawMeshControl(VKPT::Mesh &mesh) {
+bool UserInterface::drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index) {
     bool reset = false;
+    VKPT::Mesh &mesh = sceneManager.sceneStorage.meshes[index];
 
-    if (ImGui::DragFloat3("Translation", (float *)(&mesh.translation), 0.01)) reset = true;
-    if (ImGui::DragFloat3("Scale", (float *)(&mesh.scale), 0.01)) reset = true;
-    if (ImGui::DragFloat3("Rotation", (float *)(&mesh.rotation), 0.1)) reset = true;
+    if (ImGui::DragFloat3("Translation", (float *)(&sceneManager.meshTransforms[index][0]), 0.01)) reset = true;
+    if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.1)) reset = true;
+    if (ImGui::DragFloat3("Scale", (float *)(&sceneManager.meshTransforms[index][2]), 0.01)) reset = true;
     if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
     if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
     if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;

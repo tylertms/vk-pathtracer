@@ -4,7 +4,7 @@
 
 #ifdef __cplusplus
 /* ---------- C++ ---------- */
-#include "Vec3.h"
+#include "Math.h"
 #include <glm/glm.hpp>
 #include <yaml-cpp/yaml.h>
 using namespace glm;

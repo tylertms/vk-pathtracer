@@ -39,6 +39,11 @@ void SceneManager::submitStorageUpdatesIfNeeded() {
 void SceneManager::resetAccumulation() {
     m_Reset = true;
     sceneData.framesRendered = 0;
+
+
+    for (uint32_t i = 0; i < sceneData.numMeshes; i++) {
+        sceneStorage.meshes[i].invTransform = VKPT::computeInverseMatrix(meshTransforms[i]);
+    }
 }
 
 bool SceneManager::resetOccurred() {
@@ -58,6 +63,13 @@ void SceneManager::addSphere() {
 
 /* ----------- MESH ----------- */
 void SceneManager::addMesh(const std::string filename) {
+    glm::mat3 defaultTransform = 0;
+    defaultTransform[2] = { 1, 1, 1 };
+
+    addMesh(filename, defaultTransform);
+}
+
+void SceneManager::addMesh(const std::string filename, const glm::mat3 transform) {
     if (filename.empty()) return;
     Loader::GLTFLoader loader(filename);
 
@@ -69,6 +81,7 @@ void SceneManager::addMesh(const std::string filename) {
         sceneStorage.meshes[sceneData.numMeshes++] = mesh;
     }
 
+    meshTransforms.push_back(transform);
     modelPaths.push_back(filename);
     m_Reset = true;
 }

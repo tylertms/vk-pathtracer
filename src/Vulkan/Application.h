@@ -35,7 +35,7 @@ class Application {
 
   private:
     /* ----------------------- */
-    uint32_t MAX_FRAMES_IN_FLIGHT = 2;
+    uint32_t MAX_FRAMES_IN_FLIGHT = 1;
     uint32_t m_CurrentFrame = 0;
     ImVec2 m_Position = { 0, 0 };
     ImVec2 m_Extent = { 0, 0 };

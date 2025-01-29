@@ -3,18 +3,11 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace VKPT {
 
-glm::mat4 createTransformationMatrix(
-    const glm::vec3& scaleFactors,
-    const glm::vec3& rotationDegrees,
-    const glm::vec3& translation
-);
-
-glm::vec3 applyTransformation(
-    const glm::vec3& vec,
-    const glm::mat4& transform
-);
+glm::mat4 computeInverseMatrix(const glm::vec3 &translation, const glm::vec3 &rotationEuler, const glm::vec3 &scale);
+glm::mat4 computeInverseMatrix(const glm::mat3 matrix);
 
 }

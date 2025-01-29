@@ -17,12 +17,17 @@ HitPayload rayHitScene(Ray ray) {
     }
 
     for (int i = 0; i < scene.numMeshes; i++) {
-        float hitAABB = rayHitAABB(ray, meshes[i].bounds);
+        Ray localRay = ray;
+        localRay.origin = (meshes[i].invTransform * vec4(ray.origin, 1)).xyz;
+        localRay.dir = (meshes[i].invTransform * vec4(ray.dir, 0)).xyz;
+        localRay.inv = 1 / localRay.dir;
+
+        float hitAABB = rayHitAABB(localRay, meshes[i].bounds);
         if (hitAABB >= hit.distance) continue;
 
         for (int t = 0; t < meshes[i].triangleCount; t++) {
             uint index = meshes[i].startIndex + t;
-            temp = rayHitTriangle(ray, triangles[index]);
+            temp = rayHitTriangle(localRay, triangles[index]);
             if (temp.didHit && temp.distance < hit.distance)  {
                 hit = temp;
                 hit.material = meshes[i].material;

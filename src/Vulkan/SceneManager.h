@@ -6,12 +6,12 @@
 #include <vector>
 
 #include "Device.h"
+#include "VulkanApp.h"
+#include "vulkan/vulkan_core.h"
 
 #include "../Core/Types/Scene.h"
 #include "../Core/Utils/Matrix.h"
-#include "../Core/Loader/GLTFLoader.h"
-#include "VulkanApp.h"
-#include "vulkan/vulkan_core.h"
+#include "../Core/IO/GLTFLoader.h"
 
 namespace Vulkan {
 
@@ -33,10 +33,13 @@ class SceneManager {
 
     void addSphere();
     void addMesh(const std::string filename);
+    void addMesh(const std::string filename, const glm::mat3 transform);
 
     VKPT::SceneData sceneData;
     VKPT::StorageBuffer sceneStorage;
+
     std::vector<std::string> modelPaths;
+    std::vector<glm::mat3> meshTransforms;
 
   private:
     bool m_Reset = false;

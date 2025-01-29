@@ -43,7 +43,7 @@ class UserInterface {
     void setupDockspace();
     bool drawSceneControl(Vulkan::SceneManager &sceneManager);
     bool drawSphereControl(VKPT::Sphere &sphere);
-    bool drawMeshControl(VKPT::Mesh &mesh);
+    bool drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index);
 };
 
 } // namespace Interface
