@@ -24,7 +24,7 @@ endif()
 
 if(CMAKE_BUILD_TYPE MATCHES DEBUG)
     add_compile_options(-g -O0 -fno-omit-frame-pointer)
-    if(!WIN32)
+    if(NOT WIN32)
         add_compile_options(-fsanitize=address)
         add_link_options(-fsanitize=address)
     endif()
