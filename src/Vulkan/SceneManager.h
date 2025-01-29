@@ -20,20 +20,19 @@ class SceneManager {
     NO_COPY(SceneManager)
     SceneManager() = default;
 
-    inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
-    inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
-
     void init(const Device &device);
     void deinit(const VkDevice &device);
 
+    inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
+    inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
+
     void resetAccumulation();
     bool resetOccurred();
+    void submitUniformUpdates();
+    void submitStorageUpdatesIfNeeded();
 
     void addSphere();
     void addMesh(const std::string filename);
-
-    void submitUniformUpdates();
-    void submitStorageUpdatesIfNeeded();
 
     VKPT::SceneData sceneData;
     VKPT::StorageBuffer sceneStorage;
