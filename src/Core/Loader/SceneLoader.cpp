@@ -1,9 +1,7 @@
 #include "SceneLoader.h"
-#include "GLTFLoader.h"
 
 #include <filesystem>
 #include <fstream>
-#include <iostream>
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
@@ -21,7 +19,9 @@ std::string extractDirectory(const std::string& filepath) {
     return "";
 }
 
-void loadSceneFromYAML(const std::string &filename, std::vector<std::string> &modelPaths, VKPT::SceneObject &sceneObj, std::vector<VKPT::Triangle> &triangleBuffer) {
+void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneManager) {
+    if (filename.empty()) return;
+
     YAML::Node config = YAML::LoadFile(filename);
 
     if (!config["Objects"] || !config["Objects"].IsSequence()) return;
@@ -30,60 +30,40 @@ void loadSceneFromYAML(const std::string &filename, std::vector<std::string> &mo
         YAML::Node object = config["Objects"][i];
 
         if (object["Mesh"]) {
-            VKPT::Mesh mesh = object["Mesh"].as<VKPT::Mesh>();
-            if (sceneObj.numMeshes < MAX_MESHES) {
-                std::string loadpath = object["Mesh"]["File"].as<std::string>();
-                if (fs::path(loadpath).is_relative()) {
-                    loadpath = std::string(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
-                }
-                Loader::GLTFLoader loader(loadpath);
-
-                modelPaths.push_back(object["Mesh"]["File"].as<std::string>());
-                std::vector<VKPT::Triangle> triangles = loader.getTriangles();
-
-                mesh.startIndex = triangleBuffer.size();
-                mesh.triangleCount = triangles.size();
-
-                triangleBuffer.reserve(mesh.startIndex + mesh.triangleCount);
-                for (int j = 0; j < mesh.triangleCount; j++) {
-                    sceneObj.triangles[mesh.startIndex + j] = triangles[j];
-                    triangleBuffer.push_back(triangles[j]);
-                }
-                sceneObj.meshes[sceneObj.numMeshes++] = mesh;
-                sceneObj.numTriangles += mesh.triangleCount;
-
-            } else {
-                std::cerr << "Warning: Maximum number of meshes reached.\n";
+            std::string loadpath = object["Mesh"]["File"].as<std::string>();
+            if (fs::path(loadpath).is_relative()) {
+                loadpath = std::string(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
             }
+
+            sceneManager.addMesh(loadpath);
+
         } else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
-            if (sceneObj.numSpheres < MAX_SPHERES) {
-                sceneObj.spheres[sceneObj.numSpheres++] = sphere;
-            } else {
-                std::cerr << "Warning: Maximum number of spheres reached.\n";
-            }
+            sceneManager.sceneStorage.spheres[sceneManager.sceneUniform.data.numSpheres++] = sphere;
         }
     }
 }
 
-void saveSceneToYAML(const std::string &filename, VKPT::SceneObject &sceneObj, const std::vector<std::string> &modelPaths) {
+void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager) {
+    if (filename.empty()) return;
+
     YAML::Node config;
 
-    if (modelPaths.size() != sceneObj.numMeshes) {
+    if (sceneManager.modelPaths.size() != sceneManager.sceneUniform.data.numMeshes) {
         throw std::runtime_error("Number of model paths does not match the number of meshes.");
     }
 
-    for (uint32_t i = 0; i < sceneObj.numMeshes; ++i) {
-        YAML::Node meshProperties = YAML::Node(sceneObj.meshes[i]);
-        meshProperties["File"] = modelPaths[i];
+    for (uint32_t i = 0; i < sceneManager.sceneUniform.data.numMeshes; i++) {
+        YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage.meshes[i]);
+        meshProperties["File"] = sceneManager.modelPaths[i];
 
         YAML::Node meshNode;
         meshNode["Mesh"] = meshProperties;
         config["Objects"].push_back(meshNode);
     }
 
-    for (uint32_t i = 0; i < sceneObj.numSpheres; ++i) {
-        YAML::Node sphereProperties = YAML::Node(sceneObj.spheres[i]);
+    for (uint32_t i = 0; i < sceneManager.sceneUniform.data.numSpheres; i++) {
+        YAML::Node sphereProperties = YAML::Node(sceneManager.sceneStorage.spheres[i]);
 
         YAML::Node sphereNode;
         sphereNode["Sphere"] = sphereProperties;

@@ -27,7 +27,10 @@ class SceneManager {
 
     inline const VkBuffer &getVkBuffer() const { return m_Buffer; }
 
-    void submitUpdates() {
+    void submitUpdatesIfNeeded() {
+        if (!m_StorageChanged) return;
+        printf("SUBMITTING\n");
+        m_StorageChanged = false;
         memcpy(m_BufferMapped, &sceneStorage, sizeof(sceneStorage));
     }
 
@@ -37,6 +40,8 @@ class SceneManager {
 
   private:
     bool m_Reset = false;
+    bool m_StorageChanged = false;
+
     VkBuffer m_Buffer;
     VkDeviceMemory m_BufferMemory;
     void *m_BufferMapped;

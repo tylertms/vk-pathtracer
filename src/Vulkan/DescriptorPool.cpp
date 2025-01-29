@@ -1,4 +1,5 @@
 #include "DescriptorPool.h"
+#include "vulkan/vulkan_core.h"
 
 #include <stdexcept>
 
@@ -10,7 +11,7 @@ void DescriptorPool::init(const VkDevice &device, uint32_t descriptorCount) {
     poolSizes[0].descriptorCount = descriptorCount;
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
     poolSizes[1].descriptorCount = descriptorCount;
-    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     poolSizes[2].descriptorCount = descriptorCount;
 
     VkDescriptorPoolCreateInfo poolInfo{};

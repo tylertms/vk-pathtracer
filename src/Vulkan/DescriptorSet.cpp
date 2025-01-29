@@ -9,7 +9,7 @@ void DescriptorSet::deinit(const VkDevice &device) {
     vkDestroyDescriptorSetLayout(device, m_DescriptorSetLayout, nullptr);
 }
 
-void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, const ImageView &accumulationImageView, const VkDescriptorPool &descriptorPool) {
+void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneManager, const ImageView &accumulationImageView, const VkDescriptorPool &descriptorPool){
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
@@ -20,24 +20,29 @@ void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, co
         throw std::runtime_error("ERROR: Failed to allocate descriptor sets.");
     }
 
-    VkDescriptorBufferInfo bufferInfo{};
-    bufferInfo.buffer = uniform.getVkBuffer();
-    bufferInfo.offset = 0;
-    bufferInfo.range = sizeof(VKPT::SceneObject);
+    VkDescriptorBufferInfo uniformBufferInfo{};
+    uniformBufferInfo.buffer = sceneManager.sceneUniform.getVkBuffer();
+    uniformBufferInfo.offset = 0;
+    uniformBufferInfo.range = sizeof(VKPT::SceneData);
 
     VkDescriptorImageInfo accumulatorImageInfo{};
     accumulatorImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
     accumulatorImageInfo.imageView = accumulationImageView.getVkImageView();
     accumulatorImageInfo.sampler = nullptr;
 
-    VkWriteDescriptorSet descriptorWrites[2]{};
+    VkDescriptorBufferInfo storageBufferInfo{};
+    storageBufferInfo.buffer = sceneManager.getVkBuffer();
+    storageBufferInfo.offset = 0;
+    storageBufferInfo.range = sizeof(VKPT::StorageBuffer);
+
+    VkWriteDescriptorSet descriptorWrites[5]{};
     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrites[0].dstSet = m_DescriptorSet;
     descriptorWrites[0].dstBinding = 0;
     descriptorWrites[0].dstArrayElement = 0;
     descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     descriptorWrites[0].descriptorCount = 1;
-    descriptorWrites[0].pBufferInfo = &bufferInfo;
+    descriptorWrites[0].pBufferInfo = &uniformBufferInfo;
 
     descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrites[1].dstSet = m_DescriptorSet;
@@ -47,7 +52,15 @@ void DescriptorSet::createSet(const VkDevice &device, const Uniform &uniform, co
     descriptorWrites[1].descriptorCount = 1;
     descriptorWrites[1].pImageInfo = &accumulatorImageInfo;
 
-    vkUpdateDescriptorSets(device, 2, descriptorWrites, 0, nullptr);
+    descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[2].dstSet = m_DescriptorSet;
+    descriptorWrites[2].dstBinding = 2;
+    descriptorWrites[2].dstArrayElement = 0;
+    descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    descriptorWrites[2].descriptorCount = 1;
+    descriptorWrites[2].pBufferInfo = &storageBufferInfo;
+
+    vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, nullptr);
 }
 
 void DescriptorSet::createLayout(const VkDevice &device) {
@@ -65,11 +78,22 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     accumulationBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     accumulationBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding bindings[] = {uboLayoutBinding, accumulationBinding};
+    VkDescriptorSetLayoutBinding storageBufferBinding{};
+    storageBufferBinding.binding = 2;
+    storageBufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    storageBufferBinding.descriptorCount = 1;
+    storageBufferBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    storageBufferBinding.pImmutableSamplers = nullptr;
+
+    VkDescriptorSetLayoutBinding bindings[] = {
+        uboLayoutBinding,
+        accumulationBinding,
+        storageBufferBinding
+    };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 2;
+    layoutInfo.bindingCount = 3;
     layoutInfo.pBindings = bindings;
 
     if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {

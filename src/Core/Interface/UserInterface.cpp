@@ -1,7 +1,7 @@
 #include "UserInterface.h"
 
 #include "../Loader/FilePicker.h"
-
+#include "../Loader/SceneLoader.h"
 
 namespace Interface {
 
@@ -60,9 +60,9 @@ void UserInterface::deinit() {
 }
 
 void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
-    VKPT::SceneObject *sceneObj = sceneManager.getObject();
+
     ImGui::Begin("Statistics");
-    ImGui::Text("Frames: %d", sceneObj->framesRendered);
+    ImGui::Text("Frames: %d", sceneManager.sceneUniform.getFramesRendered());
 
     float total = 0;
     int count = 0;
@@ -87,22 +87,25 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
         if (ImGui::BeginMenu("Add")) {
             if (ImGui::MenuItem("Sphere")) {
                 sceneManager.addSphere();
+                sceneManager.resetAccumulation();
             }
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Load")) {
             if (ImGui::MenuItem("Scene")) {
-                sceneManager.loadFromFile(pickFilePath(VKPT_SCENE, VKPT_LOAD));
+                Loader::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
+                sceneManager.resetAccumulation();
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
+                sceneManager.resetAccumulation();
             }
             ImGui::EndMenu();
         }
 
         if (ImGui::MenuItem("Save")) {
-            sceneManager.saveToFile(pickFilePath(VKPT_SCENE, VKPT_SAVE));
+            Loader::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
         }
 
         if (ImGui::BeginMenu("View")) {
@@ -177,15 +180,13 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
 }
 
 bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
-    VKPT::SceneObject *sceneObj = sceneManager.getObject();
-
     ImGui::Begin("Scene Control");
 
-    for (int i = 0; i < sceneObj->numSpheres; i++) {
+    for (int i = 0; i < sceneManager.sceneUniform.data.numSpheres; i++) {
         ImGui::PushID("##sphere");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Sphere")) {
-            if (drawSphereControl(sceneObj->spheres[i])) {
+            if (drawSphereControl(sceneManager.sceneStorage.spheres[i])) {
                 sceneManager.resetAccumulation();
             }
         }
@@ -193,13 +194,12 @@ bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PopID();
     }
 
-    for (int i = 0; i < sceneObj->numMeshes; i++) {
+    for (int i = 0; i < sceneManager.sceneUniform.data.numMeshes; i++) {
         ImGui::PushID("##mesh");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Mesh")) {
-            if (drawMeshControl(sceneObj->meshes[i])) {
+            if (drawMeshControl(sceneManager.sceneStorage.meshes[i])) {
                 sceneManager.resetAccumulation();
-                sceneManager.applyMeshProperties(sceneObj->meshes[i]);
             }
         }
         ImGui::PopID();

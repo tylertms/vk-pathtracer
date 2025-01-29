@@ -2,7 +2,7 @@
 
 #include "FilePicker.h"
 #include "../../External/tiny_gltf/tiny_gltf.h"
-#include "../Types/SceneObject.h"
+#include "../Types/Scene.h"
 
 #include <string>
 #include <glm/glm.hpp>

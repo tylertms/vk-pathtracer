@@ -37,6 +37,7 @@ bool SceneManager::resetOccurred() {
 /* ----------- SPHERE ----------- */
 void SceneManager::addSphere() {
     sceneUniform.data.numSpheres++;
+    m_StorageChanged = true;
 }
 
 /* ----------------------------- */
@@ -55,6 +56,7 @@ void SceneManager::addMesh(const std::string filename) {
     }
 
     modelPaths.push_back(filename);
+    m_StorageChanged = true;
 }
 
 /* ----------------------------- */

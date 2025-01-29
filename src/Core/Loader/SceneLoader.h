@@ -1,13 +1,15 @@
 #pragma once
 
 #include <string>
-#include "../Types/SceneObject.h"
+
+#include "../Types/Scene.h"
+#include "../../Vulkan/SceneManager.h"
 
 namespace Loader {
 
 std::string extractDirectory(const std::string& filepath);
 
-void loadSceneFromYAML(const std::string &filename, std::vector<std::string> &modelPaths, VKPT::SceneObject &sceneObj, std::vector<VKPT::Triangle> &triangleBuffer);
-void saveSceneToYAML(const std::string &filename, VKPT::SceneObject &sceneObj, const std::vector<std::string> &modelPaths);
+void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneManager);
+void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager);
 
 }

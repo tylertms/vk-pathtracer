@@ -9,23 +9,23 @@ HitPayload rayHitScene(Ray ray) {
     hit.distance = 1.#INF;
 
     for (int i = 0; i < scene.numSpheres; i++) {
-        temp = rayHitSphere(ray, scene.spheres[i]);
+        temp = rayHitSphere(ray, spheres[i]);
         if (temp.didHit && temp.distance < hit.distance) {
             hit = temp;
-            hit.material = scene.spheres[i].material;
+            hit.material = spheres[i].material;
         }
     }
 
     for (int i = 0; i < scene.numMeshes; i++) {
-        float hitAABB = rayHitAABB(ray, scene.meshes[i].bounds);
+        float hitAABB = rayHitAABB(ray, meshes[i].bounds);
         if (hitAABB >= hit.distance) continue;
 
-        for (int t = 0; t < scene.meshes[i].triangleCount; t++) {
-            uint index = scene.meshes[i].startIndex + t;
-            temp = rayHitTriangle(ray, scene.triangles[index]);
+        for (int t = 0; t < meshes[i].triangleCount; t++) {
+            uint index = meshes[i].startIndex + t;
+            temp = rayHitTriangle(ray, triangles[index]);
             if (temp.didHit && temp.distance < hit.distance)  {
                 hit = temp;
-                hit.material = scene.meshes[i].material;
+                hit.material = meshes[i].material;
             }
         }
     }
