@@ -1,5 +1,6 @@
 #include "SceneLoader.h"
 
+#include <_stdio.h>
 #include <filesystem>
 #include <fstream>
 #include <vector>
@@ -23,7 +24,6 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
     if (filename.empty()) return;
 
     YAML::Node config = YAML::LoadFile(filename);
-
     if (!config["Objects"] || !config["Objects"].IsSequence()) return;
 
     sceneManager.reset();
@@ -47,16 +47,18 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
             uint32_t meshCount = sceneManager.sceneData.numMeshes - startMeshCount;
             for (uint32_t i = 0; i < meshCount; i++) {
                 uint32_t index = startMeshCount + i;
-                sceneManager.sceneStorage.meshes[index].material = mesh.material;
+                sceneManager.sceneStorage->meshes[index].material = mesh.material;
                 sceneManager.meshTransforms[index] = transform;
             }
 
-
         } else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
-            sceneManager.sceneStorage.spheres[sceneManager.sceneData.numSpheres++] = sphere;
+            sceneManager.sceneStorage->spheres[sceneManager.sceneData.numSpheres++] = sphere;
         }
     }
+
+    sceneManager.updateMeshTransforms();
+    sceneManager.uploadFullStorageBuffer();
 }
 
 void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager) {
@@ -69,7 +71,7 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
-        YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage.meshes[i]);
+        YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage->meshes[i]);
         meshProperties["File"] = sceneManager.modelPaths[i];
         meshProperties["Transform"] = sceneManager.meshTransforms[i];
 
@@ -79,7 +81,7 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numSpheres; i++) {
-        YAML::Node sphereProperties = YAML::Node(sceneManager.sceneStorage.spheres[i]);
+        YAML::Node sphereProperties = YAML::Node(sceneManager.sceneStorage->spheres[i]);
 
         YAML::Node sphereNode;
         sphereNode["Sphere"] = sphereProperties;

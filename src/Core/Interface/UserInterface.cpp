@@ -87,7 +87,6 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
         if (ImGui::BeginMenu("Add")) {
             if (ImGui::MenuItem("Sphere")) {
                 sceneManager.addSphere();
-                sceneManager.resetAccumulation();
             }
             ImGui::EndMenu();
         }
@@ -95,11 +94,10 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
         if (ImGui::BeginMenu("Load")) {
             if (ImGui::MenuItem("Scene")) {
                 Loader::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
-                sceneManager.resetAccumulation();
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
-                sceneManager.resetAccumulation();
+                sceneManager.uploadFullStorageBuffer();
             }
             ImGui::EndMenu();
         }
@@ -186,7 +184,8 @@ bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PushID("##sphere");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Sphere")) {
-            if (drawSphereControl(sceneManager.sceneStorage.spheres[i])) {
+            if (drawSphereControl(sceneManager.sceneStorage->spheres[i])) {
+                sceneManager.uploadPartialStorageBuffer();
                 sceneManager.resetAccumulation();
             }
         }
@@ -199,6 +198,8 @@ bool UserInterface::drawSceneControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Mesh")) {
             if (drawMeshControl(sceneManager, i)) {
+                sceneManager.updateMeshTransforms();
+                sceneManager.uploadPartialStorageBuffer();
                 sceneManager.resetAccumulation();
             }
         }
@@ -225,7 +226,7 @@ bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
 
 bool UserInterface::drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index) {
     bool reset = false;
-    VKPT::Mesh &mesh = sceneManager.sceneStorage.meshes[index];
+    VKPT::Mesh &mesh = sceneManager.sceneStorage->meshes[index];
 
     if (ImGui::DragFloat3("Translation", (float *)(&sceneManager.meshTransforms[index][0]), 0.01)) reset = true;
     if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.1)) reset = true;

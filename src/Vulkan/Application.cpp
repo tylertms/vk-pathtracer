@@ -163,7 +163,6 @@ void Application::drawFrame() {
     }
 
     m_SceneManager.submitUniformUpdates();
-    m_SceneManager.submitStorageUpdatesIfNeeded();
     m_SceneManager.sceneData.framesRendered++;
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
