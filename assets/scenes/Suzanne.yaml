@@ -4,7 +4,7 @@ Objects:
         Color: [1, 1, 1]
         EmissionColor: [1, 1, 1]
         EmissionStrength: 0
-      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/suzanne.glb
+      File: ../models/suzanne.glb
       Transform: [0, 0.370000005, -0.0900000036, 153.300003, 26.5, 14.6999998, 1, 1, 1]
   - Sphere:
       Center: [42.2099991, 0, -15.54]
