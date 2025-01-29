@@ -26,16 +26,21 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
 
     if (!config["Objects"] || !config["Objects"].IsSequence()) return;
 
+    sceneManager.sceneData.numMeshes = 0;
+    sceneManager.sceneData.numSpheres = 0;
+
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
         YAML::Node object = config["Objects"][i];
 
         if (object["Mesh"]) {
+            glm::mat3 transform = object["Mesh"]["Transform"].as<glm::mat3>();
             std::string loadpath = object["Mesh"]["File"].as<std::string>();
+
             if (fs::path(loadpath).is_relative()) {
                 loadpath = std::string(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
             }
 
-            sceneManager.addMesh(loadpath);
+            sceneManager.addMesh(loadpath, transform);
 
         } else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
@@ -56,6 +61,7 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage.meshes[i]);
         meshProperties["File"] = sceneManager.modelPaths[i];
+        meshProperties["Transform"] = sceneManager.meshTransforms[i];
 
         YAML::Node meshNode;
         meshNode["Mesh"] = meshProperties;
