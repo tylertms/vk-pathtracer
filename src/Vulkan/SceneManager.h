@@ -10,12 +10,18 @@
 #include "../Core/Types/Scene.h"
 #include "../Core/Utils/Matrix.h"
 #include "../Core/Loader/GLTFLoader.h"
+#include "VulkanApp.h"
 #include "vulkan/vulkan_core.h"
 
 namespace Vulkan {
 
 class SceneManager {
   public:
+    NO_COPY(SceneManager)
+    SceneManager() = default;
+
+    inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
+    inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
 
     void init(const Device &device);
     void deinit(const VkDevice &device);
@@ -26,18 +32,8 @@ class SceneManager {
     void addSphere();
     void addMesh(const std::string filename);
 
-    inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
-    inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
-
-    void submitUniformUpdates() {
-        memcpy(m_UniformBufferMapped, &sceneData, sizeof(sceneData));
-    }
-
-    void submitStorageUpdatesIfNeeded() {
-        if (!m_StorageChanged) return;
-        m_StorageChanged = false;
-        memcpy(m_StorageBufferMapped, &sceneStorage, sizeof(sceneStorage)); printf("SUBMITTING\n");
-    }
+    void submitUniformUpdates();
+    void submitStorageUpdatesIfNeeded();
 
     VKPT::SceneData sceneData;
     VKPT::StorageBuffer sceneStorage;

@@ -23,6 +23,18 @@ void SceneManager::deinit(const VkDevice &device) {
 }
 /* ----------------------------- */
 
+/* ----------- MEMORY ----------- */
+void SceneManager::submitUniformUpdates() {
+    memcpy(m_UniformBufferMapped, &sceneData, sizeof(sceneData));
+}
+
+void SceneManager::submitStorageUpdatesIfNeeded() {
+    if (!m_StorageChanged) return;
+    m_StorageChanged = false;
+    memcpy(m_StorageBufferMapped, &sceneStorage, sizeof(sceneStorage)); printf("SUBMITTING\n");
+}
+/* ----------------------------- */
+
 /* ----------- RESET ----------- */
 void SceneManager::resetAccumulation() {
     m_Reset = true;
