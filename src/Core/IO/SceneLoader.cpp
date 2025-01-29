@@ -1,6 +1,5 @@
 #include "SceneLoader.h"
 
-#include <_stdio.h>
 #include <filesystem>
 #include <fstream>
 #include <vector>
