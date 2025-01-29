@@ -6,24 +6,27 @@ namespace Vulkan {
 
 /* ----------- INIT ----------- */
 void SceneManager::init(const Device &device) {
-    sceneUniform.init(device);
+    createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_UniformBuffer, m_UniformBufferMemory);
+    vkMapMemory(device.getVkDevice(), m_UniformBufferMemory, 0, sizeof(VKPT::SceneData), 0, &m_UniformBufferMapped);
 
-    createBuffer(device, sizeof(VKPT::StorageBuffer), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_Buffer, m_BufferMemory);
-    vkMapMemory(device.getVkDevice(), m_BufferMemory, 0, sizeof(VKPT::StorageBuffer), 0, &m_BufferMapped);
+    createBuffer(device, sizeof(VKPT::StorageBuffer), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_StorageBuffer, m_StorageBufferMemory);
+    vkMapMemory(device.getVkDevice(), m_StorageBufferMemory, 0, sizeof(VKPT::StorageBuffer), 0, &m_StorageBufferMapped);
+
 }
 
 void SceneManager::deinit(const VkDevice &device) {
-    sceneUniform.deinit(device);
+    vkDestroyBuffer(device, m_UniformBuffer, nullptr);
+    vkFreeMemory(device, m_UniformBufferMemory, nullptr);
 
-    vkDestroyBuffer(device, m_Buffer, nullptr);
-    vkFreeMemory(device, m_BufferMemory, nullptr);
+    vkDestroyBuffer(device, m_StorageBuffer, nullptr);
+    vkFreeMemory(device, m_StorageBufferMemory, nullptr);
 }
 /* ----------------------------- */
 
 /* ----------- RESET ----------- */
 void SceneManager::resetAccumulation() {
     m_Reset = true;
-    sceneUniform.setFramesRendered(0);
+    sceneData.framesRendered = 0;
 }
 
 bool SceneManager::resetOccurred() {
@@ -36,7 +39,7 @@ bool SceneManager::resetOccurred() {
 
 /* ----------- SPHERE ----------- */
 void SceneManager::addSphere() {
-    sceneUniform.data.numSpheres++;
+    sceneData.numSpheres++;
     m_StorageChanged = true;
 }
 
@@ -48,11 +51,11 @@ void SceneManager::addMesh(const std::string filename) {
     Loader::GLTFLoader loader(filename);
 
     for (auto &triangle : loader.getTriangles()) {
-        sceneStorage.triangles[sceneUniform.data.numTriangles++] = triangle;
+        sceneStorage.triangles[sceneData.numTriangles++] = triangle;
     }
 
     for (auto &mesh : loader.getMeshes()) {
-        sceneStorage.meshes[sceneUniform.data.numMeshes++] = mesh;
+        sceneStorage.meshes[sceneData.numMeshes++] = mesh;
     }
 
     modelPaths.push_back(filename);

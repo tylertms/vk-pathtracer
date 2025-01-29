@@ -5,11 +5,12 @@
 #include <stdint.h>
 #include <vector>
 
-#include "SceneUniform.h"
+#include "Device.h"
 
 #include "../Core/Types/Scene.h"
 #include "../Core/Utils/Matrix.h"
 #include "../Core/Loader/GLTFLoader.h"
+#include "vulkan/vulkan_core.h"
 
 namespace Vulkan {
 
@@ -25,26 +26,34 @@ class SceneManager {
     void addSphere();
     void addMesh(const std::string filename);
 
-    inline const VkBuffer &getVkBuffer() const { return m_Buffer; }
+    inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
+    inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
 
-    void submitUpdatesIfNeeded() {
-        if (!m_StorageChanged) return;
-        printf("SUBMITTING\n");
-        m_StorageChanged = false;
-        memcpy(m_BufferMapped, &sceneStorage, sizeof(sceneStorage));
+    void submitUniformUpdates() {
+        memcpy(m_UniformBufferMapped, &sceneData, sizeof(sceneData));
     }
 
-    SceneUniform sceneUniform;
+    void submitStorageUpdatesIfNeeded() {
+        if (!m_StorageChanged) return;
+        m_StorageChanged = false;
+        memcpy(m_StorageBufferMapped, &sceneStorage, sizeof(sceneStorage)); printf("SUBMITTING\n");
+    }
+
+    VKPT::SceneData sceneData;
     VKPT::StorageBuffer sceneStorage;
     std::vector<std::string> modelPaths;
 
   private:
     bool m_Reset = false;
-    bool m_StorageChanged = false;
 
-    VkBuffer m_Buffer;
-    VkDeviceMemory m_BufferMemory;
-    void *m_BufferMapped;
+    VkBuffer m_UniformBuffer;
+    VkDeviceMemory m_UniformBufferMemory;
+    void *m_UniformBufferMapped;
+
+    bool m_StorageChanged = false;
+    VkBuffer m_StorageBuffer;
+    VkDeviceMemory m_StorageBufferMemory;
+    void *m_StorageBufferMapped;
 };
 
 } // namespace Vulkan

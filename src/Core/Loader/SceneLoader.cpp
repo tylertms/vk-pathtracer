@@ -39,7 +39,7 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
 
         } else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
-            sceneManager.sceneStorage.spheres[sceneManager.sceneUniform.data.numSpheres++] = sphere;
+            sceneManager.sceneStorage.spheres[sceneManager.sceneData.numSpheres++] = sphere;
         }
     }
 }
@@ -49,11 +49,11 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
 
     YAML::Node config;
 
-    if (sceneManager.modelPaths.size() != sceneManager.sceneUniform.data.numMeshes) {
+    if (sceneManager.modelPaths.size() != sceneManager.sceneData.numMeshes) {
         throw std::runtime_error("Number of model paths does not match the number of meshes.");
     }
 
-    for (uint32_t i = 0; i < sceneManager.sceneUniform.data.numMeshes; i++) {
+    for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage.meshes[i]);
         meshProperties["File"] = sceneManager.modelPaths[i];
 
@@ -62,7 +62,7 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
         config["Objects"].push_back(meshNode);
     }
 
-    for (uint32_t i = 0; i < sceneManager.sceneUniform.data.numSpheres; i++) {
+    for (uint32_t i = 0; i < sceneManager.sceneData.numSpheres; i++) {
         YAML::Node sphereProperties = YAML::Node(sceneManager.sceneStorage.spheres[i]);
 
         YAML::Node sphereNode;

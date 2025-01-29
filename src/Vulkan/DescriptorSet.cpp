@@ -21,7 +21,7 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     }
 
     VkDescriptorBufferInfo uniformBufferInfo{};
-    uniformBufferInfo.buffer = sceneManager.sceneUniform.getVkBuffer();
+    uniformBufferInfo.buffer = sceneManager.getUniformBuffer();
     uniformBufferInfo.offset = 0;
     uniformBufferInfo.range = sizeof(VKPT::SceneData);
 
@@ -31,7 +31,7 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     accumulatorImageInfo.sampler = nullptr;
 
     VkDescriptorBufferInfo storageBufferInfo{};
-    storageBufferInfo.buffer = sceneManager.getVkBuffer();
+    storageBufferInfo.buffer = sceneManager.getStorageBuffer();
     storageBufferInfo.offset = 0;
     storageBufferInfo.range = sizeof(VKPT::StorageBuffer);
 

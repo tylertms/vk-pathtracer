@@ -53,7 +53,7 @@ Application::Application() {
 
     m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
 
-    m_SceneManager.sceneUniform.setCamAspectRatio(m_Window.getAspectRatio());
+    m_SceneManager.sceneData.camera.aspectRatio = m_Window.getAspectRatio();
 }
 
 Application::~Application() {
@@ -143,13 +143,11 @@ void Application::onResize() {
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_SceneManager, m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
-    m_SceneManager.sceneUniform.setCamAspectRatio(m_Window.getAspectRatio());
-
     for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
-    m_SceneManager.sceneUniform.setFramesRendered(0);
-    m_SceneManager.sceneUniform.setCamAspectRatio((float)m_Extent.x / m_Extent.y);
+    m_SceneManager.sceneData.framesRendered = 0;
+    m_SceneManager.sceneData.camera.aspectRatio = (float)m_Extent.x / m_Extent.y;
     m_SceneManager.resetAccumulation();
 }
 
@@ -165,9 +163,9 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
-    m_SceneManager.sceneUniform.submitUpdates();
-    m_SceneManager.sceneUniform.incrementFramesRendered();
-    m_SceneManager.submitUpdatesIfNeeded();
+    m_SceneManager.submitUniformUpdates();
+    m_SceneManager.submitStorageUpdatesIfNeeded();
+    m_SceneManager.sceneData.framesRendered++;
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
 
@@ -186,7 +184,7 @@ void Application::drawFrame() {
     bool extentChanged = m_Extent.x != previousExtent.x || m_Extent.y != previousExtent.y;
 
     if (positionChanged || extentChanged) {
-        m_SceneManager.sceneUniform.setCamAspectRatio((float)m_Extent.x / m_Extent.y);
+        m_SceneManager.sceneData.camera.aspectRatio = (float)m_Extent.x / m_Extent.y;
         m_SceneManager.resetAccumulation();
     }
 
