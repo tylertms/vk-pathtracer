@@ -11,7 +11,8 @@ using namespace glm;
 
 namespace VKPT {
 struct alignas(16) Mesh {
-    mat4 invTransform;
+    mat4 worldLocalTransform;
+    mat4 localWorldTransform;
     uint32_t triangleCount;
     uint32_t startIndex;
     AABB bounds;
@@ -47,7 +48,8 @@ struct convert<VKPT::Mesh> {
 /* ---------- GLSL ---------- */
 
 struct Mesh {
-    mat4 invTransform;
+    mat4 worldLocalTransform;
+    mat4 localWorldTransform;
     uint triangleCount;
     uint startIndex;
     AABB bounds;

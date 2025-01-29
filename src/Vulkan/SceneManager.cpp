@@ -49,7 +49,9 @@ void SceneManager::resetAccumulation() {
 
 
     for (uint32_t i = 0; i < sceneData.numMeshes; i++) {
-        sceneStorage.meshes[i].invTransform = VKPT::computeInverseMatrix(meshTransforms[i]);
+        auto &localWorld = sceneStorage.meshes[i].localWorldTransform;
+        auto &worldLocal = sceneStorage.meshes[i].worldLocalTransform;
+        VKPT::computeInverseMatrix(worldLocal, localWorld, meshTransforms[i]);
     }
 }
 

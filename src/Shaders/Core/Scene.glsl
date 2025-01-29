@@ -3,13 +3,13 @@
 
 #include "../../Core/Types/AABB.h"
 
-HitPayload rayHitScene(Ray ray) {
+HitPayload rayHitScene(Ray worldRay) {
     HitPayload hit, temp;
     hit.didHit = false;
     hit.distance = 1.#INF;
 
     for (int i = 0; i < scene.numSpheres; i++) {
-        temp = rayHitSphere(ray, spheres[i]);
+        temp = rayHitSphere(worldRay, spheres[i]);
         if (temp.didHit && temp.distance < hit.distance) {
             hit = temp;
             hit.material = spheres[i].material;
@@ -17,10 +17,10 @@ HitPayload rayHitScene(Ray ray) {
     }
 
     for (int i = 0; i < scene.numMeshes; i++) {
-        Ray localRay = ray;
-        localRay.origin = (meshes[i].invTransform * vec4(ray.origin, 1)).xyz;
-        localRay.dir = (meshes[i].invTransform * vec4(ray.dir, 0)).xyz;
-        localRay.inv = 1 / localRay.dir;
+        Ray localRay;
+        localRay.origin = vec3(meshes[i].worldLocalTransform * vec4(worldRay.origin, 1.f));
+        localRay.dir = normalize(vec3(meshes[i].worldLocalTransform * vec4(worldRay.dir, 0.f)));
+        localRay.inv = 1 / (localRay.dir + 0.0000001);
 
         float hitAABB = rayHitAABB(localRay, meshes[i].bounds);
         if (hitAABB >= hit.distance) continue;
@@ -30,6 +30,8 @@ HitPayload rayHitScene(Ray ray) {
             temp = rayHitTriangle(localRay, triangles[index]);
             if (temp.didHit && temp.distance < hit.distance)  {
                 hit = temp;
+                hit.point = worldRay.origin + worldRay.dir * hit.distance;
+                hit.normal = normalize(vec3(meshes[i].localWorldTransform * vec4(temp.normal, 0.f)));
                 hit.material = meshes[i].material;
             }
         }
