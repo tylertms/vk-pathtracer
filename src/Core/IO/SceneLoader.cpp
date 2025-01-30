@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-namespace Loader {
+namespace IO {
 
 std::string extractDirectory(const std::string& filepath) {
     size_t pos = filepath.find_last_of("/\\");

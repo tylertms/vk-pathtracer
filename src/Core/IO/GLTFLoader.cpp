@@ -5,7 +5,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 
-namespace Loader {
+namespace IO {
 
 GLTFLoader::GLTFLoader(VKPT_FILE_TYPE type) : GLTFLoader(pickFilePath(type, VKPT_LOAD)) {}
 

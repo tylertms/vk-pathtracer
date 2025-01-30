@@ -94,7 +94,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
 
         if (ImGui::BeginMenu("Load")) {
             if (ImGui::MenuItem("Scene")) {
-                Loader::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
+                IO::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
@@ -106,7 +106,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
         }
 
         if (ImGui::MenuItem("Save")) {
-            Loader::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
+            IO::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
         }
 
         if (ImGui::BeginMenu("View")) {

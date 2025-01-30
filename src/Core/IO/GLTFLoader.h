@@ -8,7 +8,7 @@
 #include <glm/glm.hpp>
 
 using namespace tinygltf;
-namespace Loader {
+namespace IO {
 
 class GLTFLoader {
   public:

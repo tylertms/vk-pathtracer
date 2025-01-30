@@ -5,7 +5,7 @@
 #include "../Types/Scene.h"
 #include "../../Vulkan/SceneManager.h"
 
-namespace Loader {
+namespace IO {
 
 std::string extractDirectory(const std::string& filepath);
 
