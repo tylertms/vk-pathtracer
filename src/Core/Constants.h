@@ -1,9 +1,6 @@
 #ifndef CORE_CONSTANTS_H
 #define CORE_CONSTANTS_H
 
-#define SAMPLES_PER_PIXEL 1
-#define MAX_BOUNCES 8
-
 #define MAX_SPHERES 64
 #define MAX_MESHES 64
 #define MAX_TRIANGLES 16000

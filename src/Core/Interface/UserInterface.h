@@ -32,7 +32,8 @@ class UserInterface {
     void draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent);
 
   private:
-    bool m_ShowSceneControl = true;
+    bool m_ShowCameraControl = true;
+    bool m_ShowObjectControl = true;
     bool m_ShowStats = true;
 
     std::vector<float> m_FrameTimes;
@@ -41,7 +42,8 @@ class UserInterface {
     void drawStats(Vulkan::SceneManager &sceneManager);
     void drawMenuBar(Vulkan::SceneManager &sceneManager);
     void setupDockspace();
-    bool drawSceneControl(Vulkan::SceneManager &sceneManager);
+    bool drawCameraControl(Vulkan::SceneManager &sceneManager);
+    bool drawObjectControl(Vulkan::SceneManager &sceneManager);
     bool drawSphereControl(VKPT::Sphere &sphere);
     bool drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index);
 };
