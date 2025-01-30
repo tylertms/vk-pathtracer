@@ -52,7 +52,7 @@ Application::Application() {
 
     m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
 
-    m_SceneManager.sceneData.camera.aspectRatio = m_Window.getAspectRatio();
+    m_SceneManager.sceneData.camera.windowSize = glm::uvec2(m_Window.getWidth(), m_Window.getHeight());
 }
 
 Application::~Application() {
@@ -146,7 +146,7 @@ void Application::onResize() {
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
     m_SceneManager.sceneData.framesRendered = 0;
-    m_SceneManager.sceneData.camera.aspectRatio = (float)m_Extent.x / m_Extent.y;
+    m_SceneManager.sceneData.camera.windowSize = glm::uvec2(m_Extent.x, m_Extent.y);
     m_SceneManager.resetAccumulation();
 }
 
@@ -182,7 +182,7 @@ void Application::drawFrame() {
     bool extentChanged = m_Extent.x != previousExtent.x || m_Extent.y != previousExtent.y;
 
     if (positionChanged || extentChanged) {
-        m_SceneManager.sceneData.camera.aspectRatio = (float)m_Extent.x / m_Extent.y;
+        m_SceneManager.sceneData.camera.windowSize = glm::uvec2(m_Extent.x, m_Extent.y);
         m_SceneManager.resetAccumulation();
     }
 
