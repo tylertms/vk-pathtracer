@@ -27,6 +27,11 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
 
     sceneManager.reset();
 
+    if (config["Camera"] && config["Camera"].IsMap()) {
+        VKPT::Camera camera = config["Camera"].as<VKPT::Camera>();
+        sceneManager.sceneData.camera = camera;
+    }
+
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
         YAML::Node object = config["Objects"][i];
 
@@ -49,8 +54,9 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
                 sceneManager.sceneStorage->meshes[index].material = mesh.material;
                 sceneManager.meshTransforms[index] = transform;
             }
+        }
 
-        } else if (object["Sphere"]) {
+        else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
             sceneManager.sceneStorage->spheres[sceneManager.sceneData.numSpheres++] = sphere;
         }
@@ -68,6 +74,8 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     if (sceneManager.modelPaths.size() != sceneManager.sceneData.numMeshes) {
         throw std::runtime_error("Number of model paths does not match the number of meshes.");
     }
+
+    config["Camera"] = sceneManager.sceneData.camera;
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage->meshes[i]);
