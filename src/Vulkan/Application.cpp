@@ -51,7 +51,6 @@ Application::Application() {
     }
 
     m_Interface.init(m_Device, m_Instance, m_Window, m_ImGuiDescriptorPool, m_SwapChain, m_GraphicsPipeline);
-
     m_SceneManager.sceneData.camera.windowSize = glm::uvec2(m_Window.getWidth(), m_Window.getHeight());
 }
 
@@ -146,7 +145,7 @@ void Application::onResize() {
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
     /* ---------- END REINIT ---------- */
     m_SceneManager.sceneData.framesRendered = 0;
-    m_SceneManager.sceneData.camera.windowSize = glm::uvec2(m_Extent.x, m_Extent.y);
+    m_SceneManager.sceneData.camera.windowSize = glm::uvec2((uint32_t)m_Extent.x, (uint32_t)m_Extent.y);
     m_SceneManager.resetAccumulation();
 }
 
@@ -162,15 +161,11 @@ void Application::drawFrame() {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
     }
 
+    m_SceneManager.sceneData.camera.windowSize = glm::uvec2((uint32_t)m_Extent.x, (uint32_t)m_Extent.y);
     m_SceneManager.submitUniformUpdates();
     m_SceneManager.sceneData.framesRendered++;
 
     vkResetFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence());
-
-    if (m_Extent.x == 0 && m_Extent.y == 0) {
-        vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-        m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), m_Window, m_Position, m_Extent);
-    }
 
     ImVec2 previousPosition = m_Position;
     ImVec2 previousExtent = m_Extent;
@@ -182,7 +177,6 @@ void Application::drawFrame() {
     bool extentChanged = m_Extent.x != previousExtent.x || m_Extent.y != previousExtent.y;
 
     if (positionChanged || extentChanged) {
-        m_SceneManager.sceneData.camera.windowSize = glm::uvec2(m_Extent.x, m_Extent.y);
         m_SceneManager.resetAccumulation();
     }
 
