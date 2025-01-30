@@ -62,7 +62,7 @@ struct convert<VKPT::Camera> {
         }
 
         if (node["FocalDistance"]) {
-            rhs.vfov = node["FocalDistance"].as<float>();
+            rhs.focalDistance = node["FocalDistance"].as<float>();
         }
 
         if (node["SamplesPerPixel"]) {
@@ -70,7 +70,7 @@ struct convert<VKPT::Camera> {
         }
 
         if (node["MaxBounces"]) {
-            rhs.samplesPerPixel = node["MaxBounces"].as<uint32_t>();
+            rhs.maxBounces = node["MaxBounces"].as<uint32_t>();
         }
 
         if (node["Defocus"]) {
