@@ -1,0 +1,111 @@
+Objects:
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/quad.glb
+      Transform: [0, 1.20000005, 0, -180, 0, 0, 1.70000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 0, 0]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/quad.glb
+      Transform: [-1.70000005, 0, 0, 0, 0, -90, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/quad.glb
+      Transform: [0, 0, 1.20000005, -90, 0, 0, 1.70000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/quad.glb
+      Transform: [0, -1.20000005, 0, 0, 0, 0, 1.70000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [0, 1, 0]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/quad.glb
+      Transform: [1.70000005, 0, 0, 0, 0, 90, 1.20000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/scenes/../models/quad.glb
+      Transform: [0, 0, -1.20000005, 90, 0, 0, 1.70000005, 1.20000005, 1.20000005]
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 2.38000011
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/quad.glb
+      Transform: [0, -1.19000006, 0, 0, 0, 0, 0.5, 0.5, 0.5]
+  - Sphere:
+      Center: [-0.419999987, 0, 0]
+      Radius: 0.349999994
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0.5
+        Roughness: 0
+  - Sphere:
+      Center: [-1.24000001, 0, 0]
+      Radius: 0.349999994
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 1
+        Roughness: 0
+  - Sphere:
+      Center: [0.419999987, 0, 0]
+      Radius: 0.349999994
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0.150000006
+        Roughness: 0
+  - Sphere:
+      Center: [1.24000001, 0, 0]
+      Radius: 0.349999994
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0.0500000007
+        Roughness: 0
