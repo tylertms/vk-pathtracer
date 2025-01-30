@@ -11,11 +11,10 @@ Ray generateRay(vec2 uv, Camera camera, inout uint state) {
     vec2 planeJitter = randUnitCircle(state) * camera.diverge / camera.windowSize.x;
     vec2 originJitter = randUnitCircle(state) * camera.defocus / camera.windowSize.x;
 
-
-
     Ray ray;
     ray.origin = vec3(0, 0, -6);
     ray.origin += vec3(originJitter.x, originJitter.y, 0);
+
     vec3 targetPoint = vec3((uv + planeJitter) * camera.focalDistance / 4.f, ray.origin.z + camera.focalDistance);
     ray.dir = normalize(targetPoint - ray.origin);
     ray.inv = 1.0 / ray.dir;

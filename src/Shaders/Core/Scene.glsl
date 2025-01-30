@@ -22,8 +22,8 @@ HitPayload rayHitScene(Ray worldRay) {
         localRay.dir = vec3(meshes[i].worldLocalTransform * vec4(worldRay.dir, 0.f));
         localRay.inv = 1 / localRay.dir;
 
-        //float hitAABB = rayHitAABB(localRay, meshes[i].bounds);
-        //if (hitAABB >= hit.distance) continue;
+        float hitAABB = rayHitAABB(localRay, meshes[i].bounds);
+        if (hitAABB >= hit.distance) continue;
 
         for (int t = 0; t < meshes[i].triangleCount; t++) {
             uint index = meshes[i].startIndex + t;

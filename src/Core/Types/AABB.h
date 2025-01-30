@@ -10,8 +10,8 @@ using namespace glm;
 
 namespace VKPT {
 struct alignas(16) AABB {
-    alignas(16) vec3 min = { FLT_MAX, FLT_MAX, FLT_MAX };
-    alignas(16) vec3 max = -min;
+    alignas(16) vec3 min = { 0, 0, 0 };
+    alignas(16) vec3 max = { 0, 0, 0 };
 };
 }
 

@@ -37,6 +37,7 @@ class SceneManager {
     void addSphere();
     void addMesh(const std::string filename);
     void updateMeshTransforms();
+    void growBoundingBox(VKPT::Mesh &mesh);
 
     VKPT::SceneData sceneData;
     VKPT::StorageBuffer *sceneStorage;
