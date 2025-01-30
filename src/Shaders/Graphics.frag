@@ -35,13 +35,12 @@ void main() {
     ivec2 texCoord = ivec2(gl_FragCoord);
     uint state = (texCoord.y * 814793u + texCoord.x * 27u) ^ (scene.framesRendered * 102943u) ^ scene.framesRendered;
 
-    Ray ray = generateRay(fragUV, scene.camera.aspectRatio);
-
     vec3 totalLight = vec3(0);
-    for (uint i = 0; i < SAMPLES_PER_PIXEL; i++) {
-        totalLight += traceRay(ray, state);
+    for (uint i = 0; i < scene.camera.samplesPerPixel; i++) {
+        Ray ray = generateRay(fragUV, scene.camera, state);
+        totalLight += traceRay(ray, scene.camera.maxBounces, state);
     }
-    totalLight /= SAMPLES_PER_PIXEL;
+    totalLight /= scene.camera.samplesPerPixel;
 
     vec4 newColor = vec4(totalLight, 1);
 
