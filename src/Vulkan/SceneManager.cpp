@@ -8,21 +8,21 @@ namespace Vulkan {
 
 /* ----------- INIT ----------- */
 void SceneManager::init(const Device &device) {
-    sceneStorage = new VKPT::StorageBuffer;
+    sceneStorage = new VKPT::SceneStorage;
 
     createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_UniformBuffer, m_UniformBufferMemory);
     vkMapMemory(device.getVkDevice(), m_UniformBufferMemory, 0, sizeof(VKPT::SceneData), 0, &m_UniformBufferMapped);
 
-    createBuffer(device, sizeof(VKPT::StorageBuffer), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_StorageBuffer, m_StorageBufferMemory);
-    vkMapMemory(device.getVkDevice(), m_StorageBufferMemory, 0, sizeof(VKPT::StorageBuffer), 0, &m_StorageBufferMapped);
+    createBuffer(device, sizeof(VKPT::SceneStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_SceneStorage, m_SceneStorageMemory);
+    vkMapMemory(device.getVkDevice(), m_SceneStorageMemory, 0, sizeof(VKPT::SceneStorage), 0, &m_SceneStorageMapped);
 }
 
 void SceneManager::deinit(const VkDevice &device) {
     vkDestroyBuffer(device, m_UniformBuffer, nullptr);
     vkFreeMemory(device, m_UniformBufferMemory, nullptr);
 
-    vkDestroyBuffer(device, m_StorageBuffer, nullptr);
-    vkFreeMemory(device, m_StorageBufferMemory, nullptr);
+    vkDestroyBuffer(device, m_SceneStorage, nullptr);
+    vkFreeMemory(device, m_SceneStorageMemory, nullptr);
 
     delete sceneStorage;
 }
@@ -42,12 +42,12 @@ void SceneManager::submitUniformUpdates() {
     memcpy(m_UniformBufferMapped, &sceneData, sizeof(VKPT::SceneData));
 }
 
-void SceneManager::uploadPartialStorageBuffer() {
-    memcpy(m_StorageBufferMapped, sceneStorage, sizeof(VKPT::StorageBuffer::spheres) + sizeof(VKPT::StorageBuffer::meshes));
+void SceneManager::uploadPartialSceneStorage() {
+    memcpy(m_SceneStorageMapped, sceneStorage, sizeof(VKPT::SceneStorage::spheres) + sizeof(VKPT::SceneStorage::meshes));
 }
 
-void SceneManager::uploadFullStorageBuffer() {
-    memcpy(m_StorageBufferMapped, sceneStorage, sizeof(VKPT::StorageBuffer));
+void SceneManager::uploadFullSceneStorage() {
+    memcpy(m_SceneStorageMapped, sceneStorage, sizeof(VKPT::SceneStorage));
 }
 /* ----------------------------- */
 

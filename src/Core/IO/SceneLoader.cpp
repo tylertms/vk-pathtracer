@@ -63,7 +63,7 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
     }
 
     sceneManager.updateMeshTransforms();
-    sceneManager.uploadFullStorageBuffer();
+    sceneManager.uploadFullSceneStorage();
 }
 
 void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager) {

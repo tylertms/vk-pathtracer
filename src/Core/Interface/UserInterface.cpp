@@ -99,7 +99,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
                 sceneManager.updateMeshTransforms();
-                sceneManager.uploadFullStorageBuffer();
+                sceneManager.uploadFullSceneStorage();
                 sceneManager.resetAccumulation();
             }
             ImGui::EndMenu();
@@ -217,7 +217,7 @@ bool UserInterface::drawObjectControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Sphere")) {
             if (drawSphereControl(sceneManager.sceneStorage->spheres[i])) {
-                sceneManager.uploadPartialStorageBuffer();
+                sceneManager.uploadPartialSceneStorage();
                 sceneManager.resetAccumulation();
             }
         }
@@ -231,7 +231,7 @@ bool UserInterface::drawObjectControl(Vulkan::SceneManager &sceneManager) {
         if (ImGui::CollapsingHeader("Mesh")) {
             if (drawMeshControl(sceneManager, i)) {
                 sceneManager.updateMeshTransforms();
-                sceneManager.uploadPartialStorageBuffer();
+                sceneManager.uploadPartialSceneStorage();
                 sceneManager.resetAccumulation();
             }
         }

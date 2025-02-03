@@ -25,14 +25,14 @@ class SceneManager {
     void reset();
 
     inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
-    inline const VkBuffer &getStorageBuffer() const { return m_StorageBuffer; }
+    inline const VkBuffer &getSceneStorage() const { return m_SceneStorage; }
 
     void resetAccumulation();
     bool resetOccurred();
     void submitUniformUpdates();
 
-    void uploadPartialStorageBuffer();
-    void uploadFullStorageBuffer();
+    void uploadPartialSceneStorage();
+    void uploadFullSceneStorage();
 
     void addSphere();
     void addMesh(const std::string filename);
@@ -40,7 +40,7 @@ class SceneManager {
     void growBoundingBox(VKPT::Mesh &mesh);
 
     VKPT::SceneData sceneData;
-    VKPT::StorageBuffer *sceneStorage;
+    VKPT::SceneStorage *sceneStorage;
 
     std::vector<std::string> modelPaths;
     std::vector<glm::mat3> meshTransforms;
@@ -50,9 +50,9 @@ class SceneManager {
     VkDeviceMemory m_UniformBufferMemory;
     void *m_UniformBufferMapped;
 
-    VkBuffer m_StorageBuffer;
-    VkDeviceMemory m_StorageBufferMemory;
-    void *m_StorageBufferMapped;
+    VkBuffer m_SceneStorage;
+    VkDeviceMemory m_SceneStorageMemory;
+    void *m_SceneStorageMapped;
 };
 
 } // namespace Vulkan

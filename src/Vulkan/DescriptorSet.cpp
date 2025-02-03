@@ -30,10 +30,10 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     accumulatorImageInfo.imageView = accumulationImageView.getVkImageView();
     accumulatorImageInfo.sampler = nullptr;
 
-    VkDescriptorBufferInfo storageBufferInfo{};
-    storageBufferInfo.buffer = sceneManager.getStorageBuffer();
-    storageBufferInfo.offset = 0;
-    storageBufferInfo.range = sizeof(VKPT::StorageBuffer);
+    VkDescriptorBufferInfo SceneStorageInfo{};
+    SceneStorageInfo.buffer = sceneManager.getSceneStorage();
+    SceneStorageInfo.offset = 0;
+    SceneStorageInfo.range = sizeof(VKPT::SceneStorage);
 
     VkWriteDescriptorSet descriptorWrites[5]{};
     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -58,7 +58,7 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     descriptorWrites[2].dstArrayElement = 0;
     descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     descriptorWrites[2].descriptorCount = 1;
-    descriptorWrites[2].pBufferInfo = &storageBufferInfo;
+    descriptorWrites[2].pBufferInfo = &SceneStorageInfo;
 
     vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, nullptr);
 }
@@ -78,17 +78,17 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     accumulationBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     accumulationBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding storageBufferBinding{};
-    storageBufferBinding.binding = 2;
-    storageBufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-    storageBufferBinding.descriptorCount = 1;
-    storageBufferBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-    storageBufferBinding.pImmutableSamplers = nullptr;
+    VkDescriptorSetLayoutBinding SceneStorageBinding{};
+    SceneStorageBinding.binding = 2;
+    SceneStorageBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    SceneStorageBinding.descriptorCount = 1;
+    SceneStorageBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    SceneStorageBinding.pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutBinding bindings[] = {
         uboLayoutBinding,
         accumulationBinding,
-        storageBufferBinding
+        SceneStorageBinding
     };
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};

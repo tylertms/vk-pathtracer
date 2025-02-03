@@ -21,7 +21,7 @@ struct alignas(16) SceneData {
     uint32_t numTriangles = 0;
 };
 
-struct alignas(16) StorageBuffer {
+struct alignas(16) SceneStorage {
     Sphere spheres[MAX_SPHERES];
     Mesh meshes[MAX_MESHES];
     Triangle triangles[MAX_TRIANGLES];
