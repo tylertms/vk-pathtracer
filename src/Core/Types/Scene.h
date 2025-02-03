@@ -3,6 +3,7 @@
 
 #include "../Constants.h"
 
+#include "BVH.h"
 #include "Camera.h"
 #include "Mesh.h"
 #include "Triangle.h"
@@ -14,16 +15,18 @@
 namespace VKPT {
 struct alignas(16) SceneData {
     Camera camera;
-    uint32_t framesRendered = 0;
+    Sphere spheres[MAX_SPHERES];
+    Mesh meshes[MAX_MESHES];
 
     uint32_t numSpheres = 0;
     uint32_t numMeshes = 0;
     uint32_t numTriangles = 0;
+    uint32_t numBVHs = 0;
+    uint32_t framesRendered = 0;
 };
 
 struct alignas(16) SceneStorage {
-    Sphere spheres[MAX_SPHERES];
-    Mesh meshes[MAX_MESHES];
+    BVH bvhs[MAX_BVHS];
     Triangle triangles[MAX_TRIANGLES];
 };
 }

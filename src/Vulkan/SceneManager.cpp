@@ -42,11 +42,8 @@ void SceneManager::submitUniformUpdates() {
     memcpy(m_UniformBufferMapped, &sceneData, sizeof(VKPT::SceneData));
 }
 
-void SceneManager::uploadPartialSceneStorage() {
-    memcpy(m_SceneStorageMapped, sceneStorage, sizeof(VKPT::SceneStorage::spheres) + sizeof(VKPT::SceneStorage::meshes));
-}
-
 void SceneManager::uploadFullSceneStorage() {
+    printf("UPDATING FULL SCENE STORAGE\n");
     memcpy(m_SceneStorageMapped, sceneStorage, sizeof(VKPT::SceneStorage));
 }
 /* ----------------------------- */
@@ -77,7 +74,7 @@ void SceneManager::addMesh(const std::string filename) {
     for (auto mesh : loader.getMeshes()) {
         mesh.startIndex = triStartIndex;
         growBoundingBox(mesh);
-        sceneStorage->meshes[sceneData.numMeshes++] = mesh;
+        sceneData.meshes[sceneData.numMeshes++] = mesh;
     }
 
     glm::mat3 defaultTransform = 0;
@@ -89,8 +86,8 @@ void SceneManager::addMesh(const std::string filename) {
 
 void SceneManager::updateMeshTransforms() {
     for (uint32_t i = 0; i < sceneData.numMeshes; i++) {
-        auto &worldLocalTransform = sceneStorage->meshes[i].worldLocalTransform;
-        auto &localWorldTransform = sceneStorage->meshes[i].localWorldTransform;
+        auto &worldLocalTransform = sceneData.meshes[i].worldLocalTransform;
+        auto &localWorldTransform = sceneData.meshes[i].localWorldTransform;
         VKPT::computeInverseMatrix(worldLocalTransform, localWorldTransform, meshTransforms[i]);
     }
 }

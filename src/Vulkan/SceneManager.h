@@ -30,8 +30,6 @@ class SceneManager {
     void resetAccumulation();
     bool resetOccurred();
     void submitUniformUpdates();
-
-    void uploadPartialSceneStorage();
     void uploadFullSceneStorage();
 
     void addSphere();

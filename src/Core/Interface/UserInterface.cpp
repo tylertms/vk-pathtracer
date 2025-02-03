@@ -2,6 +2,7 @@
 
 #include "../IO/FilePicker.h"
 #include "../IO/SceneLoader.h"
+#include "../BVH/BVH.h"
 
 namespace Interface {
 
@@ -98,6 +99,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
+                BVH::createBVH(sceneManager);
                 sceneManager.updateMeshTransforms();
                 sceneManager.uploadFullSceneStorage();
                 sceneManager.resetAccumulation();
@@ -216,8 +218,7 @@ bool UserInterface::drawObjectControl(Vulkan::SceneManager &sceneManager) {
         ImGui::PushID("##sphere");
         ImGui::PushID(i);
         if (ImGui::CollapsingHeader("Sphere")) {
-            if (drawSphereControl(sceneManager.sceneStorage->spheres[i])) {
-                sceneManager.uploadPartialSceneStorage();
+            if (drawSphereControl(sceneManager.sceneData.spheres[i])) {
                 sceneManager.resetAccumulation();
             }
         }
@@ -231,7 +232,6 @@ bool UserInterface::drawObjectControl(Vulkan::SceneManager &sceneManager) {
         if (ImGui::CollapsingHeader("Mesh")) {
             if (drawMeshControl(sceneManager, i)) {
                 sceneManager.updateMeshTransforms();
-                sceneManager.uploadPartialSceneStorage();
                 sceneManager.resetAccumulation();
             }
         }
@@ -261,7 +261,7 @@ bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
 
 bool UserInterface::drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index) {
     bool reset = false;
-    VKPT::Mesh &mesh = sceneManager.sceneStorage->meshes[index];
+    VKPT::Mesh &mesh = sceneManager.sceneData.meshes[index];
 
     if (ImGui::DragFloat3("Translation", (float *)(&sceneManager.meshTransforms[index][0]), 0.01)) reset = true;
     if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.5)) reset = true;

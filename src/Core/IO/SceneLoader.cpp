@@ -51,14 +51,14 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
             uint32_t meshCount = sceneManager.sceneData.numMeshes - startMeshCount;
             for (uint32_t i = 0; i < meshCount; i++) {
                 uint32_t index = startMeshCount + i;
-                sceneManager.sceneStorage->meshes[index].material = mesh.material;
+                sceneManager.sceneData.meshes[index].material = mesh.material;
                 sceneManager.meshTransforms[index] = transform;
             }
         }
 
         else if (object["Sphere"]) {
             VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
-            sceneManager.sceneStorage->spheres[sceneManager.sceneData.numSpheres++] = sphere;
+            sceneManager.sceneData.spheres[sceneManager.sceneData.numSpheres++] = sphere;
         }
     }
 
@@ -78,7 +78,7 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     config["Camera"] = sceneManager.sceneData.camera;
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
-        YAML::Node meshProperties = YAML::Node(sceneManager.sceneStorage->meshes[i]);
+        YAML::Node meshProperties = YAML::Node(sceneManager.sceneData.meshes[i]);
         meshProperties["File"] = sceneManager.modelPaths[i];
         meshProperties["Transform"] = sceneManager.meshTransforms[i];
 
@@ -88,7 +88,7 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numSpheres; i++) {
-        YAML::Node sphereProperties = YAML::Node(sceneManager.sceneStorage->spheres[i]);
+        YAML::Node sphereProperties = YAML::Node(sceneManager.sceneData.spheres[i]);
 
         YAML::Node sphereNode;
         sphereNode["Sphere"] = sphereProperties;

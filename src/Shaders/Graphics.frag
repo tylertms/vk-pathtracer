@@ -10,17 +10,20 @@ layout (location = 0) in vec2 fragUV;
 
 layout (binding = 0, std140) readonly uniform SceneUniform {
     Camera camera;
-    uint framesRendered;
+    Sphere spheres[MAX_SPHERES];
+    Mesh meshes[MAX_MESHES];
+
     uint numSpheres;
     uint numMeshes;
     uint numTriangles;
+    uint numBVHs;
+    uint framesRendered;
 } scene;
 
 layout (binding = 1, rgba32f) coherent uniform image2D accumulationImage;
 
 layout (binding = 2, std430) readonly buffer SceneStorage {
-    Sphere spheres[MAX_SPHERES];
-    Mesh meshes[MAX_MESHES];
+    BVH bvhs[MAX_BVHS];
     Triangle triangles[MAX_TRIANGLES];
 };
 
