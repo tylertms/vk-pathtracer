@@ -4,7 +4,7 @@
 #include "Common.glsl"
 #include "Random.glsl"
 
-// #define DEBUG_NORMAL
+#define DEBUG_NORMAL
 
 Ray generateRay(vec2 uv, Camera camera, inout uint state) {
     uv.x *= float(camera.windowSize.x) / camera.windowSize.y;
