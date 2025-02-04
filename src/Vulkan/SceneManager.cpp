@@ -1,5 +1,7 @@
 #include "SceneManager.h"
 
+#include "ImageView.h"
+#include "Texture.h"
 #include "../Core/BVH/Builder.h"
 #include "vulkan/vulkan_core.h"
 
@@ -9,7 +11,7 @@
 namespace Vulkan {
 
 /* ----------- INIT ----------- */
-void SceneManager::init(const Device &device) {
+void SceneManager::init(const Device &device, const CommandPool &commandPool) {
     sceneStorage = new VKPT::SceneStorage;
 
     createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_UniformBuffer, m_UniformBufferMemory);
@@ -17,6 +19,8 @@ void SceneManager::init(const Device &device) {
 
     createBuffer(device, sizeof(VKPT::SceneStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_SceneStorage, m_SceneStorageMemory);
     vkMapMemory(device.getVkDevice(), m_SceneStorageMemory, 0, sizeof(VKPT::SceneStorage), 0, &m_SceneStorageMapped);
+
+    createTextureImage(m_TextureEnv, device, commandPool);
 }
 
 void SceneManager::deinit(const VkDevice &device) {
@@ -25,6 +29,8 @@ void SceneManager::deinit(const VkDevice &device) {
 
     vkDestroyBuffer(device, m_SceneStorage, nullptr);
     vkFreeMemory(device, m_SceneStorageMemory, nullptr);
+
+    m_TextureEnv.deinit(device);
 
     delete sceneStorage;
 }

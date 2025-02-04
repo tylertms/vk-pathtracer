@@ -6,17 +6,19 @@
 namespace Vulkan {
 
 void DescriptorPool::init(const VkDevice &device, uint32_t descriptorCount) {
-    VkDescriptorPoolSize poolSizes[3]{};
+    VkDescriptorPoolSize poolSizes[4]{};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = descriptorCount;
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
     poolSizes[1].descriptorCount = descriptorCount;
-    poolSizes[2].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     poolSizes[2].descriptorCount = descriptorCount;
+    poolSizes[3].type = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    poolSizes[3].descriptorCount = descriptorCount;
 
     VkDescriptorPoolCreateInfo poolInfo{};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 3;
+    poolInfo.poolSizeCount = 4;
     poolInfo.pPoolSizes = poolSizes;
     poolInfo.maxSets = descriptorCount;
 

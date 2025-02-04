@@ -25,6 +25,11 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     uniformBufferInfo.offset = 0;
     uniformBufferInfo.range = sizeof(VKPT::SceneData);
 
+    VkDescriptorImageInfo envSamplerInfo{};
+    envSamplerInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+    envSamplerInfo.imageView = sceneManager.getEnvImageView();
+    envSamplerInfo.sampler = sceneManager.getEnvSampler();
+
     VkDescriptorImageInfo accumulatorImageInfo{};
     accumulatorImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
     accumulatorImageInfo.imageView = accumulationImageView.getVkImageView();
@@ -35,7 +40,7 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     SceneStorageInfo.offset = 0;
     SceneStorageInfo.range = sizeof(VKPT::SceneStorage);
 
-    VkWriteDescriptorSet descriptorWrites[5]{};
+    VkWriteDescriptorSet descriptorWrites[4]{};
     descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     descriptorWrites[0].dstSet = m_DescriptorSet;
     descriptorWrites[0].dstBinding = 0;
@@ -56,11 +61,19 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
     descriptorWrites[2].dstSet = m_DescriptorSet;
     descriptorWrites[2].dstBinding = 2;
     descriptorWrites[2].dstArrayElement = 0;
-    descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     descriptorWrites[2].descriptorCount = 1;
-    descriptorWrites[2].pBufferInfo = &SceneStorageInfo;
+    descriptorWrites[2].pImageInfo = &envSamplerInfo;
 
-    vkUpdateDescriptorSets(device, 3, descriptorWrites, 0, nullptr);
+    descriptorWrites[3].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrites[3].dstSet = m_DescriptorSet;
+    descriptorWrites[3].dstBinding = 3;
+    descriptorWrites[3].dstArrayElement = 0;
+    descriptorWrites[3].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
+    descriptorWrites[3].descriptorCount = 1;
+    descriptorWrites[3].pBufferInfo = &SceneStorageInfo;
+
+    vkUpdateDescriptorSets(device, 4, descriptorWrites, 0, nullptr);
 }
 
 void DescriptorSet::createLayout(const VkDevice &device) {
@@ -78,8 +91,15 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     accumulationBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     accumulationBinding.pImmutableSamplers = nullptr;
 
+    VkDescriptorSetLayoutBinding envSamplerBinding{};
+    envSamplerBinding.binding = 2;
+    envSamplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    envSamplerBinding.descriptorCount = 1;
+    envSamplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+    envSamplerBinding.pImmutableSamplers = nullptr;
+
     VkDescriptorSetLayoutBinding SceneStorageBinding{};
-    SceneStorageBinding.binding = 2;
+    SceneStorageBinding.binding = 3;
     SceneStorageBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     SceneStorageBinding.descriptorCount = 1;
     SceneStorageBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -88,11 +108,12 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     VkDescriptorSetLayoutBinding bindings[] = {
         uboLayoutBinding,
         accumulationBinding,
+        envSamplerBinding,
         SceneStorageBinding};
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-    layoutInfo.bindingCount = 3;
+    layoutInfo.bindingCount = 4;
     layoutInfo.pBindings = bindings;
 
     if (vkCreateDescriptorSetLayout(device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {

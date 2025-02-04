@@ -35,7 +35,7 @@ Application::Application() {
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
     m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
 
-    m_SceneManager.init(m_Device);
+    m_SceneManager.init(m_Device, m_CommandPool);
 
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
     m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
