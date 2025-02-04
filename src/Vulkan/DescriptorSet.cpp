@@ -27,8 +27,8 @@ void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneM
 
     VkDescriptorImageInfo envSamplerInfo{};
     envSamplerInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-    envSamplerInfo.imageView = sceneManager.getEnvImageView();
-    envSamplerInfo.sampler = sceneManager.getEnvSampler();
+    envSamplerInfo.imageView = sceneManager.envTexture.getVkImageView();
+    envSamplerInfo.sampler = sceneManager.envTexture.getVkSampler();
 
     VkDescriptorImageInfo accumulatorImageInfo{};
     accumulatorImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;

@@ -4,6 +4,6 @@
 
 namespace Vulkan {
 
-void createTextureImage(ImageView &textureImageView, const Device &device, const CommandPool &commandPool);
+void createTextureImage(const std::string filename, ImageView &textureImageView, const Device &device, const CommandPool &commandPool);
 
 }

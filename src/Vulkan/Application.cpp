@@ -119,6 +119,8 @@ void Application::onResize() {
         m_Framebuffers[i].deinit(m_Device.getVkDevice());
 
     m_AccumulationImageView.deinit(m_Device.getVkDevice());
+    m_SceneManager.envTexture.deinit(m_Device.getVkDevice());
+
     m_SwapChain.deinit(m_Device.getVkDevice());
 
     m_DescriptorPool.deinit(m_Device.getVkDevice());
@@ -138,13 +140,15 @@ void Application::onResize() {
     m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
     m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
 
+    m_SceneManager.loadEnv();
+
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
         m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_SceneManager, m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
 
     for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
+
     /* ---------- END REINIT ---------- */
-    m_SceneManager.sceneData.framesRendered = 0;
     m_SceneManager.sceneData.camera.windowSize = glm::uvec2((uint32_t)m_Extent.x, (uint32_t)m_Extent.y);
     m_SceneManager.resetAccumulation();
 }
@@ -171,7 +175,10 @@ void Application::drawFrame() {
     ImVec2 previousExtent = m_Extent;
 
     vkResetCommandBuffer(m_CommandBuffers[m_CurrentFrame].getVkCommandBuffer(), 0);
-    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface, m_Framebuffers[imageIndex].getVkFramebuffer(), m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(), m_Window, m_Position, m_Extent);
+    m_CommandBuffers[m_CurrentFrame].record(m_GraphicsPipeline, m_SceneManager, m_Interface,
+        m_Framebuffers[imageIndex].getVkFramebuffer(),
+        m_DescriptorSets[m_CurrentFrame].getVkDescriptorSet(),
+        m_Window, m_Position, m_Extent);
 
     bool positionChanged = m_Position.x != previousPosition.x || m_Position.y != previousPosition.y;
     bool extentChanged = m_Extent.x != previousExtent.x || m_Extent.y != previousExtent.y;
@@ -214,7 +221,7 @@ void Application::drawFrame() {
 
     result = vkQueuePresentKHR(m_Device.getPresentQueue(), &presentInfo);
 
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasResized()) {
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasResized() || m_SceneManager.updateTexture) {
         m_Window.clearResized();
         onResize();
     } else if (result != VK_SUCCESS) {
@@ -222,6 +229,7 @@ void Application::drawFrame() {
     }
 
     m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+
 }
 
 } // namespace Vulkan

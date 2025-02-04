@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Device.h"
+#include "ImageView.h"
 #include "VulkanApp.h"
 #include "vulkan/vulkan_core.h"
 
@@ -27,9 +28,6 @@ class SceneManager {
     inline const VkBuffer &getUniformBuffer() const { return m_UniformBuffer; }
     inline const VkBuffer &getSceneStorage() const { return m_SceneStorage; }
 
-    inline const VkImageView &getEnvImageView() const { return m_TextureEnv.getVkImageView(); }
-    inline const VkSampler &getEnvSampler() const { return m_TextureEnv.getVkSampler(); }
-
     void resetAccumulation();
     bool resetOccurred();
     void submitUniformUpdates();
@@ -37,6 +35,10 @@ class SceneManager {
 
     void addSphere();
     void addMesh(const std::string filename);
+
+    void queueEnv(const std::string filename);
+    void loadEnv();
+
     void updateMeshTransforms();
 
     VKPT::SceneData sceneData;
@@ -44,6 +46,10 @@ class SceneManager {
 
     std::vector<std::string> modelPaths;
     std::vector<glm::mat3> meshTransforms;
+
+    ImageView envTexture;
+    std::string texturePath;
+    bool updateTexture = false;
 
   private:
     VkBuffer m_UniformBuffer;
@@ -54,7 +60,8 @@ class SceneManager {
     VkDeviceMemory m_SceneStorageMemory;
     void *m_SceneStorageMapped;
 
-    ImageView m_TextureEnv;
+    const Device *ext_Device;
+    const CommandPool *ext_CommandPool;
 };
 
 } // namespace Vulkan
