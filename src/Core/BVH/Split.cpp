@@ -53,4 +53,4 @@ SplitData chooseSplit(const Vulkan::SceneManager &sceneManager, const VKPT::BVH 
     return best;
 }
 
-}
+} // namespace BVH

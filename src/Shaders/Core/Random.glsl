@@ -10,7 +10,7 @@ float rand(inout uint state) {
 }
 
 float randNormal(inout uint state) {
-    float theta = 6.2831853072f * rand(state);
+    float theta = 6.2831853072 * rand(state);
     float rho = sqrt(-2 * log(rand(state)));
     return rho * cos(theta);
 }
@@ -28,7 +28,7 @@ vec3 randHemisphereDir(vec3 normal, inout uint state) {
 }
 
 vec2 randUnitCircle(inout uint state) {
-    float angle = rand(state) * 6.2831853072f;
+    float angle = rand(state) * 6.2831853072;
     vec2 point = vec2(cos(angle), sin(angle));
     return point * sqrt(rand(state));
 }

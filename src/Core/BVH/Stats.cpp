@@ -3,7 +3,7 @@
 namespace BVH {
 
 void collectAndPrintStats(Vulkan::SceneManager &sceneManager, uint32_t rootIndex, float buildTime) {
-    const auto& bvhs = sceneManager.sceneStorage->bvhs;
+    const auto &bvhs = sceneManager.sceneStorage->bvhs;
 
     struct TraversalStats {
         int totalNodes = 0;
@@ -18,7 +18,7 @@ void collectAndPrintStats(Vulkan::SceneManager &sceneManager, uint32_t rootIndex
     } stats;
 
     std::function<void(uint32_t, int)> traverse = [&](uint32_t index, int depth) {
-        const auto& node = bvhs[index];
+        const auto &node = bvhs[index];
         stats.totalNodes++;
         stats.maxDepth = std::max(stats.maxDepth, depth);
 
@@ -48,12 +48,12 @@ void collectAndPrintStats(Vulkan::SceneManager &sceneManager, uint32_t rootIndex
     printf("Total Nodes:         %d\n", stats.totalNodes);
     printf("Leaf Nodes:          %d\n", stats.leafNodes);
     printf("Triangle Count:      Min: %d, Max: %d, Avg: %.1f\n",
-            stats.minTriangles, stats.maxTriangles, avgTriangles);
+           stats.minTriangles, stats.maxTriangles, avgTriangles);
     printf("Tree Depth:          %d\n", stats.maxDepth);
     printf("Leaf Depth:          Min: %d, Max: %d, Avg: %.1f\n",
-            stats.minLeafDepth, stats.maxLeafDepth, avgDepth);
+           stats.minLeafDepth, stats.maxLeafDepth, avgDepth);
     printf("Memory Usage:        %.2f KB\n", memoryUsage / 1024.0f);
     printf("============================\n\n");
 }
 
-}
+} // namespace BVH

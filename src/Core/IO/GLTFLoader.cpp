@@ -10,7 +10,8 @@ namespace IO {
 GLTFLoader::GLTFLoader(VKPT_FILE_TYPE type) : GLTFLoader(pickFilePath(type, VKPT_LOAD)) {}
 
 GLTFLoader::GLTFLoader(const std::string &filename) {
-    if (filename.empty()) return;
+    if (filename.empty())
+        return;
 
     if (!LoadModel(filename)) {
         std::cerr << "Failed to load glTF model: " << filename << std::endl;
@@ -135,4 +136,4 @@ bool GLTFLoader::LoadModel(const std::string &filename) {
     return true;
 }
 
-} // namespace Loader
+} // namespace IO

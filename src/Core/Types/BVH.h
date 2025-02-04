@@ -13,7 +13,7 @@ struct alignas(16) BVH {
     vec3 boundsMax = vec3(-FLT_MAX);
     uint32_t triangleCount = 0;
 };
-}
+} // namespace VKPT
 
 /* ---------- C++ ---------- */
 #else

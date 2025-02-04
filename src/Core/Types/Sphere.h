@@ -1,8 +1,8 @@
 #ifndef CORE_OBJECTS_SPHERE_H
 #define CORE_OBJECTS_SPHERE_H
 
-#include "Material.h"
 #include "../Constants.h"
+#include "Material.h"
 
 #ifdef __cplusplus
 /* ---------- C++ ---------- */
@@ -11,11 +11,11 @@ using namespace glm;
 
 namespace VKPT {
 struct alignas(16) Sphere {
-    vec3 center = { 0.0, 0.0, 0.0 };
+    vec3 center = {0.0, 0.0, 0.0};
     float radius = 0.5;
     Material material;
 };
-}
+} // namespace VKPT
 
 namespace YAML {
 template <>

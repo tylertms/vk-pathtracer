@@ -64,7 +64,8 @@ void SceneManager::addSphere() {
 
 /* ----------- MESH ----------- */
 void SceneManager::addMesh(const std::string filename) {
-    if (filename.empty()) return;
+    if (filename.empty())
+        return;
     IO::GLTFLoader loader(filename);
 
     uint32_t triStartIndex = sceneData.numTriangles;
@@ -74,10 +75,9 @@ void SceneManager::addMesh(const std::string filename) {
     }
 
     for (auto mesh : loader.getMeshes()) {
-        VKPT::BVH initBVH {
+        VKPT::BVH initBVH{
             .index = triStartIndex,
-            .triangleCount = static_cast<uint32_t>(loader.getTriangles().size())
-        };
+            .triangleCount = static_cast<uint32_t>(loader.getTriangles().size())};
 
         mesh.rootBVHNode = sceneData.numBVHs;
         sceneData.meshes[sceneData.numMeshes++] = mesh;
@@ -86,7 +86,7 @@ void SceneManager::addMesh(const std::string filename) {
     }
 
     glm::mat3 defaultTransform = 0;
-    defaultTransform[2] = { 1, 1, 1 };
+    defaultTransform[2] = {1, 1, 1};
 
     meshTransforms.push_back(defaultTransform);
     modelPaths.push_back(filename);

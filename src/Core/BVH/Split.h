@@ -11,6 +11,7 @@ struct SplitData {
 };
 
 float evaluateSplit(const Vulkan::SceneManager &sceneManager, const VKPT::BVH &bvh, int splitAxis, float splitPos);
-SplitData chooseSplit(const Vulkan::SceneManager &sceneManager, const VKPT::BVH &bvh);;
+SplitData chooseSplit(const Vulkan::SceneManager &sceneManager, const VKPT::BVH &bvh);
+;
 
-}
+} // namespace BVH

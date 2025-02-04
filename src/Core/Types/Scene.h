@@ -6,8 +6,8 @@
 #include "BVH.h"
 #include "Camera.h"
 #include "Mesh.h"
-#include "Triangle.h"
 #include "Sphere.h"
+#include "Triangle.h"
 
 #ifdef __cplusplus
 /* ---------- C++ ---------- */
@@ -29,7 +29,7 @@ struct alignas(16) SceneStorage {
     BVH bvhs[MAX_BVHS];
     Triangle triangles[MAX_TRIANGLES];
 };
-}
+} // namespace VKPT
 
 /* ---------- C++ ---------- */
 #endif

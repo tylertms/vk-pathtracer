@@ -1,6 +1,5 @@
 
 
-
 #ifndef CORE_OBJECTS_CAMERA_H
 #define CORE_OBJECTS_CAMERA_H
 
@@ -22,7 +21,7 @@ struct alignas(16) Camera {
     float defocus = 0.f;
     float diverge = 1.f;
 };
-}
+} // namespace VKPT
 
 namespace YAML {
 template <>
@@ -84,7 +83,7 @@ struct convert<VKPT::Camera> {
         return true;
     }
 };
-}
+} // namespace YAML
 
 /* ---------- C++ ---------- */
 #else

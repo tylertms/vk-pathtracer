@@ -1,11 +1,11 @@
 #pragma once
 
-#include "FilePicker.h"
 #include "../../External/tiny_gltf/tiny_gltf.h"
 #include "../Types/Scene.h"
+#include "FilePicker.h"
 
-#include <string>
 #include <glm/glm.hpp>
+#include <string>
 
 using namespace tinygltf;
 namespace IO {
@@ -29,4 +29,4 @@ class GLTFLoader {
     std::vector<VKPT::Mesh> m_Meshes;
 };
 
-} // namespace Loader
+} // namespace IO

@@ -178,7 +178,6 @@ int Device::getScore(const VkPhysicalDevice &physicalDevice, VkPhysicalDevicePro
     vkGetPhysicalDeviceProperties(physicalDevice, &properties);
     vkGetPhysicalDeviceFeatures(physicalDevice, &features);
 
-
     // List of valid device types, higher index is better
     const VkPhysicalDeviceType deviceTypes[4] = {
         VK_PHYSICAL_DEVICE_TYPE_CPU,

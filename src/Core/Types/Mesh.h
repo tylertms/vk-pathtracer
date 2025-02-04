@@ -15,7 +15,7 @@ struct alignas(16) Mesh {
     Material material;
     uint32_t rootBVHNode;
 };
-}
+} // namespace VKPT
 
 namespace YAML {
 template <>

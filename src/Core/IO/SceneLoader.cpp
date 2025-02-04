@@ -9,7 +9,7 @@ namespace fs = std::filesystem;
 
 namespace IO {
 
-std::string extractDirectory(const std::string& filepath) {
+std::string extractDirectory(const std::string &filepath) {
     size_t pos = filepath.find_last_of("/\\");
 
     if (pos != std::string::npos) {
@@ -20,10 +20,12 @@ std::string extractDirectory(const std::string& filepath) {
 }
 
 void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneManager) {
-    if (filename.empty()) return;
+    if (filename.empty())
+        return;
 
     YAML::Node config = YAML::LoadFile(filename);
-    if (!config["Objects"] || !config["Objects"].IsSequence()) return;
+    if (!config["Objects"] || !config["Objects"].IsSequence())
+        return;
 
     sceneManager.reset();
 
@@ -67,7 +69,8 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
 }
 
 void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager) {
-    if (filename.empty()) return;
+    if (filename.empty())
+        return;
 
     YAML::Node config;
 
@@ -103,4 +106,4 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     fout.close();
 }
 
-}
+} // namespace IO

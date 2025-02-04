@@ -17,6 +17,6 @@ inline float nodeCost(const glm::vec3 &boundsMin, const glm::vec3 &boundsMax, ui
     return halfArea * triangleCount;
 }
 
-void computeBounds(const Vulkan::SceneManager& sceneManager, VKPT::BVH &bvh);
+void computeBounds(const Vulkan::SceneManager &sceneManager, VKPT::BVH &bvh);
 
-}
+} // namespace BVH

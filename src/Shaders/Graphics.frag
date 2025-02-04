@@ -5,7 +5,7 @@
 #include "Core/Common.glsl"
 #include "../Core/Types/Scene.h"
 /* --------------------------------------*/
-layout(pixel_interlock_unordered) in;
+layout (pixel_interlock_unordered) in;
 layout (location = 0) in vec2 fragUV;
 
 layout (binding = 0, std140) readonly uniform SceneUniform {
@@ -18,7 +18,8 @@ layout (binding = 0, std140) readonly uniform SceneUniform {
     uint numTriangles;
     uint numBVHs;
     uint framesRendered;
-} scene;
+}
+scene;
 
 layout (binding = 1, rgba32f) coherent uniform image2D accumulationImage;
 
@@ -52,13 +53,13 @@ void main() {
     vec4 newColor = vec4(totalLight, 1);
 
 #ifdef DEBUG_BOX_TESTS
-    float boxTests = stats[0] / 500.0f;
+    float boxTests = stats[0] / 500.0;
     vec3 boxTestColor = boxTests > 1 ? vec3(1, 0, 0) : vec3(boxTests);
     newColor = vec4(boxTestColor, 1);
 #endif
 
 #ifdef DEBUG_TRI_TESTS
-    float triTests = stats[1] / 50.0f;
+    float triTests = stats[1] / 50.0;
     vec3 triTestColor = triTests > 1 ? vec3(1, 0, 0) : vec3(triTests);
     newColor = vec4(triTestColor, 1);
 #endif

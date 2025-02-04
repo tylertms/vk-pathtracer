@@ -42,8 +42,8 @@ HitPayload rayHitScene(Ray worldRay, inout uint stats[2]) {
         Mesh mesh = scene.meshes[i];
 
         Ray localRay;
-        localRay.origin = vec3(mesh.worldLocalTransform * vec4(worldRay.origin, 1.f));
-        localRay.dir = vec3(mesh.worldLocalTransform * vec4(worldRay.dir, 0.f));
+        localRay.origin = vec3(mesh.worldLocalTransform * vec4(worldRay.origin, 1.));
+        localRay.dir = vec3(mesh.worldLocalTransform * vec4(worldRay.dir, 0.));
         localRay.inv = 1 / localRay.dir;
 
         uint nodeStack[BVH_MAX_DEPTH];
@@ -65,13 +65,11 @@ HitPayload rayHitScene(Ray worldRay, inout uint stats[2]) {
                         hit.didHit = true;
                         hit.distance = temp.distance;
                         hit.point = worldRay.origin + worldRay.dir * temp.distance;
-                        hit.normal = normalize(vec3(mesh.localWorldTransform * vec4(temp.normal, 0.f)));
+                        hit.normal = normalize(vec3(mesh.localWorldTransform * vec4(temp.normal, 0.)));
                         hit.material = mesh.material;
                     }
                 }
-            }
-
-            else {
+            } else {
                 uint leftChildIndex = node.index;
                 uint rightChildIndex = node.index + 1;
 
@@ -89,8 +87,10 @@ HitPayload rayHitScene(Ray worldRay, inout uint stats[2]) {
                 uint nearChildIndex = isLeftNearest ? leftChildIndex : rightChildIndex;
                 uint farChildIndex = isLeftNearest ? rightChildIndex : leftChildIndex;
 
-                if (distFar < hit.distance) nodeStack[nodeIndex++] = farChildIndex;
-                if (distNear < hit.distance) nodeStack[nodeIndex++] = nearChildIndex;
+                if (distFar < hit.distance)
+                    nodeStack[nodeIndex++] = farChildIndex;
+                if (distNear < hit.distance)
+                    nodeStack[nodeIndex++] = nearChildIndex;
             }
         }
     }

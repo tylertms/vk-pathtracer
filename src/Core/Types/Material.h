@@ -11,14 +11,14 @@ using namespace glm;
 
 namespace VKPT {
 struct alignas(16) Material {
-    vec3 color = { 1.0, 1.0, 1.0 };
+    vec3 color = {1.0, 1.0, 1.0};
     float emissionStrength = 0.0;
-    vec3 emissionColor = { 1.0, 1.0, 1.0 };
+    vec3 emissionColor = {1.0, 1.0, 1.0};
     float roughness = 1.0;
-    vec3 specularColor = { 1.0, 1.0, 1.0 };
+    vec3 specularColor = {1.0, 1.0, 1.0};
     float specularFactor = 0.0;
 };
-}
+} // namespace VKPT
 
 namespace YAML {
 template <>

@@ -1,9 +1,9 @@
 #include "Builder.h"
 
-#include "Stats.h"
+#include "../Constants.h"
 #include "Bounds.h"
 #include "Split.h"
-#include "../Constants.h"
+#include "Stats.h"
 
 #include <algorithm>
 
@@ -24,17 +24,19 @@ void createBVH(VKPT::Mesh &mesh, VKPT::BVH &rootBVH, Vulkan::SceneManager &scene
 
 void splitBVH(Vulkan::SceneManager &sceneManager, uint32_t bvhIndex, uint8_t depth) {
     VKPT::BVH &bvh = sceneManager.sceneStorage->bvhs[bvhIndex];
-    if (bvh.triangleCount <= BVH_TRIANGLE_MIN || depth > BVH_MAX_DEPTH) return;
+    if (bvh.triangleCount <= BVH_TRIANGLE_MIN || depth > BVH_MAX_DEPTH)
+        return;
 
     SplitData split = chooseSplit(sceneManager, bvh);
-    if (split.cost >= nodeCost(bvh.boundsMin, bvh.boundsMax, bvh.triangleCount)) return;
+    if (split.cost >= nodeCost(bvh.boundsMin, bvh.boundsMax, bvh.triangleCount))
+        return;
 
     uint32_t start = bvh.index;
     uint32_t end = start + bvh.triangleCount;
     uint32_t leftCount = 0;
 
     for (uint32_t i = start; i < end; i++) {
-        VKPT::Triangle& tri = sceneManager.sceneStorage->triangles[i];
+        VKPT::Triangle &tri = sceneManager.sceneStorage->triangles[i];
         vec3 centroid = (tri.posA + tri.posB + tri.posC) / 3.0f;
         if (centroid[split.axis] < split.pos) {
             std::swap(tri, sceneManager.sceneStorage->triangles[start + leftCount]);
@@ -42,12 +44,13 @@ void splitBVH(Vulkan::SceneManager &sceneManager, uint32_t bvhIndex, uint8_t dep
         }
     }
 
-    if (leftCount == 0 || leftCount == bvh.triangleCount) return;
+    if (leftCount == 0 || leftCount == bvh.triangleCount)
+        return;
 
     uint32_t leftIndex = sceneManager.sceneData.numBVHs++;
     uint32_t rightIndex = sceneManager.sceneData.numBVHs++;
-    VKPT::BVH& left = sceneManager.sceneStorage->bvhs[leftIndex];
-    VKPT::BVH& right = sceneManager.sceneStorage->bvhs[rightIndex];
+    VKPT::BVH &left = sceneManager.sceneStorage->bvhs[leftIndex];
+    VKPT::BVH &right = sceneManager.sceneStorage->bvhs[rightIndex];
 
     left.index = start;
     left.triangleCount = leftCount;

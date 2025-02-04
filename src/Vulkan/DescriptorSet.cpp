@@ -9,7 +9,7 @@ void DescriptorSet::deinit(const VkDevice &device) {
     vkDestroyDescriptorSetLayout(device, m_DescriptorSetLayout, nullptr);
 }
 
-void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneManager, const ImageView &accumulationImageView, const VkDescriptorPool &descriptorPool){
+void DescriptorSet::createSet(const VkDevice &device, const SceneManager &sceneManager, const ImageView &accumulationImageView, const VkDescriptorPool &descriptorPool) {
     VkDescriptorSetAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = descriptorPool;
@@ -88,8 +88,7 @@ void DescriptorSet::createLayout(const VkDevice &device) {
     VkDescriptorSetLayoutBinding bindings[] = {
         uboLayoutBinding,
         accumulationBinding,
-        SceneStorageBinding
-    };
+        SceneStorageBinding};
 
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;

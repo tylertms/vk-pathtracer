@@ -15,7 +15,7 @@ struct alignas(16) Triangle {
     alignas(16) vec3 normB;
     alignas(16) vec3 normC;
 };
-}
+} // namespace VKPT
 
 /* ---------- C++ ---------- */
 #else
