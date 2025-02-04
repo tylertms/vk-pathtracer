@@ -68,10 +68,6 @@ GLTFLoader::GLTFLoader(const std::string &filename) {
                 }
             }
 
-            uint32_t startIndex = static_cast<uint32_t>(m_Triangles.size());
-
-            uint32_t triangleCount = static_cast<uint32_t>(indices.size() / 3);
-
             for (size_t i = 0; i + 2 < indices.size(); i += 3) {
                 unsigned int indexA = indices[i];
                 unsigned int indexB = indices[i + 1];
@@ -107,9 +103,6 @@ GLTFLoader::GLTFLoader(const std::string &filename) {
             }
 
             VKPT::Mesh meshStruct;
-            meshStruct.triangleCount = triangleCount;
-            meshStruct.startIndex = startIndex;
-
             m_Meshes.push_back(meshStruct);
         }
     }
