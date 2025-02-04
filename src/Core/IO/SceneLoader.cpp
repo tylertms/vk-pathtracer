@@ -34,6 +34,10 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
         sceneManager.sceneData.camera = camera;
     }
 
+    if (config["EnvTexture"]) {
+        sceneManager.queueEnv(config["EnvTexture"].as<std::string>());
+    }
+
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
         YAML::Node object = config["Objects"][i];
 
@@ -79,6 +83,10 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     }
 
     config["Camera"] = sceneManager.sceneData.camera;
+
+    if (!sceneManager.texturePath.empty()) {
+        config["EnvTexture"] = sceneManager.texturePath;
+    }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         YAML::Node meshProperties = YAML::Node(sceneManager.sceneData.meshes[i]);

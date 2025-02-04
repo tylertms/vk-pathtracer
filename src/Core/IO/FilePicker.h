@@ -6,7 +6,8 @@
 
 enum VKPT_FILE_TYPE {
     VKPT_SCENE,
-    VKPT_MODEL
+    VKPT_MODEL,
+    VKPT_HDRI
 };
 
 enum VKPT_FILE_ACTION {

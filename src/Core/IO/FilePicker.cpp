@@ -15,6 +15,8 @@ const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
     case VKPT_SCENE:
         filters[0] = {"YAML", "yaml,yml"};
         break;
+    case VKPT_HDRI:
+        filters[0] = {"HDRI", "hdr"};
     }
 
     nfdopendialogu8args_t openArgs = {0};
