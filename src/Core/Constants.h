@@ -3,9 +3,13 @@
 
 #define MAX_SPHERES 64
 #define MAX_MESHES 64
-#define MAX_TRIANGLES 16000
-#define MAX_BVHS 16000
+#define MAX_TRIANGLES 1000000
+#define MAX_BVHS 1000000
 
-#define EPSILON 1e-5
+#define BVH_MAX_DEPTH 32
+#define BVH_TRIANGLE_MIN 3
+#define BVH_AXIS_TESTS 8
+
+#define EPSILON 1e-8
 
 #endif
