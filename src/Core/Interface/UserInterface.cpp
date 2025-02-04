@@ -2,6 +2,7 @@
 
 #include "../IO/FilePicker.h"
 #include "../IO/SceneLoader.h"
+#include "../../Vulkan/Texture.h"
 
 namespace Interface {
 
@@ -102,6 +103,9 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
                 sceneManager.updateMeshTransforms();
                 sceneManager.uploadFullSceneStorage();
                 sceneManager.resetAccumulation();
+            }
+            if (ImGui::MenuItem("HDRI Environment")) {
+                sceneManager.queueEnv(pickFilePath(VKPT_HDRI, VKPT_LOAD));
             }
             ImGui::EndMenu();
         }
@@ -206,7 +210,7 @@ bool UserInterface::drawCameraControl(Vulkan::SceneManager &sceneManager) {
     if (ImGui::DragFloat("Focal Distance", &camera.focalDistance, 0.01f, 0.1f, 100.f)) reset = true;
     if (ImGui::DragFloat("Defocus Strength", &camera.defocus, 0.1f, 0.f, 1000.f)) reset = true;
     if (ImGui::DragFloat("Diverge Strength", &camera.diverge, 0.1f, 0.f, 1000.f)) reset = true;
-    if (ImGui::DragFloat("Exposure", &camera.exposure, 0.01f)) reset = true;
+    if (ImGui::DragFloat("Exposure", &camera.exposure, 0.01f, 0.01f, 1000.f)) reset = true;
     if (ImGui::DragFloat("Environment Rotation", &camera.envRotation, 0.5f)) reset = true;
 
     ImGui::End();
