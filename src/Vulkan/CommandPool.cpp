@@ -1,4 +1,5 @@
 #include "CommandPool.h"
+#include "vulkan/vulkan_core.h"
 
 #include <stdexcept>
 
@@ -55,12 +56,44 @@ void CommandPool::endSingleTimeCommands(VkCommandBuffer &commandBuffer, const De
     vkFreeCommandBuffers(device.getVkDevice(), m_CommandPool, 1, &commandBuffer);
 }
 
-void CommandPool::copyBuffer(const Device &device, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
+void CommandPool::copyBuffer(const Device &device, const VkBuffer &srcBuffer, VkBuffer &dstBuffer, VkDeviceSize size) const {
     VkCommandBuffer commandBuffer = beginSingleTimeCommands(device.getVkDevice());
 
     VkBufferCopy copyRegion{};
     copyRegion.size = size;
     vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+
+    endSingleTimeCommands(commandBuffer, device);
+}
+
+void CommandPool::copyBufferToImage(const Device &device, const VkBuffer &srcBuffer, VkImage &dstimage, VkExtent2D extent) const {
+    VkCommandBuffer commandBuffer = beginSingleTimeCommands(device.getVkDevice());
+
+    VkBufferImageCopy region{};
+    region.bufferOffset = 0;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
+
+    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+
+    region.imageOffset = {0, 0, 0};
+    region.imageExtent = {
+        extent.width,
+        extent.height,
+        1
+    };
+
+    vkCmdCopyBufferToImage(
+        commandBuffer,
+        srcBuffer,
+        dstimage,
+        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        1,
+        &region
+    );
 
     endSingleTimeCommands(commandBuffer, device);
 }

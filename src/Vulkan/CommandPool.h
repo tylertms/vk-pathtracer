@@ -17,7 +17,9 @@ class CommandPool {
 
     VkCommandBuffer beginSingleTimeCommands(const VkDevice &device) const;
     void endSingleTimeCommands(VkCommandBuffer &commandBuffer, const Device &device) const;
-    void copyBuffer(const Device &device, VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
+
+    void copyBuffer(const Device &device, const VkBuffer &srcBuffer, VkBuffer &dstBuffer, VkDeviceSize size) const;
+    void copyBufferToImage(const Device &device, const VkBuffer &srcBuffer, VkImage &dstimage, VkExtent2D extent) const;
 
   private:
     VkCommandPool m_CommandPool;
