@@ -1,7 +1,6 @@
 #ifndef CORE_OBJECTS_MESH_H
 #define CORE_OBJECTS_MESH_H
 
-#include "AABB.h"
 #include "Material.h"
 
 #ifdef __cplusplus
@@ -13,10 +12,8 @@ namespace VKPT {
 struct alignas(16) Mesh {
     mat4 worldLocalTransform;
     mat4 localWorldTransform;
-    uint32_t triangleCount;
-    uint32_t startIndex;
-    AABB bounds;
     Material material;
+    uint32_t rootBVHNode;
 };
 }
 
@@ -50,10 +47,8 @@ struct convert<VKPT::Mesh> {
 struct Mesh {
     mat4 worldLocalTransform;
     mat4 localWorldTransform;
-    uint triangleCount;
-    uint startIndex;
-    AABB bounds;
     Material material;
+    uint rootBVHNode;
 };
 
 /* ---------- GLSL ---------- */
