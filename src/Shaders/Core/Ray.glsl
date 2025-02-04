@@ -25,7 +25,7 @@ vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
         uv += randUnitCircle(state) * ENV_TEX_BLUR;
     }
 
-    return clamp(texture(envSampler, uv).rgb, 0, 10);
+    return clamp(texture(envSampler, uv).rgb, 0, 20);
 }
 
 Ray generateRay(vec2 uv, inout uint state) {
