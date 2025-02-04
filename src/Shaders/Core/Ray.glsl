@@ -4,7 +4,7 @@
 #include "Common.glsl"
 #include "Random.glsl"
 
-#define DEBUG_NORMAL
+// #define DEBUG_NORMAL
 
 Ray generateRay(vec2 uv, Camera camera, inout uint state) {
     uv.x *= float(camera.windowSize.x) / camera.windowSize.y;
@@ -22,17 +22,17 @@ Ray generateRay(vec2 uv, Camera camera, inout uint state) {
     return ray;
 }
 
-vec3 traceRay(Ray ray, uint maxBounces, inout uint state) {
+vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
     vec3 rayColor = vec3(1);
     vec3 incomingLight = vec3(0);
 
     for (uint i = 0; i <= maxBounces; i++) {
-        HitPayload hit = rayHitScene(ray);
+        HitPayload hit = rayHitScene(ray, stats);
         if (!hit.didHit)
             break;
 
 #ifdef DEBUG_NORMAL
-        return hit.normal * vec3(1, 1, -1);
+        return hit.normal * vec3(1, 1, -1);// * 0.5f + vec3(0.5);
 #endif
 
         ray.origin = hit.point;
