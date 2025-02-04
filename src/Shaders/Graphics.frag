@@ -34,7 +34,7 @@ layout (location = 0) out vec4 outColor;
 #include "Core/Ray.glsl"
 /* --------------------------------------*/
 
-#define DEBUG_TRI_TESTS
+// #define DEBUG_TRI_TESTS
 
 void main() {
     ivec2 texCoord = ivec2(gl_FragCoord);
