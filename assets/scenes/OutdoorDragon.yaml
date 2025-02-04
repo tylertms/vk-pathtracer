@@ -1,0 +1,32 @@
+Camera:
+  LookFrom: [0, 0, 0]
+  LookAt: [0, 0, 0]
+  VFOV: 0
+  FocalDistance: 4
+  SamplesPerPixel: 1
+  MaxBounces: 8
+  Defocus: 0
+  Diverge: 1
+  Exposure: 1
+  EnvRotation: 57
+Objects:
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/870k_dragon.glb
+      Transform: [0.75999999, 0, 0, 0, -48, 180, 3, 3, 3]
+  - Sphere:
+      Center: [-1.13, -0.239999995, 0]
+      Radius: 0.620000005
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 1
+        Roughness: 0
