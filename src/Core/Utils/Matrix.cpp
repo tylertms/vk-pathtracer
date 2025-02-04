@@ -11,7 +11,7 @@ void computeInverseMatrix(glm::mat4 &worldLocalTransform, glm::mat4 &localWorldT
     localWorldTransform = glm::transpose(worldLocalTransform);
 }
 
-void computeInverseMatrix(glm::mat4 &worldLocalTransform, glm::mat4 &localWorldTransform, const glm::mat3 matrix) {
+void computeInverseMatrix(glm::mat4 &worldLocalTransform, glm::mat4 &localWorldTransform, const glm::mat3 &matrix) {
     computeInverseMatrix(worldLocalTransform, localWorldTransform, matrix[0], matrix[1], matrix[2]);
 }
 

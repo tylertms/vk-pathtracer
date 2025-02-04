@@ -46,7 +46,6 @@ void SceneManager::submitUniformUpdates() {
 }
 
 void SceneManager::uploadFullSceneStorage() {
-    printf("UPDATING FULL SCENE STORAGE\n");
     memcpy(m_SceneStorageMapped, sceneStorage, sizeof(VKPT::SceneStorage));
 }
 /* ----------------------------- */
