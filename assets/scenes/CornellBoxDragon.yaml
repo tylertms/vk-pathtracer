@@ -2,10 +2,10 @@ Camera:
   LookFrom: [0, 0, 0]
   LookAt: [0, 0, 0]
   VFOV: 0
-  FocalDistance: 4
+  FocalDistance: 5.73999977
   SamplesPerPixel: 1
   MaxBounces: 8
-  Defocus: 0
+  Defocus: 76
   Diverge: 1
 Objects:
   - Mesh:
@@ -80,11 +80,11 @@ Objects:
       Transform: [0, -1.19000006, 0, 0, 0, 0, 0.5, 0.5, 0.5]
   - Mesh:
       Material:
-        Color: [1, 1, 1]
+        Color: [0.227848113, 0.227848113, 0.227848113]
         EmissionColor: [1, 1, 1]
         EmissionStrength: 0
         SpecularColor: [1, 1, 1]
-        SpecularFactor: 0.649999976
-        Roughness: 0.230000004
-      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/suzanne.glb
-      Transform: [0.100000001, 0.300000012, 0, 164, -20, 0, 0.800000012, 0.800000012, 0.800000012]
+        SpecularFactor: 0.100000001
+        Roughness: 0.0199999996
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/870k_dragon.glb
+      Transform: [-0.0500000007, 0.540000021, 0.109999999, 0, -54.5, 180, 2.4000001, 2.4000001, 2.4000001]
