@@ -55,7 +55,7 @@ void ImageView::createImage(const Device &device, VkExtent2D extent, VkFormat fo
     imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     if (vkCreateImage(device.getVkDevice(), &imageInfo, nullptr, &m_Image) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create image!");
+        throw std::runtime_error("ERORR: Failed to create image!");
     }
 
     VkMemoryRequirements memRequirements;

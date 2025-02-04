@@ -19,7 +19,8 @@ class ImageView {
     void createSampler(const Device &device);
     void transitionImageLayout(const Device &device, const CommandPool &commandPool, VkImageLayout oldLayout, VkImageLayout newLayout);
 
-    inline const VkImage &getVkImage() const { return m_Image; }
+    inline VkImage &getVkImage() { return m_Image; }
+
     inline const VkImageView &getVkImageView() const { return m_ImageView; }
     inline const VkSampler &getVkSampler() const { return m_Sampler; }
     inline const VkDeviceMemory &getVkDeviceMemory() const { return m_ImageMemory; }
