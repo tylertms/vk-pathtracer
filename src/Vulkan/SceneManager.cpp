@@ -1,6 +1,8 @@
 #include "SceneManager.h"
+
+#include "../Core/BVH/Builder.h"
 #include "vulkan/vulkan_core.h"
-#include <cfloat>
+
 #include <cstring>
 #include <vector>
 
@@ -31,6 +33,7 @@ void SceneManager::reset() {
     sceneData.numMeshes = 0;
     sceneData.numSpheres = 0;
     sceneData.numTriangles = 0;
+    sceneData.numBVHs = 0;
     sceneData.framesRendered = 0;
     modelPaths.clear();
     meshTransforms.clear();
@@ -72,9 +75,15 @@ void SceneManager::addMesh(const std::string filename) {
     }
 
     for (auto mesh : loader.getMeshes()) {
-        mesh.startIndex = triStartIndex;
-        growBoundingBox(mesh);
+        VKPT::BVH initBVH {
+            .index = triStartIndex,
+            .triangleCount = static_cast<uint32_t>(loader.getTriangles().size())
+        };
+
+        mesh.rootBVHNode = sceneData.numBVHs;
         sceneData.meshes[sceneData.numMeshes++] = mesh;
+
+        BVH::createBVH(mesh, initBVH, *this);
     }
 
     glm::mat3 defaultTransform = 0;
@@ -92,19 +101,6 @@ void SceneManager::updateMeshTransforms() {
     }
 }
 
-void SceneManager::growBoundingBox(VKPT::Mesh &mesh) {
-    vec3 bMin = { FLT_MAX, FLT_MAX, FLT_MAX };
-    vec3 bMax = -bMin;
-
-    for (int i = mesh.startIndex; i < mesh.startIndex + mesh.triangleCount; i++) {
-        VKPT::Triangle tri = sceneStorage->triangles[i];
-        bMin = min(bMin, min(tri.posA, min(tri.posB, tri.posC)));
-        bMax = max(bMax, max(tri.posA, max(tri.posB, tri.posC)));
-    }
-
-    mesh.bounds.min = bMin;
-    mesh.bounds.max = bMax;
-}
 /* ----------------------------- */
 
 } // namespace Vulkan

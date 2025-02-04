@@ -2,7 +2,6 @@
 
 #include "../IO/FilePicker.h"
 #include "../IO/SceneLoader.h"
-#include "../BVH/BVH.h"
 
 namespace Interface {
 
@@ -99,7 +98,6 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
-                BVH::createBVH(sceneManager);
                 sceneManager.updateMeshTransforms();
                 sceneManager.uploadFullSceneStorage();
                 sceneManager.resetAccumulation();
