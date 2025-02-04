@@ -34,18 +34,34 @@ layout (location = 0) out vec4 outColor;
 #include "Core/Ray.glsl"
 /* --------------------------------------*/
 
+#define DEBUG_TRI_TESTS
+
 void main() {
     ivec2 texCoord = ivec2(gl_FragCoord);
     uint state = (texCoord.y * 814793u + texCoord.x * 27u) ^ (scene.framesRendered * 102943u) ^ scene.framesRendered;
 
+    uint stats[2] = { 0, 0 };
+
     vec3 totalLight = vec3(0);
     for (uint i = 0; i < scene.camera.samplesPerPixel; i++) {
         Ray ray = generateRay(fragUV, scene.camera, state);
-        totalLight += traceRay(ray, scene.camera.maxBounces, state);
+        totalLight += traceRay(ray, scene.camera.maxBounces, state, stats);
     }
     totalLight /= scene.camera.samplesPerPixel;
 
     vec4 newColor = vec4(totalLight, 1);
+
+#ifdef DEBUG_BOX_TESTS
+    float boxTests = stats[0] / 500.0f;
+    vec3 boxTestColor = boxTests > 1 ? vec3(1, 0, 0) : vec3(boxTests);
+    newColor = vec4(boxTestColor, 1);
+#endif
+
+#ifdef DEBUG_TRI_TESTS
+    float triTests = stats[1] / 50.0f;
+    vec3 triTestColor = triTests > 1 ? vec3(1, 0, 0) : vec3(triTests);
+    newColor = vec4(triTestColor, 1);
+#endif
 
     beginInvocationInterlockARB();
     vec4 prevColor = imageLoad(accumulationImage, texCoord);
