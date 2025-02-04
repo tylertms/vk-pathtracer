@@ -199,20 +199,15 @@ bool UserInterface::drawCameraControl(Vulkan::SceneManager &sceneManager) {
 
     if (ImGui::DragScalar("Samples Per Pixel", ImGuiDataType_U32, &camera.samplesPerPixel, 1, &samplesMin, &samplesMax)) {
     }
-    if (ImGui::DragScalar("Max Bounces", ImGuiDataType_U32, &camera.maxBounces, 1, &bouncesMin, &bouncesMax))
-        reset = true;
-    if (ImGui::DragFloat3("Look From", (float *)&camera.lookFrom))
-        reset = true;
-    if (ImGui::DragFloat3("Look At", (float *)&camera.lookAt))
-        reset = true;
-    if (ImGui::DragFloat("VFOV", &camera.vfov, 0.f, 180.f))
-        reset = true;
-    if (ImGui::DragFloat("Focal Distance", &camera.focalDistance, 0.01f, 0.1f, 100.f))
-        reset = true;
-    if (ImGui::DragFloat("Defocus Strength", &camera.defocus, 0.1f, 0.f, 1000.f))
-        reset = true;
-    if (ImGui::DragFloat("Diverge Strength", &camera.diverge, 0.1f, 0.f, 1000.f))
-        reset = true;
+    if (ImGui::DragScalar("Max Bounces", ImGuiDataType_U32, &camera.maxBounces, 1, &bouncesMin, &bouncesMax)) reset = true;
+    if (ImGui::DragFloat3("Look From", (float *)&camera.lookFrom)) reset = true;
+    if (ImGui::DragFloat3("Look At", (float *)&camera.lookAt)) reset = true;
+    if (ImGui::DragFloat("VFOV", &camera.vfov, 0.f, 180.f)) reset = true;
+    if (ImGui::DragFloat("Focal Distance", &camera.focalDistance, 0.01f, 0.1f, 100.f)) reset = true;
+    if (ImGui::DragFloat("Defocus Strength", &camera.defocus, 0.1f, 0.f, 1000.f)) reset = true;
+    if (ImGui::DragFloat("Diverge Strength", &camera.diverge, 0.1f, 0.f, 1000.f)) reset = true;
+    if (ImGui::DragFloat("Exposure", &camera.exposure, 0.01f)) reset = true;
+    if (ImGui::DragFloat("Environment Rotation", &camera.envRotation, 0.5f)) reset = true;
 
     ImGui::End();
     return reset;
@@ -253,22 +248,14 @@ bool UserInterface::drawObjectControl(Vulkan::SceneManager &sceneManager) {
 bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
     bool reset = false;
 
-    if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01))
-        reset = true;
-    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01))
-        reset = true;
-    if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color)))
-        reset = true;
-    if (ImGui::DragFloat("Roughness", &sphere.material.roughness, 0.01, 0.0, 1.0))
-        reset = true;
-    if (ImGui::ColorEdit3("Specular Color", (float *)(&sphere.material.specularColor)))
-        reset = true;
-    if (ImGui::DragFloat("Specular Factor", &sphere.material.specularFactor, 0.01, 0.0, 1.0))
-        reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor)))
-        reset = true;
-    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01))
-        reset = true;
+    if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01)) reset = true;
+    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
+    if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color))) reset = true;
+    if (ImGui::DragFloat("Roughness", &sphere.material.roughness, 0.01, 0.0, 1.0)) reset = true;
+    if (ImGui::ColorEdit3("Specular Color", (float *)(&sphere.material.specularColor))) reset = true;
+    if (ImGui::DragFloat("Specular Factor", &sphere.material.specularFactor, 0.01, 0.0, 1.0)) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor))) reset = true;
+    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
     ImGui::Spacing();
 
     return reset;
@@ -278,24 +265,15 @@ bool UserInterface::drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t
     bool reset = false;
     VKPT::Mesh &mesh = sceneManager.sceneData.meshes[index];
 
-    if (ImGui::DragFloat3("Translation", (float *)(&sceneManager.meshTransforms[index][0]), 0.01))
-        reset = true;
-    if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.5))
-        reset = true;
-    if (ImGui::DragFloat3("Scale", (float *)(&sceneManager.meshTransforms[index][2]), 0.01))
-        reset = true;
-    if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color)))
-        reset = true;
-    if (ImGui::DragFloat("Roughness", &mesh.material.roughness, 0.01, 0.0, 1.0))
-        reset = true;
-    if (ImGui::ColorEdit3("Specular Color", (float *)(&mesh.material.specularColor)))
-        reset = true;
-    if (ImGui::DragFloat("Specular Factor", &mesh.material.specularFactor, 0.01, 0.0, 1.0))
-        reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor)))
-        reset = true;
-    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01))
-        reset = true;
+    if (ImGui::DragFloat3("Translation", (float *)(&sceneManager.meshTransforms[index][0]), 0.01)) reset = true;
+    if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.5)) reset = true;
+    if (ImGui::DragFloat3("Scale", (float *)(&sceneManager.meshTransforms[index][2]), 0.01)) reset = true;
+    if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
+    if (ImGui::DragFloat("Roughness", &mesh.material.roughness, 0.01, 0.0, 1.0)) reset = true;
+    if (ImGui::ColorEdit3("Specular Color", (float *)(&mesh.material.specularColor))) reset = true;
+    if (ImGui::DragFloat("Specular Factor", &mesh.material.specularFactor, 0.01, 0.0, 1.0)) reset = true;
+    if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
+    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
     ImGui::Spacing();
 
     return reset;

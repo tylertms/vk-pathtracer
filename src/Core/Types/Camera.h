@@ -20,6 +20,8 @@ struct alignas(16) Camera {
     uint32_t maxBounces = 8;
     float defocus = 0.f;
     float diverge = 1.f;
+    float exposure = 1.f;
+    float envRotation = 0.f;
 };
 } // namespace VKPT
 
@@ -36,6 +38,8 @@ struct convert<VKPT::Camera> {
         node["MaxBounces"] = rhs.maxBounces;
         node["Defocus"] = rhs.defocus;
         node["Diverge"] = rhs.diverge;
+        node["Exposure"] = rhs.exposure;
+        node["EnvRotation"] = rhs.envRotation;
         return node;
     }
 
@@ -80,6 +84,14 @@ struct convert<VKPT::Camera> {
             rhs.diverge = node["Diverge"].as<float>();
         }
 
+        if (node["Exposure"]) {
+            rhs.exposure = node["Exposure"].as<float>();
+        }
+
+        if (node["EnvRotation"]) {
+            rhs.envRotation = node["EnvRotation"].as<float>();
+        }
+
         return true;
     }
 };
@@ -99,6 +111,8 @@ struct Camera {
     uint maxBounces;
     float defocus;
     float diverge;
+    float exposure;
+    float envRotation;
 };
 
 /* ---------- GLSL ---------- */
