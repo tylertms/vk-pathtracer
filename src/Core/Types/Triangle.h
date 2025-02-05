@@ -6,22 +6,25 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
-namespace VKPT {
-struct alignas(16) Triangle {
-    alignas(16) vec3 posA;
-    alignas(16) vec3 posB;
-    alignas(16) vec3 posC;
-    alignas(16) vec3 normA;
-    alignas(16) vec3 normB;
-    alignas(16) vec3 normC;
-};
-} // namespace VKPT
+namespace VKPT
+{
+    struct alignas(16) Triangle
+    {
+        alignas(16) vec3 posA;
+        alignas(16) vec3 posB;
+        alignas(16) vec3 posC;
+        alignas(16) vec3 normA;
+        alignas(16) vec3 normB;
+        alignas(16) vec3 normC;
+    };
+}
 
 /* ---------- C++ ---------- */
 #else
 /* ---------- GLSL ---------- */
 
-struct Triangle {
+struct Triangle
+{
     vec3 posA;
     vec3 posB;
     vec3 posC;
@@ -30,26 +33,44 @@ struct Triangle {
     vec3 normC;
 };
 
-HitPayload rayHitTriangle(Ray ray, Triangle tri) {
-    vec3 edgeAB = tri.posB - tri.posA;
-    vec3 edgeAC = tri.posC - tri.posA;
-    vec3 normalVector = cross(edgeAB, edgeAC);
-    vec3 ao = ray.origin - tri.posA;
-    vec3 dao = cross(ao, ray.dir);
-
-    float determinant = -dot(ray.dir, normalVector);
-    float invDet = 1 / determinant;
-
-    float dst = dot(ao, normalVector) * invDet;
-    float u = dot(edgeAC, dao) * invDet;
-    float v = -dot(edgeAB, dao) * invDet;
-    float w = 1 - u - v;
-
+HitPayload rayHitTriangle(Ray ray, Triangle tri)
+{
     HitPayload hit;
-    hit.didHit = determinant >= EPSILON && dst >= 0 && u >= 0 && v >= 0 && w >= 0;
-    hit.point = ray.origin + ray.dir * dst;
-    hit.normal = normalize(tri.normA * w + tri.normB * u + tri.normC * v);
-    hit.distance = dst;
+    hit.didHit = false;
+
+    vec3 edge1 = tri.posB - tri.posA;
+    vec3 edge2 = tri.posC - tri.posA;
+    vec3 h = cross(ray.dir, edge2);
+    float a = dot(edge1, h);
+
+    if (abs(a) < EPSILON) return hit;
+
+    float f = 1.0 / a;
+    vec3 s = ray.origin - tri.posA;
+    float u = f * dot(s, h);
+    if (u < 0.0 || u > 1.0) return hit;
+
+    vec3 q = cross(s, edge1);
+    float v = f * dot(ray.dir, q);
+    if (v < 0.0 || (u + v) > 1.0) return hit;
+
+    float t = f * dot(edge2, q);
+    if (t < 0.0) return hit;
+
+    hit.didHit = true;
+    hit.distance = t;
+    hit.point = ray.origin + ray.dir * t;
+
+    float w = 1.0 - u - v;
+
+    vec3 interpNormal = normalize(tri.normA * w + tri.normB * u + tri.normC * v);
+    vec3 faceNormal = normalize(cross(edge1, edge2));
+
+    if (dot(interpNormal, faceNormal) < 0.0)
+        interpNormal = -interpNormal;
+
+    hit.normal = interpNormal;
+
     return hit;
 }
 

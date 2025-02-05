@@ -73,17 +73,28 @@ HitPayload rayHitSphere(Ray ray, Sphere sphere) {
     float c = dot(offset, offset) - sphere.radius * sphere.radius;
 
     float discriminant = h * h - a * c;
-    if (discriminant >= 0) {
-        float distance = (-h - sqrt(discriminant)) / a;
-
-        if (distance >= EPSILON) {
-            hit.didHit = true;
-            hit.distance = distance;
-            hit.point = ray.origin + ray.dir * distance;
-            hit.normal = normalize(hit.point - sphere.center);
-        }
+    if (discriminant < 0) {
+        return hit;
     }
 
+    float sqrtDisc = sqrt(discriminant);
+
+    float t1 = (-h - sqrtDisc) / a;
+    float t2 = (-h + sqrtDisc) / a;
+
+    float distance = 0.0;
+    if (t1 >= EPSILON) {
+        distance = t1;
+    } else if (t2 >= EPSILON) {
+        distance = t2;
+    } else {
+        return hit;
+    }
+
+    hit.didHit = true;
+    hit.distance = distance;
+    hit.point = ray.origin + ray.dir * distance;
+    hit.normal = normalize(hit.point - sphere.center);
     return hit;
 }
 
