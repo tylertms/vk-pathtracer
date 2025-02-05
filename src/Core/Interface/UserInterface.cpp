@@ -222,7 +222,8 @@ void UserInterface::processCameraMovement(Vulkan::SceneManager &sceneManager) {
     glm::vec3 right = glm::normalize(glm::cross(viewDir, WORLD_UP));
     glm::vec3 up = glm::normalize(glm::cross(right, viewDir));
 
-    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) && ImGui::IsWindowFocused()) {
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) && (ImGui::IsWindowHovered() || ImGui::IsWindowFocused())) {
+        ImGui::SetWindowFocus();
         glm::vec2 delta(mouseDelta.x * PAN_SPEED, mouseDelta.y * PAN_SPEED);
         glm::vec3 move = right * delta.x + up * delta.y;
         lookFrom += move;
