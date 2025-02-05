@@ -12,7 +12,7 @@
 
 #define ENV_TEX_BLUR 0.002f
 
-#define EPSILON 1e-8
+#define EPSILON 1e-8f
 #define INV_PI 0.3183098862f
 #define INV_2PI 0.1591549431f
 

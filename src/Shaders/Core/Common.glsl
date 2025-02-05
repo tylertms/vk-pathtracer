@@ -10,8 +10,8 @@ struct Ray {
 };
 
 struct HitPayload {
-    bool didHit;
     vec3 point;
+    bool didHit;
     vec3 normal;
     float distance;
     Material material;

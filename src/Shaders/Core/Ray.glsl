@@ -46,7 +46,7 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
     vec3 throughput = vec3(1.0);
     vec3 radiance = vec3(0.0);
     float currentIOR = 1.0, glassIOR = 1.5;
-    vec3 glassAbsorption = vec3(1);
+    vec3 glassAbsorption = vec3(0.6);
     
     for (uint bounce = 0; bounce <= maxBounces; bounce++) {
         HitPayload hit = rayHitScene(ray, stats);
