@@ -10,7 +10,7 @@
 #define BVH_TRIANGLE_MIN 3
 #define BVH_AXIS_TESTS 8
 
-#define ENV_TEX_BLUR 0.001f
+#define ENV_TEX_BLUR 0.002f
 
 #define EPSILON 1e-8
 #define INV_PI 0.3183098862f
