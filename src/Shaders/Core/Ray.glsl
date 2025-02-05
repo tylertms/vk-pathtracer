@@ -55,7 +55,6 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
             break;
         }
         
-        // Apply Beer–Lambert absorption when traveling through glass.
         if (currentIOR == glassIOR)
             throughput *= exp(-glassAbsorption * hit.distance);
         
