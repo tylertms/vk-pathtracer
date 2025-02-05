@@ -7,7 +7,7 @@ Camera:
   MaxBounces: 8
   Defocus: 0
   Diverge: 1
-  Exposure: 1.20000005
+  Exposure: 1.10000002
   EnvRotation: 75
 EnvTexture: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/hdri/spruit_sunrise_4k.hdr
 Objects:

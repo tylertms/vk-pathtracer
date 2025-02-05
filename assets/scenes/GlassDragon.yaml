@@ -1,0 +1,23 @@
+Camera:
+  LookFrom: [0, 0, 0]
+  LookAt: [0, 0, 0]
+  VFOV: 0
+  FocalDistance: 4
+  SamplesPerPixel: 1
+  MaxBounces: 16
+  Defocus: 0
+  Diverge: 1
+  Exposure: 1
+  EnvRotation: 0
+EnvTexture: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/hdri/symmetrical_garden_02_4k.hdr
+Objects:
+  - Mesh:
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 1
+        Roughness: 1
+      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/870k_dragon.glb
+      Transform: [0, 0, 0, 0, -90, 180, 3, 3, 3]
