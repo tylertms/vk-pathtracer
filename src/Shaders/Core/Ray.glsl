@@ -45,8 +45,8 @@ Ray generateRay(vec2 uv, inout uint state) {
 vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
     vec3 throughput = vec3(1.0);
     vec3 radiance = vec3(0.0);
-    
     float currentIOR = 1.0, glassIOR = 1.5;
+    vec3 glassAbsorption = vec3(1);
     
     for (uint bounce = 0; bounce <= maxBounces; bounce++) {
         HitPayload hit = rayHitScene(ray, stats);
@@ -55,7 +55,11 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
             break;
         }
         
-        if (hit.material.specularFactor > 0.9) {
+        // Apply Beer–Lambert absorption when traveling through glass.
+        if (currentIOR == glassIOR)
+            throughput *= exp(-glassAbsorption * hit.distance);
+        
+        if (hit.material.specularFactor > 0.99) {
             bool entering = dot(ray.dir, hit.normal) < 0.0;
             vec3 n = entering ? hit.normal : -hit.normal;
             float etai = currentIOR;
@@ -90,6 +94,7 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
     
     return radiance;
 }
+
 
 
 #endif
