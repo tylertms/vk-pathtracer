@@ -18,7 +18,7 @@ void createTextureImage(const std::string filename, ImageView &textureImage, con
         pixels = stbi_loadf(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
         if (!pixels) {
-            throw std::runtime_error("ERROR: Failed to load texture image!");
+            throw std::runtime_error("ERROR: Failed to load texture image\"" + filename + "\"!\nCheck the path, or download it from https://polyhaven.com/hdris");
         }
     }
 

@@ -35,7 +35,11 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
     }
 
     if (config["EnvTexture"]) {
-        sceneManager.queueEnv(config["EnvTexture"].as<std::string>());
+        std::string loadpath = config["EnvTexture"].as<std::string>();
+        if (fs::path(loadpath).is_relative()) {
+            loadpath = std::string(extractDirectory(filename) + loadpath);
+        }
+        sceneManager.queueEnv(loadpath);
     }
 
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
@@ -46,7 +50,7 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
             std::string loadpath = object["Mesh"]["File"].as<std::string>();
 
             if (fs::path(loadpath).is_relative()) {
-                loadpath = std::string(extractDirectory(filename) + object["Mesh"]["File"].as<std::string>());
+                loadpath = std::string(extractDirectory(filename) + loadpath);
             }
 
             VKPT::Mesh mesh = object["Mesh"].as<VKPT::Mesh>();
