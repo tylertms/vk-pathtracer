@@ -10,7 +10,7 @@
 #include "VulkanApp.h"
 #include "vulkan/vulkan_core.h"
 
-#include "../Core/IO/GLTFLoader.h"
+#include "../Core/File/GLTFLoader.h"
 #include "../Core/Types/Scene.h"
 #include "../Core/Utils/Matrix.h"
 

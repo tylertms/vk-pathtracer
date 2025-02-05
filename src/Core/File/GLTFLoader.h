@@ -8,7 +8,7 @@
 #include <string>
 
 using namespace tinygltf;
-namespace IO {
+namespace File {
 
 class GLTFLoader {
   public:
@@ -29,4 +29,4 @@ class GLTFLoader {
     std::vector<VKPT::Mesh> m_Meshes;
 };
 
-} // namespace IO
+} // namespace File

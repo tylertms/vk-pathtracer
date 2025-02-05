@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-namespace IO {
+namespace File {
 
 std::string extractDirectory(const std::string &filepath) {
     size_t pos = filepath.find_last_of("/\\");
@@ -118,4 +118,4 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     fout.close();
 }
 
-} // namespace IO
+} // namespace File

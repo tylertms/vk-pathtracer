@@ -1,7 +1,7 @@
 #include "UserInterface.h"
 
-#include "../IO/FilePicker.h"
-#include "../IO/SceneLoader.h"
+#include "../File/FilePicker.h"
+#include "../File/SceneLoader.h"
 #include "../../Vulkan/Texture.h"
 
 namespace Interface {
@@ -96,7 +96,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
 
         if (ImGui::BeginMenu("Load")) {
             if (ImGui::MenuItem("Scene")) {
-                IO::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
+                File::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
             }
             if (ImGui::MenuItem("Model")) {
                 sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
@@ -111,7 +111,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
         }
 
         if (ImGui::MenuItem("Save")) {
-            IO::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
+            File::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
         }
 
         if (ImGui::BeginMenu("View")) {

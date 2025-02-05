@@ -74,7 +74,7 @@ void SceneManager::addSphere() {
 void SceneManager::addMesh(const std::string filename) {
     if (filename.empty())
         return;
-    IO::GLTFLoader loader(filename);
+    File::GLTFLoader loader(filename);
 
     uint32_t triStartIndex = sceneData.numTriangles;
 
