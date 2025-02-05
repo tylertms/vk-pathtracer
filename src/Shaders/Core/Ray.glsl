@@ -28,24 +28,33 @@ vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
 
 Ray generateRay(vec2 uv, inout uint state) {
     vec3 forward = normalize(scene.camera.lookAt - scene.camera.lookFrom);
-    vec3 worldUp = vec3(0.0, 1.0, 0.0);
-    vec3 right = normalize(cross(forward, worldUp));
+    vec3 worldUp = vec3(0, 1, 0);
+    
+    vec3 right = normalize(cross(forward, mix(worldUp, vec3(0,0,1), 
+        float(abs(dot(forward, worldUp)) > 0.99))));
     vec3 up = normalize(cross(right, forward));
 
-    float aspect = float(scene.camera.windowSize.x) / float(scene.camera.windowSize.y);
-    float theta = radians(scene.camera.vfov);
-    float halfHeight = tan(theta * 0.5);
-    float halfWidth = aspect * halfHeight;
+    float tanHalfFov = tan(radians(scene.camera.vfov) * 0.5);
+    vec2 recipRes = vec2(1.0) / vec2(scene.camera.windowSize);
+    
+    float halfHeight = tanHalfFov * scene.camera.focalDistance;
+    float halfWidth = halfHeight * (scene.camera.windowSize.x * recipRes.y);
 
-    vec3 lowerLeft = scene.camera.lookFrom + forward - halfWidth * right - halfHeight * up;
-    vec3 horizontal = 2.0 * halfWidth * right;
-    vec3 vertical   = 2.0 * halfHeight * up;
-    vec3 target = lowerLeft + (uv.x + 1.0) * 0.5 * horizontal + (uv.y + 1.0) * 0.5 * vertical;
+    vec3 focalCenter = scene.camera.lookFrom + forward * scene.camera.focalDistance;
+    vec2 jitter = randUnitCircle(state) * recipRes.x;
+    vec3 targetPoint = focalCenter 
+        - right * (uv.x * halfWidth + jitter.x * scene.camera.diverge)
+        + up * (uv.y * halfHeight + jitter.y * scene.camera.diverge);
+
+    vec3 rayOrigin = scene.camera.lookFrom;
+    rayOrigin += right * (jitter.x * scene.camera.defocus);
+    rayOrigin += up * (jitter.y * scene.camera.defocus);
 
     Ray ray;
-    ray.origin = scene.camera.lookFrom;
-    ray.dir = normalize(target - ray.origin);
+    ray.origin = rayOrigin;
+    ray.dir = normalize(targetPoint - rayOrigin);
     ray.inv = 1.0 / ray.dir;
+    
     return ray;
 }
 
@@ -62,12 +71,8 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
             break;
         }
 
-#ifdef DEBUG_NO_PATH
-            radiance = hit.material.color;
-            break;
-#elif DEBUG_NORMAL
-            radiance = hit.normal * 0.5 + vec3(0.5);
-            break;
+#ifdef DEBUG_NORMAL
+            return hit.normal * 0.5 + 0.5;
 #endif
         
         if (currentIOR == glassIOR)
