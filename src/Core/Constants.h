@@ -12,8 +12,12 @@
 
 #define ENV_TEX_BLUR 0.002f
 
-#define EPSILON 1e-8f
+#define EPSILON 1e-7f
 #define INV_PI 0.3183098862f
 #define INV_2PI 0.1591549431f
+
+#define PAN_SPEED 0.005f
+#define ORBIT_SPEED 0.005f
+#define ZOOM_SPEED 0.05f
 
 #endif

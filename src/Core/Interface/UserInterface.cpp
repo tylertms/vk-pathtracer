@@ -3,6 +3,7 @@
 #include "../File/FilePicker.h"
 #include "../File/SceneLoader.h"
 #include "../../Vulkan/Texture.h"
+#include "../Constants.h"
 
 namespace Interface {
 
@@ -73,10 +74,8 @@ void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
         count++;
     }
 
-    float avg = total / count;
-    ImGui::Text("Average: %6.2fms", avg);
-
-    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, avg * 2, ImVec2(160.0f, 40.0f));
+    ImGui::Text("Average: %6.2fms", total / count);
+    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, 2 * total / count, ImVec2(160.0f, 40.0f));
 
     if (ImGui::Button("Reset Accumulation"))
         sceneManager.resetAccumulation();
@@ -185,11 +184,80 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
     }
 
     ImGui::Begin("Viewport");
+    processCameraMovement(sceneManager);
     position = ImGui::GetWindowPos();
     extent = ImGui::GetWindowSize();
     ImGui::End();
 
     ImGui::Render();
+}
+
+void UserInterface::processCameraMovement(Vulkan::SceneManager &sceneManager) {
+    VKPT::Camera &cam = sceneManager.sceneData.camera;
+    const glm::vec3 WORLD_UP(0.0f, -1.0f, 0.0f);
+
+    ImGuiIO& io = ImGui::GetIO();
+    ImVec2 mouseDelta = io.MouseDelta;
+    float scroll = io.MouseWheel * ZOOM_SPEED;
+
+    const float minDistance = 0.01f;
+    const float maxDistance = 1000.f;
+
+    glm::vec3 lookAt = cam.lookAt;
+    glm::vec3 lookFrom = cam.lookFrom;
+    glm::vec3 viewDir = lookAt - lookFrom;
+    float currentDist = glm::length(viewDir);
+
+    float newDistance = currentDist - scroll;
+    newDistance = glm::clamp(newDistance, minDistance, maxDistance);
+
+    if (fabs(newDistance - currentDist) > EPSILON && ImGui::IsWindowHovered()) {
+        glm::vec3 normDir = glm::normalize(viewDir);
+        lookFrom = lookAt - normDir * newDistance;
+        cam.lookFrom = lookFrom;
+
+        sceneManager.resetAccumulation();
+    }
+
+    glm::vec3 right = glm::normalize(glm::cross(viewDir, WORLD_UP));
+    glm::vec3 up = glm::normalize(glm::cross(right, viewDir));
+
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) && ImGui::IsWindowFocused()) {
+        glm::vec2 delta(mouseDelta.x * PAN_SPEED, mouseDelta.y * PAN_SPEED);
+        glm::vec3 move = right * delta.x + up * delta.y;
+        lookFrom += move;
+        lookAt += move;
+        sceneManager.resetAccumulation();
+    }
+
+    if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsWindowFocused()) {
+        glm::vec2 delta(-mouseDelta.x * ORBIT_SPEED, -mouseDelta.y * ORBIT_SPEED);
+
+        glm::vec3 offset = lookFrom - lookAt;
+        float radius = glm::length(offset);
+
+        glm::vec3 corrected = glm::vec3(offset.x, -offset.y, offset.z);
+        float theta = atan2(corrected.x, corrected.z);
+        float phi = acos(glm::clamp(corrected.y / radius, -1.0f, 1.0f));
+
+        theta += delta.x;
+        phi += delta.y;
+        const float minPhi = 0.01f;
+        const float maxPhi = glm::pi<float>() - 0.01f;
+        phi = glm::clamp(phi, minPhi, maxPhi);
+
+        float sinPhi = sin(phi);
+        float newX = radius * sinPhi * sin(theta);
+        float newY = radius * cos(phi);
+        float newZ = radius * sinPhi * cos(theta);
+        glm::vec3 newOffset = glm::vec3(newX, -newY, newZ);
+
+        lookFrom = lookAt + newOffset;
+        sceneManager.resetAccumulation();
+    }
+
+    cam.lookFrom = lookFrom;
+    cam.lookAt   = lookAt;
 }
 
 bool UserInterface::drawCameraControl(Vulkan::SceneManager &sceneManager) {
@@ -206,7 +274,7 @@ bool UserInterface::drawCameraControl(Vulkan::SceneManager &sceneManager) {
     if (ImGui::DragScalar("Max Bounces", ImGuiDataType_U32, &camera.maxBounces, 1, &bouncesMin, &bouncesMax)) reset = true;
     if (ImGui::DragFloat3("Look From", (float *)&camera.lookFrom)) reset = true;
     if (ImGui::DragFloat3("Look At", (float *)&camera.lookAt)) reset = true;
-    if (ImGui::DragFloat("VFOV", &camera.vfov, 0.f, 180.f)) reset = true;
+    if (ImGui::DragFloat("VFOV", &camera.vfov, 0.1f, 10.f, 120.f)) reset = true;
     if (ImGui::DragFloat("Focal Distance", &camera.focalDistance, 0.01f, 0.1f, 100.f)) reset = true;
     if (ImGui::DragFloat("Defocus Strength", &camera.defocus, 0.1f, 0.f, 1000.f)) reset = true;
     if (ImGui::DragFloat("Diverge Strength", &camera.diverge, 0.1f, 0.f, 1000.f)) reset = true;

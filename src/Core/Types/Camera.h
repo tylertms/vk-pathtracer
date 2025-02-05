@@ -11,11 +11,11 @@ using namespace glm;
 
 namespace VKPT {
 struct alignas(16) Camera {
-    vec3 lookFrom;
-    float vfov;
-    vec3 lookAt;
+    vec3 lookFrom = vec3(0, 0, -4);
+    float vfov = 60.f;
+    vec3 lookAt = vec3(0, 0, 0);
     float focalDistance = 4.f;
-    uvec2 windowSize;
+    uvec2 windowSize = uvec2(0);
     uint32_t samplesPerPixel = 1;
     uint32_t maxBounces = 8;
     float defocus = 0.f;

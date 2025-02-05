@@ -27,18 +27,25 @@ vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
 }
 
 Ray generateRay(vec2 uv, inout uint state) {
-    uv.x *= float(scene.camera.windowSize.x) / scene.camera.windowSize.y;
-    vec2 planeJitter = randUnitCircle(state) * scene.camera.diverge / scene.camera.windowSize.x;
-    vec2 originJitter = randUnitCircle(state) * scene.camera.defocus / scene.camera.windowSize.x;
+    vec3 forward = normalize(scene.camera.lookAt - scene.camera.lookFrom);
+    vec3 worldUp = vec3(0.0, 1.0, 0.0);
+    vec3 right = normalize(cross(forward, worldUp));
+    vec3 up = normalize(cross(right, forward));
+
+    float aspect = float(scene.camera.windowSize.x) / float(scene.camera.windowSize.y);
+    float theta = radians(scene.camera.vfov);
+    float halfHeight = tan(theta * 0.5);
+    float halfWidth = aspect * halfHeight;
+
+    vec3 lowerLeft = scene.camera.lookFrom + forward - halfWidth * right - halfHeight * up;
+    vec3 horizontal = 2.0 * halfWidth * right;
+    vec3 vertical   = 2.0 * halfHeight * up;
+    vec3 target = lowerLeft + (uv.x + 1.0) * 0.5 * horizontal + (uv.y + 1.0) * 0.5 * vertical;
 
     Ray ray;
-    ray.origin = vec3(0, 0, -6);
-    ray.origin += vec3(originJitter.x, originJitter.y, 0);
-
-    vec3 targetPoint = vec3((uv + planeJitter) * scene.camera.focalDistance / 4., ray.origin.z + scene.camera.focalDistance);
-    ray.dir = normalize(targetPoint - ray.origin);
+    ray.origin = scene.camera.lookFrom;
+    ray.dir = normalize(target - ray.origin);
     ray.inv = 1.0 / ray.dir;
-
     return ray;
 }
 
@@ -54,6 +61,14 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
             radiance += throughput * getEnvironmentLight(ray.dir, bounce, state);
             break;
         }
+
+#ifdef DEBUG_NO_PATH
+            radiance = hit.material.color;
+            break;
+#elif DEBUG_NORMAL
+            radiance = hit.normal * 0.5 + vec3(0.5);
+            break;
+#endif
         
         if (currentIOR == glassIOR)
             throughput *= exp(-glassAbsorption * hit.distance);

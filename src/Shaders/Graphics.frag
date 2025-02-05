@@ -32,6 +32,7 @@ layout (binding = 3, std430) readonly buffer SceneStorage {
 /* --------------------------------------*/
 layout (location = 0) out vec4 outColor;
 /* --------------------------------------*/
+#define DEBUG_NO_PATH
 // #define DEBUG_NORMAL
 // #define DEBUG_BOX_TESTS
 // #define DEBUG_TRI_TESTS
@@ -46,12 +47,17 @@ void main() {
 
     uint stats[2] = { 0, 0 };
 
+#ifdef DEBUG_NO_PATH
+    Ray ray = generateRay(fragUV, state);
+    vec3 totalLight = traceRay(ray, 0, state, stats);
+#else
     vec3 totalLight = vec3(0);
     for (uint i = 0; i < scene.camera.samplesPerPixel; i++) {
         Ray ray = generateRay(fragUV, state);
         totalLight += traceRay(ray, scene.camera.maxBounces, state, stats);
     }
     totalLight /= scene.camera.samplesPerPixel;
+#endif
 
 #ifdef DEBUG_NORMAL
     outColor = vec4(totalLight, 1.f);

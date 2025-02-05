@@ -43,6 +43,7 @@ class UserInterface {
     void drawMenuBar(Vulkan::SceneManager &sceneManager);
     void setupDockspace();
     bool drawCameraControl(Vulkan::SceneManager &sceneManager);
+    void processCameraMovement(Vulkan::SceneManager &sceneManager);
     bool drawObjectControl(Vulkan::SceneManager &sceneManager);
     bool drawSphereControl(VKPT::Sphere &sphere);
     bool drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index);
