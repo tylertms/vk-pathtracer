@@ -6,6 +6,7 @@
 #include "Stats.h"
 
 #include <algorithm>
+#include <chrono>
 
 namespace BVH {
 
