@@ -32,11 +32,13 @@ layout (binding = 3, std430) readonly buffer SceneStorage {
 /* --------------------------------------*/
 layout (location = 0) out vec4 outColor;
 /* --------------------------------------*/
+// #define DEBUG_NORMAL
+// #define DEBUG_BOX_TESTS
+// #define DEBUG_TRI_TESTS
+/* --------------------------------------*/
 #include "Core/Scene.glsl"
 #include "Core/Ray.glsl"
 /* --------------------------------------*/
-
-// #define DEBUG_TRI_TESTS
 
 void main() {
     ivec2 texCoord = ivec2(gl_FragCoord);
@@ -51,18 +53,20 @@ void main() {
     }
     totalLight /= scene.camera.samplesPerPixel;
 
+#ifdef DEBUG_NORMAL
+    outColor = vec4(totalLight, 1.f);
+#endif
+
 #ifdef DEBUG_BOX_TESTS
     float boxTests = stats[0] / 500.0;
     vec3 boxTestColor = boxTests > 1 ? vec3(1, 0, 0) : vec3(boxTests);
     outColor = vec4(boxTestColor, 1.f);
-    return;
 #endif
 
 #ifdef DEBUG_TRI_TESTS
     float triTests = stats[1] / 50.0;
     vec3 triTestColor = triTests > 1 ? vec3(1, 0, 0) : vec3(triTests);
     outColor = vec4(triTestColor, 1.f);
-    return;
 #endif
 
     beginInvocationInterlockARB();
@@ -71,9 +75,13 @@ void main() {
     imageStore(accumulationImage, texCoord, vec4(newColor, 1.f));
     endInvocationInterlockARB();
 
+#if defined(DEBUG_NORMAL) || defined(DEBUG_BOX_TESTS) || defined(DEBUG_TRI_TESTS)
+    outColor = vec4(newColor, 1.f);
+#else
     vec3 hdrColor = newColor * scene.camera.exposure;
     vec3 toneMappedColor = toneMapACES(hdrColor);
-    vec3 gammaCorrectedColor = pow(toneMappedColor, vec3(1.0 / 2.2));
+    vec3 gammaCorrectedColor = pow(toneMappedColor, vec3(1.0f / 2.2f));
+    outColor = vec4(gammaCorrectedColor, 1.f);
+#endif
 
-    outColor = vec4(gammaCorrectedColor, 1.0);
 }
