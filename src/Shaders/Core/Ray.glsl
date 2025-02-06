@@ -17,7 +17,7 @@ vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
 
     float u = 0.5 + atan(rotatedDir.z, rotatedDir.x) * INV_2PI;
     float v = 0.5 - asin(rotatedDir.y) * INV_PI;
-    vec2 uv = vec2(u, v);
+    vec2 uv = vec2(-u, v);
 
     if (bounceNum == 0) {
         uv += randUnitCircle(state) * ENV_TEX_BLUR;
@@ -43,7 +43,7 @@ Ray generateRay(vec2 uv, inout uint state) {
     vec3 focalCenter = scene.camera.lookFrom + forward * scene.camera.focalDistance;
     vec2 jitter = randUnitCircle(state) * recipRes.x;
     vec3 targetPoint = focalCenter 
-        - right * (uv.x * halfWidth + jitter.x * scene.camera.diverge)
+        + right * (uv.x * halfWidth + jitter.x * scene.camera.diverge)
         - up * (uv.y * halfHeight + jitter.y * scene.camera.diverge);
 
     vec3 rayOrigin = scene.camera.lookFrom;

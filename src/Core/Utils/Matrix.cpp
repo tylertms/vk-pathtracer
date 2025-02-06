@@ -6,7 +6,7 @@ void computeInverseMatrix(glm::mat4 &worldLocalTransform, glm::mat4 &localWorldT
     glm::mat4 mScale = glm::scale(glm::mat4(1.0f), scale);
     glm::quat quatRotation = glm::normalize(glm::quat(glm::radians(rotationEuler)));
     glm::mat4 mRotation = glm::mat4(quatRotation);
-    glm::mat4 mTranslation = glm::translate(glm::mat4(1.0f), translation);
+    glm::mat4 mTranslation = glm::translate(glm::mat4(1.0f), translation * glm::vec3(-1, 1, 1));
     worldLocalTransform = glm::inverse(mTranslation * mRotation * mScale);
     localWorldTransform = glm::transpose(worldLocalTransform);
 }
