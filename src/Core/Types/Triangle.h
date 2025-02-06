@@ -6,10 +6,8 @@
 #include <glm/glm.hpp>
 using namespace glm;
 
-namespace VKPT
-{
-    struct alignas(16) Triangle
-    {
+namespace VKPT {
+    struct alignas(16) Triangle {
         alignas(16) vec3 posA;
         alignas(16) vec3 posB;
         alignas(16) vec3 posC;
@@ -23,8 +21,7 @@ namespace VKPT
 #else
 /* ---------- GLSL ---------- */
 
-struct Triangle
-{
+struct Triangle {
     vec3 posA;
     vec3 posB;
     vec3 posC;
