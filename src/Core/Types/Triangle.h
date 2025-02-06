@@ -33,45 +33,37 @@ struct Triangle
     vec3 normC;
 };
 
-HitPayload rayHitTriangle(Ray ray, Triangle tri)
-{
-    HitPayload hit;
-    hit.didHit = false;
+HitPayload rayHitTriangle(Ray ray, Triangle tri) {
+    vec3 eAB = tri.posB - tri.posA;
+    vec3 eAC = tri.posC - tri.posA;
+    vec3 nG  = cross(eAB, eAC);
+    float d  = -dot(ray.dir, nG);
+    float ad = abs(d);
+    float passDet = step(DST_EPSILON, ad);
+    float invD = 1.0f / (d + 1e-30f);
+    vec3 ao  = ray.origin - tri.posA;
+    vec3 dao = cross(ao, ray.dir);
+    float t  = dot(ao, nG) * invD;
+    float u  = dot(eAC, dao) * invD;
+    float v  = -dot(eAB, dao) * invD;
+    float w  = 1.0f - u - v;
+    float passT = step(DST_EPSILON, t);
+    float passU = step(0.0f, u);
+    float passV = step(0.0f, v);
+    float passW = step(0.0f, w);
+    float passAll = passDet * passT * passU * passV * passW;
 
-    vec3 edge1 = tri.posB - tri.posA;
-    vec3 edge2 = tri.posC - tri.posA;
-    vec3 h = cross(ray.dir, edge2);
-    float a = dot(edge1, h);
+    vec3 nI = normalize(tri.normA * w + tri.normB * u + tri.normC * v);
+    float flip = step(0.0f, dot(nI, ray.dir));
+    nI = mix(nI, -nI, flip);
 
-    if (abs(a) < EPSILON) return hit;
-
-    float f = 1.0 / a;
-    vec3 s = ray.origin - tri.posA;
-    float u = f * dot(s, h);
-    if (u < 0.0 || u > 1.0) return hit;
-
-    vec3 q = cross(s, edge1);
-    float v = f * dot(ray.dir, q);
-    if (v < 0.0 || (u + v) > 1.0) return hit;
-
-    float t = f * dot(edge2, q);
-    if (t < 0.0) return hit;
-
-    hit.didHit = true;
-    hit.distance = t;
-    hit.point = ray.origin + ray.dir * t;
-
-    float w = 1.0 - u - v;
-
-    vec3 interpNormal = normalize(tri.normA * w + tri.normB * u + tri.normC * v);
-    vec3 faceNormal = normalize(cross(edge1, edge2));
-
-    if (dot(interpNormal, faceNormal) < 0.0)
-        interpNormal = -interpNormal;
-
-    hit.normal = interpNormal;
-
-    return hit;
+    HitPayload p;
+    p.didHit   = (passAll != 0.0f);
+    p.distance = mix(0.0f, t, passAll);
+    vec3 hitP  = ray.origin + ray.dir * t + nI * 1e6;
+    p.point    = mix(vec3(0.0f), hitP, passAll);
+    p.normal   = mix(vec3(0.0f), nI,   passAll);
+    return p;
 }
 
 /* ---------- GLSL ---------- */
