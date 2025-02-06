@@ -83,9 +83,9 @@ HitPayload rayHitSphere(Ray ray, Sphere sphere) {
     float t2 = (-h + sqrtDisc) / a;
 
     float distance = 0.0;
-    if (t1 >= EPSILON) {
+    if (t1 >= DST_EPSILON) {
         distance = t1;
-    } else if (t2 >= EPSILON) {
+    } else if (t2 >= DST_EPSILON) {
         distance = t2;
     } else {
         return hit;
