@@ -1,15 +1,15 @@
 Camera:
-  LookFrom: [0, 0, 0]
-  LookAt: [0, 0, 0]
-  VFOV: 0
-  FocalDistance: 4
+  LookFrom: [-0.921772599, 1.32995391, -4.82718897]
+  LookAt: [-0.11407274, -0.739136457, -0.38852784]
+  VFOV: 60
+  FocalDistance: 2.88000011
   SamplesPerPixel: 1
   MaxBounces: 8
-  Defocus: 0
+  Defocus: 60
   Diverge: 1
-  Exposure: 1.10000002
-  EnvRotation: 75
-EnvTexture: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/hdri/spruit_sunrise_4k.hdr
+  Exposure: 1
+  EnvRotation: 121
+EnvTexture: ../hdri/spruit_sunrise_4k.hdr
 Objects:
   - Mesh:
       Material:
@@ -19,15 +19,15 @@ Objects:
         SpecularColor: [1, 1, 1]
         SpecularFactor: 0
         Roughness: 1
-      File: /Users/tyler/Documents/graphics/vulkan-pathtracer/assets/models/870k_dragon.glb
-      Transform: [0.75999999, 0.150000006, 0, 0, -48, 180, 3, 3, 3]
-  - Sphere:
-      Center: [-1.05999994, 0, 0]
-      Radius: 0.620000005
+      File: ../models/cloth.glb
+      Transform: [0, -1.10000002, 0, 0, 180, 0, 3, 3, 3]
+  - Mesh:
       Material:
-        Color: [1, 1, 1]
+        Color: [0.632911384, 0.248053417, 0.0801153928]
         EmissionColor: [1, 1, 1]
         EmissionStrength: 0
         SpecularColor: [1, 1, 1]
-        SpecularFactor: 1
+        SpecularFactor: 0.150000006
         Roughness: 0
+      File: ../models/870k_dragon.glb
+      Transform: [-0.200000003, -0.140000001, -1.64999998, 0, -52, 0, 3.5, 3.5, 3.5]

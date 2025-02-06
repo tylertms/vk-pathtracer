@@ -1,0 +1,33 @@
+Camera:
+  LookFrom: [-0.201655582, 6.92050791, -2.74652863]
+  LookAt: [-0.201630607, 6.15325451, 1.8612082]
+  VFOV: 60
+  FocalDistance: 4
+  SamplesPerPixel: 1
+  MaxBounces: 16
+  Defocus: 0
+  Diverge: 1
+  Exposure: 1
+  EnvRotation: 230
+EnvTexture: ../hdri/snowy_hillside_4k.hdr
+Objects:
+  - Mesh:
+      Material:
+        Color: [0.124072, 0.215845749, 0.426160336]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0.150000006
+        Roughness: 0
+      File: ../models/450k_lucy.glb
+      Transform: [0.00999999978, -0.379999995, 2.73000002, 90, -92.5, 0, 0.00999999978, 0.00999999978, 0.00999999978]
+  - Sphere:
+      Center: [-1.95000005, 14.2299995, 0]
+      Radius: 0
+      Material:
+        Color: [1, 1, 1]
+        EmissionColor: [1, 1, 1]
+        EmissionStrength: 0
+        SpecularColor: [1, 1, 1]
+        SpecularFactor: 0.99000001
+        Roughness: 0
