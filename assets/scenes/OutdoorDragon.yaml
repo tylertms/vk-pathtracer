@@ -5,7 +5,7 @@ Camera:
   FocalDistance: 2.88000011
   SamplesPerPixel: 1
   MaxBounces: 8
-  Defocus: 60
+  Defocus: 30
   Diverge: 1
   Exposure: 1
   EnvRotation: 121
