@@ -211,7 +211,7 @@ void UserInterface::processCameraMovement(Vulkan::SceneManager &sceneManager) {
     float newDistance = currentDist - scroll;
     newDistance = glm::clamp(newDistance, minDistance, maxDistance);
 
-    if (fabs(newDistance - currentDist) > EPSILON && ImGui::IsWindowHovered()) {
+    if (newDistance != currentDist && ImGui::IsWindowHovered()) {
         glm::vec3 normDir = glm::normalize(viewDir);
         lookFrom = lookAt - normDir * newDistance;
         cam.lookFrom = lookFrom;
@@ -224,7 +224,7 @@ void UserInterface::processCameraMovement(Vulkan::SceneManager &sceneManager) {
 
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) && (ImGui::IsWindowHovered() || ImGui::IsWindowFocused())) {
         ImGui::SetWindowFocus();
-        glm::vec2 delta(mouseDelta.x * PAN_SPEED, mouseDelta.y * PAN_SPEED);
+        glm::vec2 delta(-mouseDelta.x * PAN_SPEED, -mouseDelta.y * PAN_SPEED);
         glm::vec3 move = right * delta.x + up * delta.y;
         lookFrom += move;
         lookAt += move;
@@ -232,7 +232,7 @@ void UserInterface::processCameraMovement(Vulkan::SceneManager &sceneManager) {
     }
 
     if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsWindowFocused()) {
-        glm::vec2 delta(-mouseDelta.x * ORBIT_SPEED, -mouseDelta.y * ORBIT_SPEED);
+        glm::vec2 delta(mouseDelta.x * ORBIT_SPEED, mouseDelta.y * ORBIT_SPEED);
 
         glm::vec3 offset = lookFrom - lookAt;
         float radius = glm::length(offset);

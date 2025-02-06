@@ -17,7 +17,7 @@ vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
 
     float u = 0.5 + atan(rotatedDir.z, rotatedDir.x) * INV_2PI;
     float v = 0.5 - asin(rotatedDir.y) * INV_PI;
-    vec2 uv = -vec2(u, v);
+    vec2 uv = vec2(u, v);
 
     if (bounceNum == 0) {
         uv += randUnitCircle(state) * ENV_TEX_BLUR;
@@ -44,7 +44,7 @@ Ray generateRay(vec2 uv, inout uint state) {
     vec2 jitter = randUnitCircle(state) * recipRes.x;
     vec3 targetPoint = focalCenter 
         - right * (uv.x * halfWidth + jitter.x * scene.camera.diverge)
-        + up * (uv.y * halfHeight + jitter.y * scene.camera.diverge);
+        - up * (uv.y * halfHeight + jitter.y * scene.camera.diverge);
 
     vec3 rayOrigin = scene.camera.lookFrom;
     rayOrigin += right * (jitter.x * scene.camera.defocus);
@@ -61,8 +61,6 @@ Ray generateRay(vec2 uv, inout uint state) {
 vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
     vec3 throughput = vec3(1.0);
     vec3 radiance = vec3(0.0);
-    float currentIOR = 1.0, glassIOR = 1.5;
-    vec3 glassAbsorption = vec3(0.6);
     
     for (uint bounce = 0; bounce <= maxBounces; bounce++) {
         HitPayload hit = rayHitScene(ray, stats);
@@ -75,37 +73,14 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
             return hit.normal * 0.5 + 0.5;
 #endif
         
-        if (currentIOR == glassIOR)
-            throughput *= exp(-glassAbsorption * hit.distance);
-        
-        if (hit.material.specularFactor > 0.99) {
-            bool entering = dot(ray.dir, hit.normal) < 0.0;
-            vec3 n = entering ? hit.normal : -hit.normal;
-            float etai = currentIOR;
-            float etat = entering ? glassIOR : 1.0;
-            ray.origin = entering ? hit.point - hit.normal * EPSILON : hit.point + hit.normal * EPSILON;
-            float eta = etai / etat;
-            float cosTheta = clamp(dot(-ray.dir, n), 0.0, 1.0);
-            float k = 1.0 - eta * eta * (1.0 - cosTheta * cosTheta);
-            bool totalInternal = (k < 0.0);
-            float R0 = pow((etai - etat) / (etai + etat), 2.0);
-            float fresnel = totalInternal ? 1.0 : (R0 + (1.0 - R0) * pow(1.0 - cosTheta, 5.0));
-            
-            if (rand(state) < fresnel)
-                ray.dir = normalize(reflect(ray.dir, n));
-            else {
-                ray.dir = normalize(refract(ray.dir, n, eta));
-                currentIOR = entering ? glassIOR : 1.0;
-            }
-        } else {
-            ray.origin = hit.point + hit.normal * EPSILON;
-            vec3 diffuseDir = normalize(hit.normal + randDir(state));
-            vec3 specularDir = reflect(ray.dir, hit.normal);
-            uint specularScatter = (hit.material.specularFactor >= rand(state)) ? 1u : 0u;
-            ray.dir = normalize(mix(diffuseDir, specularDir, (1.0 - hit.material.roughness) * float(specularScatter)));
-        }
-        
+        vec3 diffuseDir = normalize(hit.normal + randDir(state));
+        vec3 specularDir = normalize(reflect(ray.dir, hit.normal));
+        uint specularScatter = (hit.material.specularFactor >= rand(state)) ? 1u : 0u;
+
+        ray.origin = hit.point + hit.normal * RAY_ORIGIN_EPSILON;
+        ray.dir = normalize(mix(diffuseDir, specularDir, (1.0 - hit.material.roughness) * float(specularScatter)));
         ray.inv = 1.0 / ray.dir;
+
         vec3 emitted = hit.material.emissionColor * hit.material.emissionStrength;
         radiance += throughput * emitted;
         throughput *= mix(hit.material.color, hit.material.specularColor, hit.material.specularFactor);
