@@ -12,7 +12,7 @@ GLFWwindow *Window::init() {
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, VK_TRUE);
 
-    m_Window = glfwCreateWindow(m_Width, m_Height, "vulkan-pathtracer", nullptr, nullptr);
+    m_Window = glfwCreateWindow(m_Width, m_Height, "vk-pathtracer", nullptr, nullptr);
 
     glfwSetWindowUserPointer(m_Window, this);
     glfwSetFramebufferSizeCallback(m_Window, onResize);

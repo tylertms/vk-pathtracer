@@ -61,7 +61,7 @@ VkInstanceCreateInfo Instance::getCreateInfo(VkApplicationInfo appInfo, VkDebugU
 VkApplicationInfo Instance::getAppInfo() {
     VkApplicationInfo appInfo{};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "vulkan-pathtracer";
+    appInfo.pApplicationName = "vk-pathtracer";
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = "NONE";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
