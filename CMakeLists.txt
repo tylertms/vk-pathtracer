@@ -56,7 +56,7 @@ set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders_spv")
 file(MAKE_DIRECTORY ${SHADER_OUTPUT_DIR})
 
 set(SHADER_SRCS "Graphics.vert" "Graphics.frag")
-file(GLOB_RECURSE SHADER_DEPS "${CMAKE_SOURCE_DIR}/src/Shaders/*.glsl" "${CMAKE_SOURCE_DIR}/src/Core/*.h")
+file(GLOB_RECURSE SHADER_DEPS "${CMAKE_SOURCE_DIR}/src/Shaders/*" "${CMAKE_SOURCE_DIR}/src/Core/*.h")
 
 foreach(SHADER ${SHADER_SRCS})
     add_custom_command(
