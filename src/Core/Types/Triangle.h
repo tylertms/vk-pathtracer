@@ -51,8 +51,6 @@ HitPayload rayHitTriangle(Ray ray, Triangle tri) {
     float passAll = passDet * passT * passU * passV * passW;
 
     vec3 nI = normalize(tri.normA * w + tri.normB * u + tri.normC * v);
-    float flip = step(0.0f, dot(nI, ray.dir));
-    nI = mix(nI, -nI, flip);
 
     HitPayload p;
     p.didHit   = (passAll != 0.0f);
