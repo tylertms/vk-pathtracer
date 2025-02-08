@@ -3,8 +3,8 @@
 
 #define MAX_SPHERES 64
 #define MAX_MESHES 64
-#define MAX_TRIANGLES 30000000  // 30M
-#define MAX_BVHS      30000000  // 30M
+#define MAX_TRIANGLES 30000000
+#define MAX_BVHS 30000000
 
 #define BVH_MAX_DEPTH 32
 #define BVH_TRIANGLE_MIN 4
@@ -12,9 +12,10 @@
 
 #define ENV_TEX_BLUR 0.002f
 
-#define DST_EPSILON 1e-12
+#define DST_EPSILON 1e-10
 #define RAY_ORIGIN_EPSILON 1e-5
 
+#define PI 3.1415926536f
 #define INV_PI 0.3183098862f
 #define INV_2PI 0.1591549431f
 
