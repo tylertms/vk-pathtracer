@@ -1,5 +1,5 @@
-#ifndef BXDF_DIFFUSE
-#define BXDF_DIFFUSE
+#ifndef BSDF_DIFFUSE
+#define BSDF_DIFFUSE
 
 vec3 diffuseBRDF(vec3 normal, inout uint state) {
     return normalize(normal + randDir(state));

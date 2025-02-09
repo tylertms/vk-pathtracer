@@ -1,7 +1,9 @@
-#ifndef BXDF_SPECULAR
-#define BXDF_SPECULAR
+#ifndef BSDF_SPECULAR
+#define BSDF_SPECULAR
 
-vec3 specularBRDF(vec3 normal, vec3 incident) {
+#include "Diffuse.glsl"
+
+vec3 specularBRDF(vec3 normal, vec3 incident, inout uint state) {
     return normalize(reflect(incident, normal));
 }
 
