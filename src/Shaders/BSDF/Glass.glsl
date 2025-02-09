@@ -1,10 +1,8 @@
-#ifndef BXDF_GLASS
-#define BXDF_GLASS
+#ifndef BSDF_GLASS
+#define BSDF_GLASS
 
 #include "../../Core/Constants.h"
-
-// Complex IOR
-const vec2 GLASS_IOR = vec2(1.5, 0.4);
+#include "../Utility/GGX.glsl"
 
 // TODO: Implement wavlength-dependent refraction
 // const float WAVELENGTH = 550e-9;
@@ -17,27 +15,31 @@ bool totalInternalReflection(vec3 incident, vec3 normal, float eta) {
     return (k < 0.0);
 }
 
-vec3 glassBSDF(inout vec3 normal, in vec3 incident, float segmentLength, inout vec3 throughput, inout uint state) {
+vec3 glassBSDF(HitPayload hit, inout vec3 normal, vec3 incident, inout vec3 throughput, inout uint state) {
     float cosTheta_i = dot(normal, incident);
     bool entering = cosTheta_i < 0.0;
     normal = entering ? normal : -normal;
 
-    float realIOR = GLASS_IOR.x;
+    float realIOR = hit.material.IOR.x;
     float eta = entering ? 1.0 / realIOR : realIOR;
+
     float cosTheta = clamp(dot(-incident, normal), 0.0, 1.0);
     float R0 = pow((1.0 - realIOR) / (1.0 + realIOR), 2.0);
     float fresnel = R0 + (1.0 - R0) * pow(1.0 - cosTheta, 5.0);
-    bool reflectSample = rand(state) < fresnel;
 
-    vec3 absorption = vec3(entering ? 1.0 : exp(-GLASS_IOR.y * segmentLength));
+    vec3 microNormal = sampleGGX(normal, hit.material.roughness, state);
+
+    vec3 absorption = vec3(entering ? 1.0 : exp(-hit.material.IOR.y * hit.distance));
     throughput *= absorption;
 
-    if (reflectSample || totalInternalReflection(incident, normal, eta)) {
-        return reflect(incident, normal);
+    bool reflectSample = (rand(state) < fresnel);
+
+    if (reflectSample || totalInternalReflection(incident, microNormal, eta)) {
+        return reflect(incident, microNormal);
     } else {
-        return refract(incident, normal, eta);
+        normal = -normal;
+        return refract(incident, microNormal, eta);
     }
 }
-
 
 #endif
