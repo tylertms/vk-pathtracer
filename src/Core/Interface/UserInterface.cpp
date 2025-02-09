@@ -1,17 +1,26 @@
 #include "UserInterface.h"
 
+#include "CameraControl.h"
+#include "ObjectEditor.h"
+
 #include "../File/FilePicker.h"
 #include "../File/SceneLoader.h"
-#include "../../Vulkan/Texture.h"
 #include "../Constants.h"
+
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_vulkan.h>
 
 namespace Interface {
 
-void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &instance,
-                         const Vulkan::Window &window, const Vulkan::DescriptorPool &descriptorPool,
-                         const Vulkan::SwapChain &swapChain,
-                         const Vulkan::GraphicsPipeline &graphicsPipeline) {
-
+void UserInterface::init(
+    const Vulkan::Device &device, 
+    const Vulkan::Instance &instance,
+    const Vulkan::Window &window, 
+    const Vulkan::DescriptorPool &descriptorPool,
+    const Vulkan::SwapChain &swapChain,
+    const Vulkan::GraphicsPipeline &graphicsPipeline)
+{
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO &io = ImGui::GetIO();
@@ -21,6 +30,7 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
 
     ImGui::StyleColorsDark();
     ImGuiStyle &style = ImGui::GetStyle();
+    
     style.WindowRounding = 2;
     style.GrabRounding = 2;
     style.FrameRounding = 2;
@@ -30,8 +40,8 @@ void UserInterface::init(const Vulkan::Device &device, const Vulkan::Instance &i
     style.WindowPadding = {8, 5};
 
     style.Colors[ImGuiCol_WindowBg] = ImVec4(0, 0, 0, 0);
-    style.Colors[ImGuiCol_FrameBg] = ImVec4(0.14, 0.14, 0.14, 1.0);
-    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.1, 0.1, 0.1, 1.0);
+    style.Colors[ImGuiCol_FrameBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.0f);
+    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 
     ImGui_ImplGlfw_InitForVulkan(window.getGlfwWindow(), true);
     ImGui_ImplVulkan_InitInfo info{};
@@ -61,56 +71,33 @@ void UserInterface::deinit() {
     ImGui::DestroyContext();
 }
 
-void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
-
-    ImGui::Begin("Statistics");
-    ImGui::Text("Frames: %d", sceneManager.sceneData.framesRendered);
-
-    float total = 0;
-    uint32_t count = 0;
-
-    while (total < 1000 && count < m_FrameTimes.size() - 1) {
-        total += m_FrameTimes[m_FrameTimes.size() - count - 1];
-        count++;
-    }
-
-    ImGui::Text("Average: %6.2fms", total / count);
-    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, __null, 0.0, 2 * total / count, ImVec2(160.0f, 40.0f));
-
-    if (ImGui::Button("Reset Accumulation"))
-        sceneManager.resetAccumulation();
-
-    ImGui::End();
-}
-
 void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
     if (ImGui::BeginMainMenuBar()) {
-        if (ImGui::BeginMenu("Add")) {
-            if (ImGui::MenuItem("Sphere")) {
-                sceneManager.addSphere();
-                sceneManager.resetAccumulation();
-            }
-            ImGui::EndMenu();
-        }
 
-        if (ImGui::BeginMenu("Load")) {
-            if (ImGui::MenuItem("Scene")) {
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("New"))
+                sceneManager.reset();
+
+            if (ImGui::MenuItem("Open"))
                 File::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
-            }
-            if (ImGui::MenuItem("Model")) {
-                sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
-                sceneManager.updateMeshTransforms();
-                sceneManager.uploadFullSceneStorage();
-                sceneManager.resetAccumulation();
-            }
-            if (ImGui::MenuItem("HDRI Environment")) {
-                sceneManager.queueEnv(pickFilePath(VKPT_HDRI, VKPT_LOAD));
-            }
+
+            if (ImGui::MenuItem("Save"))
+                File::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
+                
             ImGui::EndMenu();
         }
 
-        if (ImGui::MenuItem("Save")) {
-            File::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
+        if (ImGui::BeginMenu("Add")) {
+            if (ImGui::MenuItem("Sphere"))
+                sceneManager.addSphere();
+
+            if (ImGui::MenuItem("Model"))
+                sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
+
+            if (ImGui::MenuItem("Environment"))
+                sceneManager.queueEnv(pickFilePath(VKPT_HDRI, VKPT_LOAD));
+
+            ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("View")) {
@@ -119,15 +106,15 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
             ImGui::Checkbox("Show Statistics", &m_ShowStats);
             ImGui::EndMenu();
         }
-
+        
         ImGui::EndMainMenuBar();
     }
 }
 
 void UserInterface::setupDockspace() {
     ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-
     const ImGuiViewport *viewport = ImGui::GetMainViewport();
+
     ImGui::SetNextWindowPos(viewport->Pos);
     ImGui::SetNextWindowSize(viewport->Size);
     ImGui::SetNextWindowViewport(viewport->ID);
@@ -138,7 +125,6 @@ void UserInterface::setupDockspace() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
     ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
 
@@ -155,11 +141,9 @@ void UserInterface::setupDockspace() {
 void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent) {
     m_TimeCurrent = std::chrono::high_resolution_clock::now();
     float frameTime = std::chrono::duration<float, std::milli>(m_TimeCurrent - m_TimeStart).count();
-
     m_FrameTimes.push_back(frameTime);
     if (m_FrameTimes.size() > 100)
         m_FrameTimes.erase(m_FrameTimes.begin());
-
     m_TimeStart = m_TimeCurrent;
 
     ImGui_ImplVulkan_NewFrame();
@@ -169,187 +153,35 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
     setupDockspace();
     drawMenuBar(sceneManager);
 
-    if (m_ShowCameraControl) {
-        if (drawCameraControl(sceneManager)) {
-            sceneManager.resetAccumulation();
-        }
-    }
-
-    if (m_ShowObjectControl) {
-        drawObjectControl(sceneManager);
-    }
-
-    if (m_ShowStats) {
-        drawStats(sceneManager);
-    }
+    if (m_ShowCameraControl) drawCameraControl(sceneManager);
+    if (m_ShowObjectControl) drawObjectControl(sceneManager);
+    if (m_ShowStats) drawStats(sceneManager);
 
     ImGui::Begin("Viewport");
     processCameraMovement(sceneManager);
     position = ImGui::GetWindowPos();
     extent = ImGui::GetWindowSize();
     ImGui::End();
-
     ImGui::Render();
 }
 
-void UserInterface::processCameraMovement(Vulkan::SceneManager &sceneManager) {
-    VKPT::Camera &cam = sceneManager.sceneData.camera;
-    const glm::vec3 WORLD_UP(0.0f, -1.0f, 0.0f);
+void UserInterface::drawStats(Vulkan::SceneManager &sceneManager) {
+    ImGui::Begin("Statistics");
+    ImGui::Text("Frames: %d", sceneManager.sceneData.framesRendered);
 
-    ImGuiIO& io = ImGui::GetIO();
-    ImVec2 mouseDelta = io.MouseDelta;
-    float scroll = io.MouseWheel * ZOOM_SPEED;
+    float total = 0;
+    uint32_t count = 0;
+    while (total < 1000 && count < m_FrameTimes.size() - 1) {
+        total += m_FrameTimes[m_FrameTimes.size() - count - 1];
+        count++;
+    }
+    ImGui::Text("Average: %6.2fms", total / count);
+    ImGui::PlotLines("##", m_FrameTimes.data(), m_FrameTimes.size(), 0, nullptr, 0.0f, 2 * total / count, ImVec2(160.0f, 40.0f));
 
-    const float minDistance = 0.01f;
-    const float maxDistance = 1000.f;
-
-    glm::vec3 lookAt = cam.lookAt;
-    glm::vec3 lookFrom = cam.lookFrom;
-    glm::vec3 viewDir = lookAt - lookFrom;
-    float currentDist = glm::length(viewDir);
-
-    float newDistance = currentDist - scroll;
-    newDistance = glm::clamp(newDistance, minDistance, maxDistance);
-
-    if (newDistance != currentDist && ImGui::IsWindowHovered()) {
-        glm::vec3 normDir = glm::normalize(viewDir);
-        lookFrom = lookAt - normDir * newDistance;
-        cam.lookFrom = lookFrom;
-
+    if (ImGui::Button("Reset Accumulation"))
         sceneManager.resetAccumulation();
-    }
-
-    glm::vec3 right = glm::normalize(glm::cross(viewDir, WORLD_UP));
-    glm::vec3 up = glm::normalize(glm::cross(right, viewDir));
-
-    if (ImGui::IsMouseDragging(ImGuiMouseButton_Right) && (ImGui::IsWindowHovered() || ImGui::IsWindowFocused())) {
-        ImGui::SetWindowFocus();
-        glm::vec2 delta(mouseDelta.x * PAN_SPEED, -mouseDelta.y * PAN_SPEED);
-        glm::vec3 move = right * delta.x + up * delta.y;
-        lookFrom += move;
-        lookAt += move;
-        sceneManager.resetAccumulation();
-    }
-
-    if (ImGui::IsMouseDragging(ImGuiMouseButton_Left) && ImGui::IsWindowFocused()) {
-        glm::vec2 delta(-mouseDelta.x * ORBIT_SPEED, mouseDelta.y * ORBIT_SPEED);
-
-        glm::vec3 offset = lookFrom - lookAt;
-        float radius = glm::length(offset);
-
-        glm::vec3 corrected = glm::vec3(offset.x, -offset.y, offset.z);
-        float theta = atan2(corrected.x, corrected.z);
-        float phi = acos(glm::clamp(corrected.y / radius, -1.0f, 1.0f));
-
-        theta += delta.x;
-        phi += delta.y;
-        const float minPhi = 0.01f;
-        const float maxPhi = glm::pi<float>() - 0.01f;
-        phi = glm::clamp(phi, minPhi, maxPhi);
-
-        float sinPhi = sin(phi);
-        float newX = radius * sinPhi * sin(theta);
-        float newY = radius * cos(phi);
-        float newZ = radius * sinPhi * cos(theta);
-        glm::vec3 newOffset = glm::vec3(newX, -newY, newZ);
-
-        lookFrom = lookAt + newOffset;
-        sceneManager.resetAccumulation();
-    }
-
-    cam.lookFrom = lookFrom;
-    cam.lookAt   = lookAt;
-}
-
-bool UserInterface::drawCameraControl(Vulkan::SceneManager &sceneManager) {
-    ImGui::Begin("Camera");
-
-    auto &camera = sceneManager.sceneData.camera;
-    bool reset = false;
-
-    uint32_t samplesMin = 1, samplesMax = 100;
-    uint32_t bouncesMin = 0, bouncesMax = 30;
-
-    if (ImGui::DragScalar("Samples Per Pixel", ImGuiDataType_U32, &camera.samplesPerPixel, 1, &samplesMin, &samplesMax)) {
-    }
-    if (ImGui::DragScalar("Max Bounces", ImGuiDataType_U32, &camera.maxBounces, 1, &bouncesMin, &bouncesMax)) reset = true;
-    if (ImGui::DragFloat3("Look From", (float *)&camera.lookFrom)) reset = true;
-    if (ImGui::DragFloat3("Look At", (float *)&camera.lookAt)) reset = true;
-    if (ImGui::DragFloat("VFOV", &camera.vfov, 0.1f, 10.f, 120.f)) reset = true;
-    if (ImGui::DragFloat("Focal Distance", &camera.focalDistance, 0.01f, 0.1f, 100.f)) reset = true;
-    if (ImGui::DragFloat("Defocus Strength", &camera.defocus, 0.1f, 0.f, 1000.f)) reset = true;
-    if (ImGui::DragFloat("Diverge Strength", &camera.diverge, 0.1f, 0.f, 1000.f)) reset = true;
-    if (ImGui::DragFloat("Exposure", &camera.exposure, 0.01f, 0.01f, 1000.f)) reset = true;
-    if (ImGui::DragFloat("Environment Rotation", &camera.envRotation, 0.5f)) reset = true;
-
     ImGui::End();
-    return reset;
 }
 
-bool UserInterface::drawObjectControl(Vulkan::SceneManager &sceneManager) {
-    ImGui::Begin("Objects");
-
-    for (uint32_t i = 0; i < sceneManager.sceneData.numSpheres; i++) {
-        ImGui::PushID("##sphere");
-        ImGui::PushID(i);
-        if (ImGui::CollapsingHeader("Sphere")) {
-            if (drawSphereControl(sceneManager.sceneData.spheres[i])) {
-                sceneManager.resetAccumulation();
-            }
-        }
-        ImGui::PopID();
-        ImGui::PopID();
-    }
-
-    for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
-        ImGui::PushID("##mesh");
-        ImGui::PushID(i);
-        if (ImGui::CollapsingHeader("Mesh")) {
-            if (drawMeshControl(sceneManager, i)) {
-                sceneManager.updateMeshTransforms();
-                sceneManager.resetAccumulation();
-            }
-        }
-        ImGui::PopID();
-        ImGui::PopID();
-    }
-
-    ImGui::End();
-    return true;
-}
-
-bool UserInterface::drawSphereControl(VKPT::Sphere &sphere) {
-    bool reset = false;
-
-    if (ImGui::DragFloat3("Position", (float *)(&sphere.center), 0.01)) reset = true;
-    if (ImGui::DragFloat("Radius", &sphere.radius, 0.01)) reset = true;
-    if (ImGui::ColorEdit3("Color", (float *)(&sphere.material.color))) reset = true;
-    if (ImGui::DragFloat("Roughness", &sphere.material.roughness, 0.01, 0.0, 1.0)) reset = true;
-    if (ImGui::ColorEdit3("Specular Color", (float *)(&sphere.material.specularColor))) reset = true;
-    if (ImGui::DragFloat("Specular Factor", &sphere.material.specularFactor, 0.01, 0.0, 1.0)) reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float *)(&sphere.material.emissionColor))) reset = true;
-    if (ImGui::DragFloat("Emission Strength", &sphere.material.emissionStrength, 0.01)) reset = true;
-    ImGui::Spacing();
-
-    return reset;
-}
-
-bool UserInterface::drawMeshControl(Vulkan::SceneManager &sceneManager, uint32_t index) {
-    bool reset = false;
-    VKPT::Mesh &mesh = sceneManager.sceneData.meshes[index];
-
-    if (ImGui::DragFloat3("Translation", (float *)(&sceneManager.meshTransforms[index][0]), 0.01)) reset = true;
-    if (ImGui::DragFloat3("Rotation", (float *)(&sceneManager.meshTransforms[index][1]), 0.5)) reset = true;
-    if (ImGui::DragFloat3("Scale", (float *)(&sceneManager.meshTransforms[index][2]), 0.01)) reset = true;
-    if (ImGui::ColorEdit3("Color", (float *)(&mesh.material.color))) reset = true;
-    if (ImGui::DragFloat("Roughness", &mesh.material.roughness, 0.01, 0.0, 1.0)) reset = true;
-    if (ImGui::ColorEdit3("Specular Color", (float *)(&mesh.material.specularColor))) reset = true;
-    if (ImGui::DragFloat("Specular Factor", &mesh.material.specularFactor, 0.01, 0.0, 1.0)) reset = true;
-    if (ImGui::ColorEdit3("Emission Color", (float *)(&mesh.material.emissionColor))) reset = true;
-    if (ImGui::DragFloat("Emission Strength", &mesh.material.emissionStrength, 0.01)) reset = true;
-    ImGui::Spacing();
-
-    return reset;
-}
 
 } // namespace Interface
