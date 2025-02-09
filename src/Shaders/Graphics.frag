@@ -1,4 +1,4 @@
-#version 460
+#version 460 core
 /* --------------------------------------*/
 #extension GL_ARB_fragment_shader_interlock : require
 /* --------------------------------------*/

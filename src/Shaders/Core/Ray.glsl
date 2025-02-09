@@ -73,6 +73,10 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
         return hit.normal * 0.5 + 0.5;
 #endif
 
+#ifdef DEBUG_NO_PATH
+        return hit.material.baseColor;
+#endif
+
         evaluateBSDF(hit, ray, radiance, throughput, state);
     }
 
