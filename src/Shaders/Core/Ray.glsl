@@ -3,10 +3,7 @@
 
 #include "Common.glsl"
 #include "Random.glsl"
-
-#include "../BxDF/Diffuse.glsl"
-#include "../BxDF/Specular.glsl"
-#include "../BxDF/Glass.glsl"
+#include "../BSDF/Evaluate.glsl"
 
 vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
     float angle = radians(scene.camera.envRotation);
@@ -34,8 +31,7 @@ Ray generateRay(vec2 uv, inout uint state) {
     vec3 forward = normalize(scene.camera.lookAt - scene.camera.lookFrom);
     vec3 worldUp = vec3(0, 1, 0);
 
-    vec3 right = normalize(cross(forward, mix(worldUp, vec3(0,0,1),
-        float(abs(dot(forward, worldUp)) > 0.99))));
+    vec3 right = normalize(cross(forward, worldUp));
     vec3 up = normalize(cross(right, forward));
 
     float tanHalfFov = tan(radians(scene.camera.vfov) * 0.5);
@@ -77,18 +73,7 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
         return hit.normal * 0.5 + 0.5;
 #endif
 
-        vec3 diffuseDir = diffuseBRDF(hit.normal, state);
-        vec3 specularDir = specularBRDF(hit.normal, ray.dir);
-        vec3 glassDir = glassBSDF(hit.normal, ray.dir, hit.distance, throughput, state);
-        uint specularScatter = (hit.material.specularFactor >= rand(state)) ? 1u : 0u;
-
-        ray.origin = hit.point + glassDir * RAY_ORIGIN_EPSILON;
-        ray.dir = glassDir; // normalize(mix(diffuseDir, specularDir, (1.0 - hit.material.roughness) * float(specularScatter)));
-        ray.inv = 1.0 / ray.dir;
-
-        vec3 emitted = hit.material.emissionColor * hit.material.emissionStrength;
-        radiance += throughput * emitted;
-        throughput *= mix(hit.material.color, hit.material.specularColor, hit.material.specularFactor);
+        evaluateBSDF(hit, ray, radiance, throughput, state);
     }
 
     return radiance;
