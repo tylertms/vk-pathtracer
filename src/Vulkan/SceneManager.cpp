@@ -43,8 +43,10 @@ void SceneManager::reset() {
     sceneData.numTriangles = 0;
     sceneData.numBVHs = 0;
     sceneData.framesRendered = 0;
+    sceneData.camera = {};
     modelPaths.clear();
     meshTransforms.clear();
+    queueEnv("");
 }
 /* ----------------------------- */
 
@@ -67,6 +69,7 @@ void SceneManager::resetAccumulation() {
 /* ----------- SPHERE ----------- */
 void SceneManager::addSphere() {
     sceneData.numSpheres++;
+    resetAccumulation();
 }
 /* ----------------------------- */
 
@@ -98,6 +101,10 @@ void SceneManager::addMesh(const std::string filename) {
 
     meshTransforms.push_back(defaultTransform);
     modelPaths.push_back(filename);
+
+    updateMeshTransforms();
+    uploadFullSceneStorage();
+    resetAccumulation();
 }
 
 void SceneManager::updateMeshTransforms() {
