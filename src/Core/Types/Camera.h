@@ -11,7 +11,7 @@ using namespace glm;
 
 namespace VKPT {
 struct alignas(16) Camera {
-    vec3 lookFrom = vec3(0, 0, -4);
+    vec3 lookFrom = vec3(0, 0, 4);
     float vfov = 60.f;
     vec3 lookAt = vec3(0, 0, 0);
     float focalDistance = 4.f;
