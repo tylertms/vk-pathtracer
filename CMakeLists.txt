@@ -49,7 +49,13 @@ FetchContent_MakeAvailable(glfw glm yaml-cpp nfd)
 file(GLOB_RECURSE SOURCES "${CMAKE_SOURCE_DIR}/src/*.cpp" "${CMAKE_SOURCE_DIR}/src/*.hpp")
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${Vulkan_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} PRIVATE 
+    ${CMAKE_SOURCE_DIR}/src 
+    ${Vulkan_INCLUDE_DIRS}
+    ${CMAKE_SOURCE_DIR}/src/External
+    ${CMAKE_SOURCE_DIR}/src/External/ImGui
+)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE Vulkan::Vulkan glfw glm yaml-cpp::yaml-cpp nfd)
 
 set(SHADER_OUTPUT_DIR "${CMAKE_BINARY_DIR}/shaders_spv")
