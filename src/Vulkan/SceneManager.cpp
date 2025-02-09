@@ -82,7 +82,10 @@ void SceneManager::addMesh(const std::string filename) {
     uint32_t triStartIndex = sceneData.numTriangles;
 
     for (auto &triangle : loader.getTriangles()) {
-        sceneStorage->triangles[sceneData.numTriangles++] = triangle;
+        triIndices.push_back(sceneData.numTriangles++);
+        triMin.push_back(glm::min(triangle.posA, glm::min(triangle.posB, triangle.posC)));
+        triMax.push_back(glm::max(triangle.posA, glm::max(triangle.posB, triangle.posC)));
+        triCentroid.push_back((triangle.posA + triangle.posB + triangle.posC) / 3.f);
     }
 
     for (auto mesh : loader.getMeshes()) {
@@ -93,6 +96,7 @@ void SceneManager::addMesh(const std::string filename) {
         mesh.rootBVHNode = sceneData.numBVHs;
         sceneData.meshes[sceneData.numMeshes++] = mesh;
 
+        printf("FINISHED PUSHING DATA, CREATING BVH\n");
         BVH::createBVH(mesh, initBVH, *this);
     }
 
@@ -102,9 +106,19 @@ void SceneManager::addMesh(const std::string filename) {
     meshTransforms.push_back(defaultTransform);
     modelPaths.push_back(filename);
 
+    printf("WRITING TRIANGLES TO SCENE...\n");
+
+    for (uint32_t i = triStartIndex; i < sceneData.numTriangles; i++) {
+        sceneStorage->triangles[i] = loader.getTriangles()[triIndices[i]];
+    }
+
+    printf("UPLOADING TO GPU...\n");
+
     updateMeshTransforms();
     uploadFullSceneStorage();
     resetAccumulation();
+
+    printf("DONE!\n");
 }
 
 void SceneManager::updateMeshTransforms() {

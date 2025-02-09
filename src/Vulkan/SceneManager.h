@@ -47,6 +47,11 @@ class SceneManager {
     std::vector<std::string> modelPaths;
     std::vector<glm::mat3> meshTransforms;
 
+    std::vector<uint32_t> triIndices;
+    std::vector<glm::vec3> triMin;
+    std::vector<glm::vec3> triMax;
+    std::vector<glm::vec3> triCentroid;
+
     ImageView envTexture;
     std::string texturePath;
     bool updateTexture = false;
