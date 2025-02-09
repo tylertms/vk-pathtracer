@@ -6,9 +6,9 @@
 
 namespace BVH {
 
-inline void growBounds(glm::vec3 &boundsMin, glm::vec3 &boundsMax, const VKPT::Triangle &tri) {
-    boundsMin = glm::min(boundsMin, glm::min(tri.posA, glm::min(tri.posB, tri.posC)));
-    boundsMax = glm::max(boundsMax, glm::max(tri.posA, glm::max(tri.posB, tri.posC)));
+inline void growBounds(glm::vec3 &boundsMin, glm::vec3 &boundsMax, const glm::vec3 &triMin, const glm::vec3 &triMax) {
+    boundsMin = glm::min(boundsMin, triMin);
+    boundsMax = glm::max(boundsMax, triMax);
 }
 
 inline float nodeCost(const glm::vec3 &boundsMin, const glm::vec3 &boundsMax, uint32_t triangleCount) {

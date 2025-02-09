@@ -15,14 +15,17 @@ float evaluateSplit(const Vulkan::SceneManager &sceneManager, const VKPT::BVH &b
     uint32_t numInB = 0;
 
     for (uint32_t i = bvh.index; i < bvh.index + bvh.triangleCount; i++) {
-        VKPT::Triangle tri = sceneManager.sceneStorage->triangles[i];
-        vec3 centroid = (tri.posA + tri.posB + tri.posC) / 3.0f;
+        uint32_t triIndex = sceneManager.triIndices[i];
+
+        const glm::vec3 &centroid = sceneManager.triCentroid[triIndex];
+        const glm::vec3 &triMin = sceneManager.triMin[triIndex];
+        const glm::vec3 &triMax = sceneManager.triMax[triIndex];
 
         if (centroid[splitAxis] < splitPos) {
-            growBounds(boundsAmin, boundsAmax, tri);
+            growBounds(boundsAmin, boundsAmax, triMin, triMax);
             numInA++;
         } else {
-            growBounds(boundsBmin, boundsBmax, tri);
+            growBounds(boundsBmin, boundsBmax, triMin, triMax);
             numInB++;
         }
     }
