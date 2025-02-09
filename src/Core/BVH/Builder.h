@@ -2,7 +2,9 @@
 
 #include "../../Vulkan/SceneManager.h"
 #include "../Types/BVH.h"
+
 #include <cfloat>
+#include <mutex>
 
 namespace BVH {
 

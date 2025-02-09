@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <chrono>
 #include <future>
-#include <mutex>
 
 namespace BVH {
 
