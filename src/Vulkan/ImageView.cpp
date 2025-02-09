@@ -64,7 +64,7 @@ void ImageView::createImage(const Device &device, VkExtent2D extent, VkFormat fo
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = findMemoryType(device.getVkPhysicalDevice(), memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex = findMemoryType(device.getVkPhysicalDevice(), memRequirements.memoryTypeBits, properties, memRequirements.size);
 
     if (vkAllocateMemory(device.getVkDevice(), &allocInfo, nullptr, &m_ImageMemory) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to allocate image memory.");

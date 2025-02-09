@@ -6,18 +6,23 @@
 
 namespace Vulkan {
 
-uint32_t findMemoryType(const VkPhysicalDevice &physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+uint32_t findMemoryType(const VkPhysicalDevice &physicalDevice, uint32_t typeFilter, VkMemoryPropertyFlags properties, VkDeviceSize requiredAllocationSize) {
     VkPhysicalDeviceMemoryProperties memProperties;
     vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
     for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-        if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-            return i;
+        if ((typeFilter & (1 << i)) && ((memProperties.memoryTypes[i].propertyFlags & properties) == properties)) {
+            uint32_t heapIndex = memProperties.memoryTypes[i].heapIndex;
+            
+            if (requiredAllocationSize <= memProperties.memoryHeaps[heapIndex].size) {
+                return i;
+            }
         }
     }
 
-    throw std::runtime_error("ERROR: Failed to find suitable memory type.");
+    throw std::runtime_error("ERROR: Failed to find a suitable memory type with a sufficiently large heap.");
 }
+
 
 void createBuffer(const Device &device, VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer &buffer, VkDeviceMemory &bufferMemory) {
     VkBufferCreateInfo bufferInfo{};
@@ -36,7 +41,7 @@ void createBuffer(const Device &device, VkDeviceSize size, VkBufferUsageFlags us
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
-    allocInfo.memoryTypeIndex = findMemoryType(device.getVkPhysicalDevice(), memRequirements.memoryTypeBits, properties);
+    allocInfo.memoryTypeIndex = findMemoryType(device.getVkPhysicalDevice(), memRequirements.memoryTypeBits, properties, size);
 
     if (vkAllocateMemory(device.getVkDevice(), &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
         throw std::runtime_error("ERROR: Failed to allocate buffer memory.");
