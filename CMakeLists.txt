@@ -67,7 +67,7 @@ file(GLOB_RECURSE SHADER_DEPS "${CMAKE_SOURCE_DIR}/src/Shaders/*" "${CMAKE_SOURC
 foreach(SHADER ${SHADER_SRCS})
     add_custom_command(
         OUTPUT "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
-        COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" -O -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
+        COMMAND ${GLSLC} -c "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" -O --target-env=vulkan1.3 --target-spv=spv1.5 -o "${SHADER_OUTPUT_DIR}/${SHADER}.spv"
         DEPENDS "${CMAKE_SOURCE_DIR}/src/Shaders/${SHADER}" ${SHADER_DEPS}
         COMMENT "Compiling ${SHADER} to SPIR-V"
     )
