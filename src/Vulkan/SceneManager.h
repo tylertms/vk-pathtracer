@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <vector>
 
+#include "CommandPool.h"
 #include "Device.h"
 #include "ImageView.h"
 #include "VulkanApp.h"
@@ -63,7 +64,6 @@ class SceneManager {
 
     VkBuffer m_SceneStorage;
     VkDeviceMemory m_SceneStorageMemory;
-    void *m_SceneStorageMapped;
 
     const Device *ext_Device;
     const CommandPool *ext_CommandPool;

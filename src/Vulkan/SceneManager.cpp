@@ -16,11 +16,10 @@ void SceneManager::init(const Device &device, const CommandPool &commandPool) {
     ext_Device = &device;
     ext_CommandPool = &commandPool;
 
-    createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, m_UniformBuffer, m_UniformBufferMemory);
+    createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_UniformBuffer, m_UniformBufferMemory);
     vkMapMemory(device.getVkDevice(), m_UniformBufferMemory, 0, sizeof(VKPT::SceneData), 0, &m_UniformBufferMapped);
 
-    createBuffer(device, sizeof(VKPT::SceneStorage), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, m_SceneStorage, m_SceneStorageMemory);
-    vkMapMemory(device.getVkDevice(), m_SceneStorageMemory, 0, sizeof(VKPT::SceneStorage), 0, &m_SceneStorageMapped);
+    createBuffer(device, sizeof(VKPT::SceneStorage), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_SceneStorage, m_SceneStorageMemory);
 
     createTextureImage("", envTexture, device, commandPool);
 }
@@ -56,7 +55,24 @@ void SceneManager::submitUniformUpdates() {
 }
 
 void SceneManager::uploadFullSceneStorage() {
-    memcpy(m_SceneStorageMapped, sceneStorage, sizeof(VKPT::SceneStorage));
+    const Device &device = *ext_Device;
+    const VkDevice &vkDevice = device.getVkDevice();
+
+    VkDeviceSize storageSize = sizeof(VKPT::SceneStorage);
+
+    VkBuffer stagingBuffer;
+    VkDeviceMemory stagingBufferMemory;
+    createBuffer(device, storageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
+
+    void* data;
+    vkMapMemory(vkDevice, stagingBufferMemory, 0, storageSize, 0, &data);
+    memcpy(data, sceneStorage, storageSize);
+    vkUnmapMemory(vkDevice, stagingBufferMemory);
+
+    ext_CommandPool->copyBuffer(device, stagingBuffer, m_SceneStorage, storageSize);
+    
+    vkDestroyBuffer(vkDevice, stagingBuffer, nullptr);
+    vkFreeMemory(vkDevice, stagingBufferMemory, nullptr);
 }
 /* ----------------------------- */
 
