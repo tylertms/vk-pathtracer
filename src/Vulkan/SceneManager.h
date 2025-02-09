@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include <vector>
 
-#include "CommandPool.h"
 #include "Device.h"
 #include "ImageView.h"
 #include "VulkanApp.h"

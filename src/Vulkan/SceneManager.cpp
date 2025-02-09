@@ -12,7 +12,6 @@ namespace Vulkan {
 
 /* ----------- INIT ----------- */
 void SceneManager::init(const Device &device, const CommandPool &commandPool) {
-    sceneStorage = new VKPT::SceneStorage;
     ext_Device = &device;
     ext_CommandPool = &commandPool;
 
@@ -32,8 +31,6 @@ void SceneManager::deinit(const VkDevice &device) {
     vkFreeMemory(device, m_SceneStorageMemory, nullptr);
 
     envTexture.deinit(device);
-
-    delete sceneStorage;
 }
 
 void SceneManager::reset() {
@@ -91,6 +88,8 @@ void SceneManager::addSphere() {
 
 /* ----------- MESH ----------- */
 void SceneManager::addMesh(const std::string filename) {
+    sceneStorage = new VKPT::SceneStorage();
+
     if (filename.empty())
         return;
     File::GLTFLoader loader(filename);
@@ -135,6 +134,7 @@ void SceneManager::addMesh(const std::string filename) {
     resetAccumulation();
 
     printf("DONE!\n");
+    delete sceneStorage;
 }
 
 void SceneManager::updateMeshTransforms() {
