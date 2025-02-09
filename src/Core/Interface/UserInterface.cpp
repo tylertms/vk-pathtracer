@@ -8,6 +8,7 @@
 #include "../Constants.h"
 
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_vulkan.h>
 
@@ -106,7 +107,7 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
             ImGui::Checkbox("Show Statistics", &m_ShowStats);
             ImGui::EndMenu();
         }
-        
+
         ImGui::EndMainMenuBar();
     }
 }
@@ -156,6 +157,10 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
     if (m_ShowCameraControl) drawCameraControl(sceneManager);
     if (m_ShowObjectControl) drawObjectControl(sceneManager);
     if (m_ShowStats) drawStats(sceneManager);
+
+    ImGuiWindowClass winClass;
+    winClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDockingOverMe;
+    ImGui::SetNextWindowClass(&winClass);
 
     ImGui::Begin("Viewport");
     processCameraMovement(sceneManager);
