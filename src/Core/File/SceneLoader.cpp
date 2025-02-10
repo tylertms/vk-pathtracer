@@ -20,7 +20,7 @@ std::string extractDirectory(const std::string &filepath) {
 }
 
 std::string extractFilename(const std::string& filepath) {
-    size_t lastSlashPos = filepath.find_last_of('/');
+    size_t lastSlashPos = max((int)filepath.find_last_of('/'), (int)filepath.find_last_of('\\'));
     size_t lastDotPos = filepath.find_last_of('.');
 
     if (lastSlashPos == std::string::npos) {
