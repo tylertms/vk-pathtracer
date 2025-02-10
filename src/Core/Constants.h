@@ -13,7 +13,7 @@
 
 #define ENV_TEX_BLUR 0.002f
 
-#define DST_EPSILON 1e-10
+#define DST_EPSILON 1e-12
 #define RAY_ORIGIN_EPSILON 1e-5
 
 #define PI 3.1415926536f
