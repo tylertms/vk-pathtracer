@@ -23,7 +23,7 @@ void SetDarkTheme() {
     const ImVec4 almostBlack  = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
     const ImVec4 darkGray     = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
     const ImVec4 midGray      = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-    const ImVec4 lightGray    = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+    const ImVec4 lightGray    = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
     const ImVec4 textColor    = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 
     colors[ImGuiCol_Text]                   = textColor;
@@ -63,7 +63,7 @@ void SetDarkTheme() {
     colors[ImGuiCol_TabActive]              = lightGray;
     colors[ImGuiCol_TabUnfocused]           = darkGray;
     colors[ImGuiCol_TabUnfocusedActive]     = midGray;
-    colors[ImGuiCol_TabSelectedOverline]    = lightGray;
+    colors[ImGuiCol_TabSelectedOverline]    = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
     colors[ImGuiCol_DockingPreview]         = lightGray;
     colors[ImGuiCol_PlotLines]              = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
     colors[ImGuiCol_PlotLinesHovered]       = lightGray;

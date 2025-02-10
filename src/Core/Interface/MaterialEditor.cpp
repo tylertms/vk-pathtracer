@@ -25,20 +25,24 @@ void drawMaterialEditor(Vulkan::SceneManager &sceneManager) {
     };
     uint32_t &objectMatIndex = getObjectMaterialIndex();
 
-    ImGui::Begin("Material");
+    ImGui::Begin("Material ");
 
-    if (sceneManager.sceneData.numMaterials > 0 && objectMatIndex < sceneManager.sceneData.numMaterials) {
-        VKPT::Material &material = sceneManager.sceneData.materials[objectMatIndex];
+    for (uint32_t i = 0; i < sceneManager.sceneData.numMaterials; i++) {
+        VKPT::Material &material = sceneManager.sceneData.materials[i];
         bool changed = false;
 
-        if (ImGui::ColorEdit3("Base Color", glm::value_ptr(material.baseColor))) changed = true;
-        if (ImGui::SliderFloat("Roughness", &material.roughness, 0.0f, 1.0f)) changed = true;
-        if (ImGui::DragFloat2("IOR", glm::value_ptr(material.IOR), 0.01f, 0.f, 100.f)) changed = true;
-        if (ImGui::DragFloat("Specular", &material.specular, 0.01f, 0.0f, 12.5f)) changed = true;
-        if (ImGui::ColorEdit3("Specular Tint", glm::value_ptr(material.specularTint))) changed = true;
-        if (ImGui::DragFloat("Emission Strength", &material.emissionStrength, 0.01f, 0.0f, 1000.f)) changed = true;
-        if (ImGui::ColorEdit3("Emission Color", glm::value_ptr(material.emissionColor))) changed = true;
-        if (ImGui::SliderFloat("Transmission", &material.transmission, 0.0f, 1.0f)) changed = true;
+        const char *materialHeader = (std::string("Material ") + std::to_string(i)).c_str();
+
+        if (ImGui::CollapsingHeader(materialHeader, i == objectMatIndex ? ImGuiTreeNodeFlags_DefaultOpen : 0)) {
+            if (ImGui::ColorEdit3("Base Color", glm::value_ptr(material.baseColor))) changed = true;
+            if (ImGui::SliderFloat("Roughness", &material.roughness, 0.0f, 1.0f)) changed = true;
+            if (ImGui::DragFloat2("IOR", glm::value_ptr(material.IOR), 0.01f, 0.f, 100.f)) changed = true;
+            if (ImGui::DragFloat("Specular", &material.specular, 0.01f, 0.0f, 12.5f)) changed = true;
+            if (ImGui::ColorEdit3("Specular Tint", glm::value_ptr(material.specularTint))) changed = true;
+            if (ImGui::DragFloat("Emission Strength", &material.emissionStrength, 0.01f, 0.0f, 1000.f)) changed = true;
+            if (ImGui::ColorEdit3("Emission Color", glm::value_ptr(material.emissionColor))) changed = true;
+            if (ImGui::SliderFloat("Transmission", &material.transmission, 0.0f, 1.0f)) changed = true;
+        }
 
         if (changed) sceneManager.resetAccumulation();
     }
