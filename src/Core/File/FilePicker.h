@@ -5,8 +5,9 @@
 #include <string>
 
 enum VKPT_FILE_TYPE {
+    VKPT_SPHERE,
     VKPT_SCENE,
-    VKPT_MODEL,
+    VKPT_MESH,
     VKPT_HDRI
 };
 

@@ -9,7 +9,7 @@ const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
 
     nfdu8filteritem_t filters[1];
     switch (type) {
-    case VKPT_MODEL:
+    case VKPT_MESH:
         filters[0] = {"glTF 2.0", "gltf,glb"};
         break;
     case VKPT_SCENE:
@@ -17,6 +17,8 @@ const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
         break;
     case VKPT_HDRI:
         filters[0] = {"HDRI", "hdr"};
+    default:
+        break;
     }
 
     nfdopendialogu8args_t openArgs = {0};
