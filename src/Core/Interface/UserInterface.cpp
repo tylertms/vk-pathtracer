@@ -16,6 +16,68 @@
 
 namespace Interface {
 
+void SetDarkTheme() {
+    ImGuiStyle& style = ImGui::GetStyle();
+    ImVec4* colors = style.Colors;
+
+    const ImVec4 almostBlack  = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
+    const ImVec4 darkGray     = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+    const ImVec4 midGray      = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+    const ImVec4 lightGray    = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+    const ImVec4 textColor    = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
+
+    colors[ImGuiCol_Text]                   = textColor;
+    colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+    colors[ImGuiCol_WindowBg]               = ImVec4(0, 0, 0, 0);;
+    colors[ImGuiCol_ChildBg]                = darkGray;
+    colors[ImGuiCol_PopupBg]                = almostBlack;
+    colors[ImGuiCol_Border]                 = midGray;
+    colors[ImGuiCol_FrameBg]                = midGray;
+    colors[ImGuiCol_FrameBgHovered]         = lightGray;
+    colors[ImGuiCol_FrameBgActive]          = lightGray;
+    colors[ImGuiCol_TitleBg]                = darkGray;
+    colors[ImGuiCol_TitleBgActive]          = midGray;
+    colors[ImGuiCol_TitleBgCollapsed]       = almostBlack;
+    colors[ImGuiCol_MenuBarBg]              = darkGray;
+    colors[ImGuiCol_ScrollbarBg]            = darkGray;
+    colors[ImGuiCol_ScrollbarGrab]          = midGray;
+    colors[ImGuiCol_ScrollbarGrabHovered]   = lightGray;
+    colors[ImGuiCol_ScrollbarGrabActive]    = lightGray;
+    colors[ImGuiCol_CheckMark]              = textColor;
+    colors[ImGuiCol_SliderGrab]             = midGray;
+    colors[ImGuiCol_SliderGrabActive]       = lightGray;
+    colors[ImGuiCol_Button]                 = midGray;
+    colors[ImGuiCol_ButtonHovered]          = lightGray;
+    colors[ImGuiCol_ButtonActive]           = lightGray;
+    colors[ImGuiCol_Header]                 = midGray;
+    colors[ImGuiCol_HeaderHovered]          = lightGray;
+    colors[ImGuiCol_HeaderActive]           = lightGray;
+    colors[ImGuiCol_Separator]              = midGray;
+    colors[ImGuiCol_SeparatorHovered]       = lightGray;
+    colors[ImGuiCol_SeparatorActive]        = lightGray;
+    colors[ImGuiCol_ResizeGrip]             = midGray;
+    colors[ImGuiCol_ResizeGripHovered]      = lightGray;
+    colors[ImGuiCol_ResizeGripActive]       = lightGray;
+    colors[ImGuiCol_Tab]                    = midGray;
+    colors[ImGuiCol_TabHovered]             = lightGray;
+    colors[ImGuiCol_TabActive]              = lightGray;
+    colors[ImGuiCol_TabUnfocused]           = darkGray;
+    colors[ImGuiCol_TabUnfocusedActive]     = midGray;
+    colors[ImGuiCol_TabSelectedOverline]    = lightGray;
+    colors[ImGuiCol_DockingPreview]         = lightGray;
+    colors[ImGuiCol_PlotLines]              = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+    colors[ImGuiCol_PlotLinesHovered]       = lightGray;
+    colors[ImGuiCol_PlotHistogram]          = midGray;
+    colors[ImGuiCol_PlotHistogramHovered]   = lightGray;
+    colors[ImGuiCol_TextSelectedBg]         = midGray;
+    colors[ImGuiCol_DragDropTarget]         = lightGray;
+    colors[ImGuiCol_NavHighlight]           = lightGray;
+    colors[ImGuiCol_NavWindowingHighlight]  = lightGray;
+    colors[ImGuiCol_NavWindowingDimBg]      = darkGray;
+    colors[ImGuiCol_ModalWindowDimBg]       = almostBlack;
+}
+
+
 void UserInterface::init(
     const Vulkan::Device &device, 
     const Vulkan::Instance &instance,
@@ -37,11 +99,10 @@ void UserInterface::init(
     io.Fonts->AddFontFromFileTTF("assets/fonts/Lato.ttf", 16);
     io.Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 14, &icons_config, icons_ranges);
     
-
-
     ImGui::StyleColorsDark();
-    ImGuiStyle &style = ImGui::GetStyle();
+    SetDarkTheme();
     
+    ImGuiStyle &style = ImGui::GetStyle();
     style.WindowRounding = 2;
     style.GrabRounding = 2;
     style.FrameRounding = 2;
@@ -49,10 +110,6 @@ void UserInterface::init(
     style.WindowBorderSize = 0;
     style.DockingSeparatorSize = 1;
     style.WindowPadding = {8, 5};
-
-    style.Colors[ImGuiCol_WindowBg] = ImVec4(0, 0, 0, 0);
-    style.Colors[ImGuiCol_FrameBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.0f);
-    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.1f, 0.1f, 0.1f, 1.0f);
 
     ImGui_ImplGlfw_InitForVulkan(window.getGlfwWindow(), true);
     ImGui_ImplVulkan_InitInfo info{};
