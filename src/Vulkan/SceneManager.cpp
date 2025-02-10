@@ -82,8 +82,10 @@ void SceneManager::resetAccumulation() {
 
 /* ----------- SPHERE ----------- */
 void SceneManager::addSphere() {
+    sceneData.spheres[sceneData.numSpheres].materialIndex = sceneData.numMaterials++;
     selectedObjectIndex = sceneData.numSpheres++;
     selectedObjectType = VKPT_SPHERE;
+
     resetAccumulation();
 }
 /* ----------------------------- */
@@ -94,7 +96,7 @@ void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint
 
     if (filename.empty())
         return;
-        
+
     File::GLTFLoader loader(filename);
 
     selectedObjectIndex = sceneData.numMeshes;
@@ -115,8 +117,10 @@ void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint
             .triangleCount = static_cast<uint32_t>(loader.getTriangles().size())};
 
         mesh.rootBVHNode = sceneData.numBVHs;
-        mesh.materialIndex = matIndex;
 
+        if (matIndex == -1) mesh.materialIndex = sceneData.numMaterials++;
+        else mesh.materialIndex = matIndex;
+        
         sceneData.meshes[sceneData.numMeshes++] = mesh;
         
         printf("FINISHED PUSHING DATA, CREATING BVH\n");

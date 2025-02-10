@@ -33,7 +33,7 @@ class SceneManager {
     void uploadFullSceneStorage();
 
     void addSphere();
-    void addMesh(const std::string filename, glm::mat3 transform = glm::mat3(0), uint32_t matIndex = 0);
+    void addMesh(const std::string filename, glm::mat3 transform = glm::mat3(0), uint32_t matIndex = -1);
 
     void queueEnv(const std::string filename);
     void loadEnv();

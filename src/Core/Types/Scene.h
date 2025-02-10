@@ -21,7 +21,7 @@ struct alignas(16) SceneData {
 
     uint32_t numSpheres = 0;
     uint32_t numMeshes = 0;
-    uint32_t numMaterials = 1;
+    uint32_t numMaterials = 0;
     uint32_t numTriangles = 0;
     uint32_t numBVHs = 0;
     uint32_t framesRendered = 0;
