@@ -23,12 +23,12 @@ void SetDarkTheme() {
     const ImVec4 almostBlack  = ImVec4(0.05f, 0.05f, 0.05f, 1.00f);
     const ImVec4 darkGray     = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
     const ImVec4 midGray      = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
-    const ImVec4 lightGray    = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+    const ImVec4 lightGray    = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
     const ImVec4 textColor    = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 
     colors[ImGuiCol_Text]                   = textColor;
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-    colors[ImGuiCol_WindowBg]               = ImVec4(0, 0, 0, 0);;
+    colors[ImGuiCol_WindowBg]               = almostBlack;
     colors[ImGuiCol_ChildBg]                = darkGray;
     colors[ImGuiCol_PopupBg]                = almostBlack;
     colors[ImGuiCol_Border]                 = midGray;
@@ -198,12 +198,12 @@ void UserInterface::setupDockspace() {
 
     ImGui::Begin("DockSpace", nullptr, window_flags);
 
-    ImGui::PopStyleVar(3);
-    ImGui::PopStyleColor(2);
-
     ImGuiID dockspace_id = ImGui::GetID("Dockspace");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
     ImGui::End();
+
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor(2);
 }
 
 void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent) {
@@ -232,11 +232,21 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
     winClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDockingOverMe;
     ImGui::SetNextWindowClass(&winClass);
 
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+    ImGui::PushStyleColor(ImGuiCol_DockingEmptyBg, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+
     ImGui::Begin("Viewport");
     processCameraMovement(sceneManager);
     position = ImGui::GetWindowPos();
     extent = ImGui::GetWindowSize();
     ImGui::End();
+
+    ImGui::PopStyleVar(3);
+    ImGui::PopStyleColor(2);
+
     ImGui::Render();
 }
 
