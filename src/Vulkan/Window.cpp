@@ -13,13 +13,13 @@ GLFWwindow* Window::init() {
     const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
 
     const float scale = 0.8;
-    const int windowWidth  = static_cast<int>(vidmode->width * scale);
-    const int windowHeight = static_cast<int>(vidmode->height * scale);
+    m_Width  = static_cast<int>(vidmode->width * scale);
+    m_Height = static_cast<int>(vidmode->height * scale);
 
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-    m_Window = glfwCreateWindow(windowWidth, windowHeight, "vk-pathtracer", nullptr, nullptr);
+    m_Window = glfwCreateWindow(m_Width, m_Height, "vk-pathtracer", nullptr, nullptr);
     if (!m_Window) {
         glfwTerminate();
         throw std::runtime_error("ERROR: Failed to create GLFW window.");

@@ -30,6 +30,9 @@ class Window {
   private:
     GLFWwindow *m_Window;
     bool m_Resized = false;
+
+    uint32_t m_Width = 1920;
+    uint32_t m_Height = 1080;
 };
 
 } // namespace Vulkan
