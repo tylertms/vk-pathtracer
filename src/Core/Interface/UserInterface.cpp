@@ -24,7 +24,7 @@ void SetDarkTheme() {
     const ImVec4 darkGray     = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
     const ImVec4 midGray      = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
     const ImVec4 lightGray    = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
-    const ImVec4 textColor    = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
+    const ImVec4 textColor    = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
 
     colors[ImGuiCol_Text]                   = textColor;
     colors[ImGuiCol_TextDisabled]           = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
@@ -44,8 +44,8 @@ void SetDarkTheme() {
     colors[ImGuiCol_ScrollbarGrabHovered]   = lightGray;
     colors[ImGuiCol_ScrollbarGrabActive]    = lightGray;
     colors[ImGuiCol_CheckMark]              = textColor;
-    colors[ImGuiCol_SliderGrab]             = midGray;
-    colors[ImGuiCol_SliderGrabActive]       = lightGray;
+    colors[ImGuiCol_SliderGrab]             = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+    colors[ImGuiCol_SliderGrabActive]       = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
     colors[ImGuiCol_Button]                 = midGray;
     colors[ImGuiCol_ButtonHovered]          = lightGray;
     colors[ImGuiCol_ButtonActive]           = lightGray;
