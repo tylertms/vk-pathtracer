@@ -29,12 +29,11 @@ class SceneManager {
     inline const VkBuffer &getSceneStorage() const { return m_SceneStorage; }
 
     void resetAccumulation();
-    bool resetOccurred();
     void submitUniformUpdates();
     void uploadFullSceneStorage();
 
     void addSphere();
-    void addMesh(const std::string filename);
+    void addMesh(const std::string filename, glm::mat3 transform = glm::mat3(0), uint32_t matIndex = 0);
 
     void queueEnv(const std::string filename);
     void loadEnv();
@@ -43,6 +42,9 @@ class SceneManager {
 
     VKPT::SceneData sceneData;
     VKPT::SceneStorage *sceneStorage;
+
+    uint32_t selectedObjectIndex = -1;
+    VKPT_FILE_TYPE selectedObjectType;
 
     std::vector<std::string> modelPaths;
     std::vector<glm::mat3> meshTransforms;

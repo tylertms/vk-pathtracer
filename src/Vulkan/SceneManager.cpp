@@ -36,6 +36,7 @@ void SceneManager::deinit(const VkDevice &device) {
 void SceneManager::reset() {
     sceneData.numMeshes = 0;
     sceneData.numSpheres = 0;
+    sceneData.numMaterials = 0;
     sceneData.numTriangles = 0;
     sceneData.numBVHs = 0;
     sceneData.framesRendered = 0;
@@ -81,18 +82,23 @@ void SceneManager::resetAccumulation() {
 
 /* ----------- SPHERE ----------- */
 void SceneManager::addSphere() {
-    sceneData.numSpheres++;
+    selectedObjectIndex = sceneData.numSpheres++;
+    selectedObjectType = VKPT_SPHERE;
     resetAccumulation();
 }
 /* ----------------------------- */
 
 /* ----------- MESH ----------- */
-void SceneManager::addMesh(const std::string filename) {
+void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint32_t matIndex) {
     sceneStorage = new VKPT::SceneStorage();
 
     if (filename.empty())
         return;
+        
     File::GLTFLoader loader(filename);
+
+    selectedObjectIndex = sceneData.numMeshes;
+    selectedObjectType = VKPT_MESH;
 
     uint32_t triStartIndex = sceneData.numTriangles;
 
@@ -109,16 +115,18 @@ void SceneManager::addMesh(const std::string filename) {
             .triangleCount = static_cast<uint32_t>(loader.getTriangles().size())};
 
         mesh.rootBVHNode = sceneData.numBVHs;
-        sceneData.meshes[sceneData.numMeshes++] = mesh;
+        mesh.materialIndex = matIndex;
 
+        sceneData.meshes[sceneData.numMeshes++] = mesh;
+        
         printf("FINISHED PUSHING DATA, CREATING BVH\n");
         BVH::createBVH(mesh, initBVH, *this);
     }
 
-    glm::mat3 defaultTransform = 0;
-    defaultTransform[2] = {1, 1, 1};
+    if (transform == glm::mat3(0))
+        transform[2] = {1, 1, 1};
 
-    meshTransforms.push_back(defaultTransform);
+    meshTransforms.push_back(transform);
     modelPaths.push_back(filename);
 
     printf("WRITING TRIANGLES TO SCENE...\n");
