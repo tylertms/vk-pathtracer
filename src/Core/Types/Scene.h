@@ -17,9 +17,11 @@ struct alignas(16) SceneData {
     Camera camera;
     Sphere spheres[MAX_SPHERES];
     Mesh meshes[MAX_MESHES];
+    Material materials[MAX_MATERIALS];
 
     uint32_t numSpheres = 0;
     uint32_t numMeshes = 0;
+    uint32_t numMaterials = 1;
     uint32_t numTriangles = 0;
     uint32_t numBVHs = 0;
     uint32_t framesRendered = 0;

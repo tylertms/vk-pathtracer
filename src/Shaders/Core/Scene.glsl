@@ -11,7 +11,7 @@ HitPayload rayHitScene(Ray worldRay, inout uint stats[2]) {
         temp = rayHitSphere(worldRay, scene.spheres[i]);
         if (temp.didHit && temp.distance < hit.distance) {
             hit = temp;
-            hit.material = scene.spheres[i].material;
+            hit.material = scene.materials[scene.spheres[i].materialIndex];
         }
     }
 
@@ -43,7 +43,7 @@ HitPayload rayHitScene(Ray worldRay, inout uint stats[2]) {
                         hit.distance = temp.distance;
                         hit.point = worldRay.origin + worldRay.dir * temp.distance;
                         hit.normal = normalize(vec3(mesh.localWorldTransform * vec4(temp.normal, 0.)));
-                        hit.material = mesh.material;
+                        hit.material = scene.materials[mesh.materialIndex];
                     }
                 }
             } else {

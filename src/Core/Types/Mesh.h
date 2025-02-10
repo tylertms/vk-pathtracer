@@ -12,7 +12,7 @@ namespace VKPT {
 struct alignas(16) Mesh {
     mat4 worldLocalTransform;
     mat4 localWorldTransform;
-    Material material;
+    uint32_t materialIndex;
     uint32_t rootBVHNode;
 };
 } // namespace VKPT
@@ -22,7 +22,7 @@ template <>
 struct convert<VKPT::Mesh> {
     static Node encode(const VKPT::Mesh &rhs) {
         Node node;
-        node["Material"] = rhs.material;
+        node["MaterialIndex"] = rhs.materialIndex;
         return node;
     }
 
@@ -31,8 +31,8 @@ struct convert<VKPT::Mesh> {
             return false;
         }
 
-        if (node["Material"]) {
-            rhs.material = node["Material"].as<VKPT::Material>();
+        if (node["MaterialIndex"]) {
+            rhs.materialIndex = node["MaterialIndex"].as<uint32_t>();
         }
 
         return true;
@@ -47,7 +47,7 @@ struct convert<VKPT::Mesh> {
 struct Mesh {
     mat4 worldLocalTransform;
     mat4 localWorldTransform;
-    Material material;
+    uint materialIndex;
     uint rootBVHNode;
 };
 

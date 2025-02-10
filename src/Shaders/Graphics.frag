@@ -12,9 +12,11 @@ layout (binding = 0, std140) readonly uniform SceneUniform {
     Camera camera;
     Sphere spheres[MAX_SPHERES];
     Mesh meshes[MAX_MESHES];
+    Material materials[MAX_MATERIALS];
 
     uint numSpheres;
     uint numMeshes;
+    uint numMaterials;
     uint numTriangles;
     uint numBVHs;
     uint framesRendered;

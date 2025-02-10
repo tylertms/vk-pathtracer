@@ -13,7 +13,7 @@ namespace VKPT {
 struct alignas(16) Sphere {
     vec3 center = {0.0, 0.0, 0.0};
     float radius = 0.5;
-    Material material;
+    uint32_t materialIndex = 0;
 };
 } // namespace VKPT
 
@@ -24,7 +24,7 @@ struct convert<VKPT::Sphere> {
         Node node;
         node["Center"] = rhs.center;
         node["Radius"] = rhs.radius;
-        node["Material"] = rhs.material;
+        node["MaterialIndex"] = rhs.materialIndex;
         return node;
     }
 
@@ -43,8 +43,8 @@ struct convert<VKPT::Sphere> {
             rhs.radius = node["Radius"].as<float>();
         }
 
-        if (node["Material"]) {
-            rhs.material = node["Material"].as<VKPT::Material>();
+        if (node["MaterialIndex"]) {
+            rhs.materialIndex = node["MaterialIndex"].as<uint32_t>();
         }
 
         return true;
@@ -59,7 +59,7 @@ struct convert<VKPT::Sphere> {
 struct Sphere {
     vec3 center;
     float radius;
-    Material material;
+    uint materialIndex;
 };
 
 HitPayload rayHitSphere(Ray ray, Sphere sphere) {
