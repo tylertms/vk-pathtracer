@@ -4,26 +4,34 @@
 
 namespace Vulkan {
 
-GLFWwindow *Window::init() {
-    if (glfwInit() != GLFW_TRUE) {
+GLFWwindow* Window::init() {
+    if (!glfwInit()) {
         throw std::runtime_error("ERROR: Failed to initialize GLFW.");
     }
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, VK_TRUE);
+    GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
 
-    m_Window = glfwCreateWindow(m_Width, m_Height, "vk-pathtracer", nullptr, nullptr);
+    const float scale = 0.8;
+    const int windowWidth  = static_cast<int>(vidmode->width * scale);
+    const int windowHeight = static_cast<int>(vidmode->height * scale);
+
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+
+    m_Window = glfwCreateWindow(windowWidth, windowHeight, "vk-pathtracer", nullptr, nullptr);
+    if (!m_Window) {
+        glfwTerminate();
+        throw std::runtime_error("ERROR: Failed to create GLFW window.");
+    }
 
     glfwSetWindowUserPointer(m_Window, this);
     glfwSetFramebufferSizeCallback(m_Window, onResize);
     glfwSetWindowSizeLimits(m_Window, 200, 100, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
-    if (m_Window == NULL) {
-        throw std::runtime_error("ERROR: Failed to create GLFW window.");
-    }
-
     return m_Window;
 }
+    
 
 void Window::onResize(GLFWwindow *window, int width, int height) {
     auto appWindow = reinterpret_cast<Window *>(glfwGetWindowUserPointer(window));
