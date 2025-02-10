@@ -8,6 +8,7 @@
 namespace File {
 
 std::string extractDirectory(const std::string &filepath);
+std::string extractFilename(const std::string& filepath);
 
 void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneManager);
 void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager);
