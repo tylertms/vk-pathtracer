@@ -7,7 +7,8 @@
 
 namespace Interface {
 
-void drawObjectControl(Vulkan::SceneManager &sceneManager);
+void drawSceneOverview(Vulkan::SceneManager &sceneManager);
+void drawObjectEditor(Vulkan::SceneManager &sceneManager);
 
 bool drawSphereEditor(VKPT::Sphere &sphere);
 bool drawMeshEditor(VKPT::Mesh &mesh, glm::mat3 &transform);

@@ -1,9 +1,10 @@
 #pragma once
 
 #include "../Types/Material.h"
+#include "../../Vulkan/SceneManager.h"
 
 namespace Interface {
 
-bool drawMaterialEditor(VKPT::Material &material);
+void drawMaterialEditor(Vulkan::SceneManager &sceneManager);
 
 } // namespace Interface

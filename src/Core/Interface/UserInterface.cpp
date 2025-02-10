@@ -2,6 +2,7 @@
 
 #include "CameraControl.h"
 #include "ObjectEditor.h"
+#include "MaterialEditor.h"
 
 #include "../File/FilePicker.h"
 #include "../File/SceneLoader.h"
@@ -9,6 +10,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <icons/IconsFontAwesome6.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_vulkan.h>
 
@@ -27,7 +29,15 @@ void UserInterface::init(
     ImGuiIO &io = ImGui::GetIO();
     (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+    static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
+    ImFontConfig icons_config; 
+    icons_config.MergeMode = true; 
+    icons_config.PixelSnapH = true; 
     io.Fonts->AddFontFromFileTTF("assets/fonts/Lato.ttf", 16);
+    io.Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 14, &icons_config, icons_ranges);
+    
+
 
     ImGui::StyleColorsDark();
     ImGuiStyle &style = ImGui::GetStyle();
@@ -76,26 +86,26 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
-            if (ImGui::MenuItem("New"))
+            if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"    New"))
                 sceneManager.reset();
 
-            if (ImGui::MenuItem("Open"))
+            if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN"    Open"))
                 File::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
 
-            if (ImGui::MenuItem("Save"))
+            if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"      Save"))
                 File::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
                 
             ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Add")) {
-            if (ImGui::MenuItem("Sphere"))
+            if (ImGui::MenuItem(ICON_FA_CIRCLE"    Sphere"))
                 sceneManager.addSphere();
 
-            if (ImGui::MenuItem("Model"))
-                sceneManager.addMesh(pickFilePath(VKPT_MODEL, VKPT_LOAD));
+            if (ImGui::MenuItem(ICON_FA_DRAW_POLYGON"     Mesh"))
+                sceneManager.addMesh(pickFilePath(VKPT_MESH, VKPT_LOAD));
 
-            if (ImGui::MenuItem("Environment"))
+            if (ImGui::MenuItem(ICON_FA_MOUNTAIN_SUN"   Environment"))
                 sceneManager.queueEnv(pickFilePath(VKPT_HDRI, VKPT_LOAD));
 
             ImGui::EndMenu();
@@ -155,8 +165,11 @@ void UserInterface::draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, I
     drawMenuBar(sceneManager);
 
     if (m_ShowCameraControl) drawCameraControl(sceneManager);
-    if (m_ShowObjectControl) drawObjectControl(sceneManager);
+    if (m_ShowObjectControl) drawSceneOverview(sceneManager);
     if (m_ShowStats) drawStats(sceneManager);
+
+    drawMaterialEditor(sceneManager);
+    drawObjectEditor(sceneManager);
 
     ImGuiWindowClass winClass;
     winClass.DockNodeFlagsOverrideSet = ImGuiDockNodeFlags_NoTabBar | ImGuiDockNodeFlags_NoDockingOverMe;
