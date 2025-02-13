@@ -55,7 +55,6 @@ class Application {
     DescriptorPool m_DescriptorPool;
     DescriptorPool m_ImGuiDescriptorPool;
     std::vector<DescriptorSet> m_DescriptorSets;
-    ImageView m_AccumulationImageView;
     SceneManager m_SceneManager;
     Interface::UserInterface m_Interface;
     /* ----------------------- */

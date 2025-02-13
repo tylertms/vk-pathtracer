@@ -28,14 +28,10 @@ Application::Application() {
 
     m_CommandPool.init(m_Device);
 
+    m_SceneManager.init(m_Device, m_SwapChain.getExtent(), m_CommandPool);
+
     m_DescriptorPool.init(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
-    m_ImGuiDescriptorPool.initImGui(m_Device.getVkDevice(), MAX_FRAMES_IN_FLIGHT);
-
-    m_AccumulationImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
-    m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
-
-    m_SceneManager.init(m_Device, m_CommandPool);
+    m_ImGuiDescriptorPool.initImGui(m_Device.getVkDevice());
 
     m_CommandBuffers = std::vector<CommandBuffer>(MAX_FRAMES_IN_FLIGHT);
     m_ImageAvailableSemaphores = std::vector<Semaphore>(MAX_FRAMES_IN_FLIGHT);
@@ -44,7 +40,7 @@ Application::Application() {
 
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         m_CommandBuffers[i].init(m_Device, m_CommandPool);
-        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_SceneManager, m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_SceneManager, m_DescriptorPool.getVkDescriptorPool());
         m_ImageAvailableSemaphores[i].init(device);
         m_RenderFinishedSemaphores[i].init(device);
         m_InFlightFences[i].init(device, true);
@@ -70,7 +66,6 @@ Application::~Application() {
     }
 
     m_SceneManager.deinit(device);
-    m_AccumulationImageView.deinit(device);
 
     m_CommandPool.deinit(m_Device);
     m_GraphicsPipeline.deinit(device);
@@ -118,9 +113,6 @@ void Application::onResize() {
     for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].deinit(m_Device.getVkDevice());
 
-    m_AccumulationImageView.deinit(m_Device.getVkDevice());
-    m_SceneManager.envTexture.deinit(m_Device.getVkDevice());
-
     m_SwapChain.deinit(m_Device.getVkDevice());
 
     m_DescriptorPool.deinit(m_Device.getVkDevice());
@@ -136,14 +128,8 @@ void Application::onResize() {
     m_SwapChain.init(m_Device, m_Surface.getVkSurface(), window);
     m_GraphicsPipeline.updateExtent(m_SwapChain.getExtent());
 
-    m_AccumulationImageView.createImage(m_Device, m_SwapChain.getExtent(), VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-    m_AccumulationImageView.transitionImageLayout(m_Device, m_CommandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
-    m_AccumulationImageView.init(m_Device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
-
-    m_SceneManager.loadEnv();
-
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
-        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_SceneManager, m_AccumulationImageView, m_DescriptorPool.getVkDescriptorPool());
+        m_DescriptorSets[i].createSet(m_Device.getVkDevice(), m_SceneManager, m_DescriptorPool.getVkDescriptorPool());
 
     for (uint32_t i = 0; i < m_Framebuffers.size(); i++)
         m_Framebuffers[i].init(m_Device.getVkDevice(), m_GraphicsPipeline.getVkRenderPass(), m_SwapChain.getVkImageView(i), m_SwapChain.getExtent());
@@ -163,6 +149,13 @@ void Application::drawFrame() {
         return;
     } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
         throw std::runtime_error("ERROR: Failed to acquire swapchain image.");
+    }
+
+    if (m_SceneManager.texturesUpdated) {
+        m_SceneManager.texturesUpdated = false;
+        for (auto &descriptorSet : m_DescriptorSets) {
+            descriptorSet.updateSet(m_Device.getVkDevice(), m_SceneManager);
+        }
     }
 
     m_SceneManager.sceneData.camera.windowSize = glm::uvec2((uint32_t)m_Extent.x, (uint32_t)m_Extent.y);
@@ -221,7 +214,7 @@ void Application::drawFrame() {
 
     result = vkQueuePresentKHR(m_Device.getPresentQueue(), &presentInfo);
 
-    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasResized() || m_SceneManager.updateTexture) {
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || m_Window.wasResized()) {
         m_Window.clearResized();
         onResize();
     } else if (result != VK_SUCCESS) {
