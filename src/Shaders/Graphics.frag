@@ -17,19 +17,20 @@ layout (binding = 0, std140) readonly uniform SceneUniform {
     uint numSpheres;
     uint numMeshes;
     uint numMaterials;
+    uint numTextures;
     uint numTriangles;
     uint numBVHs;
     uint framesRendered;
-}
-scene;
+} scene;
 
-layout (binding = 1, rgba32f) coherent uniform image2D accumulationImage;
-layout (binding = 2) uniform sampler2D envSampler;
-
-layout (binding = 3, std430) readonly buffer SceneStorage {
+layout (binding = 1, std430) readonly buffer SceneStorage {
     BVH bvhs[MAX_BVHS];
     Triangle triangles[MAX_TRIANGLES];
 };
+
+layout (binding = 2, rgba32f) coherent uniform image2D accumulationImage;
+layout (binding = 3) uniform texture2D textures[MAX_TEXTURES];
+layout (binding = 4) uniform sampler texSampler;
 
 /* --------------------------------------*/
 layout (location = 0) out vec4 outColor;
