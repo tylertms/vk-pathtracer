@@ -87,7 +87,7 @@ void SceneManager::uploadFullSceneStorage() {
     vkUnmapMemory(vkDevice, stagingBufferMemory);
 
     ext_CommandPool->copyBuffer(device, stagingBuffer, m_SceneStorage, storageSize);
-    
+
     vkDestroyBuffer(vkDevice, stagingBuffer, nullptr);
     vkFreeMemory(vkDevice, stagingBufferMemory, nullptr);
 }
@@ -140,9 +140,9 @@ void SceneManager::addSphere() {
 
         if (matIndex == -1) mesh.materialIndex = sceneData.numMaterials++;
         else mesh.materialIndex = matIndex;
-        
+
         sceneData.meshes[sceneData.numMeshes++] = mesh;
-        
+
         printf("FINISHED PUSHING DATA, CREATING BVH\n");
         BVH::createBVH(mesh, initBVH, *this);
     }
@@ -199,9 +199,12 @@ void SceneManager::loadTexture(const std::string filename, uint32_t &textureInde
 
 /* ----------------------------- */
 
-void SceneManager::addCamera(std::string name, tinygltf::Camera camera, glm::mat4 transform) {
+void SceneManager::addCamera(std::string name, tinygltf::Camera camera, glm::mat3 &transform) {
     cameraNames.push_back(name);
     VKPT::Camera cam;
+    cam.vfov = camera.perspective.yfov;
+    cam.lookFrom = transform[0];
+    cam.lookAt = transform[1];
     cameras.push_back(cam);
 }
 

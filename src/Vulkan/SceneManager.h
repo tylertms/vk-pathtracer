@@ -35,7 +35,7 @@ class SceneManager {
     void uploadFullSceneStorage();
 
     void addSphere();
-    void addCamera(std::string name, tinygltf::Camera camera, glm::mat4 transform);
+    void addCamera(std::string name, tinygltf::Camera camera, glm::mat3 &transform);
     //void addMesh(const std::string filename, glm::mat3 transform = glm::mat3(0), uint32_t matIndex = -1);
 
     void updateMeshTransforms();
