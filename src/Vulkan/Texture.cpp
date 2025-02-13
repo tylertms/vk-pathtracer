@@ -16,8 +16,6 @@ void createTextureImage(const std::string filename, ImageView &textureImage, con
     VkDeviceSize imageSize = 0;
     void *pixels = nullptr;
 
-    printf("%d\n", format);
-
     if (!filename.empty()) {
         if (format == VK_FORMAT_R32G32B32A32_SFLOAT) {
             float *dataFloat = stbi_loadf(filename.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -34,7 +32,7 @@ void createTextureImage(const std::string filename, ImageView &textureImage, con
             imageSize = static_cast<VkDeviceSize>(texWidth) * texHeight * 4 * sizeof(unsigned char);
             pixels = static_cast<void*>(data8);
         } else {
-            printf("SKIPPING %s\n", filename.c_str());
+            printf("Warning: Unknown texture format %d at texture %s, skipping!\n", format, filename.c_str());
             return;
         }
     } else {
