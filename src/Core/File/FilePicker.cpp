@@ -17,6 +17,10 @@ const std::string pickFilePath(VKPT_FILE_TYPE type, VKPT_FILE_ACTION action) {
         break;
     case VKPT_HDRI:
         filters[0] = {"HDRI", "hdr"};
+        break;
+    case VKPT_TEXTURE:
+        filters[0] = {"Image", "png,jpg,jpeg"};
+        break;
     default:
         break;
     }

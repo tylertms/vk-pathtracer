@@ -8,7 +8,8 @@ enum VKPT_FILE_TYPE {
     VKPT_SPHERE,
     VKPT_SCENE,
     VKPT_MESH,
-    VKPT_HDRI
+    VKPT_HDRI,
+    VKPT_TEXTURE
 };
 
 enum VKPT_FILE_ACTION {
