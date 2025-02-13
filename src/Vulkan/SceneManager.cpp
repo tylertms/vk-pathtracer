@@ -2,7 +2,6 @@
 
 #include "ImageView.h"
 #include "Texture.h"
-#include "../Core/BVH/Builder.h"
 #include "vulkan/vulkan_core.h"
 
 #include <cstring>
@@ -11,16 +10,29 @@
 namespace Vulkan {
 
 /* ----------- INIT ----------- */
-void SceneManager::init(const Device &device, const CommandPool &commandPool) {
+void SceneManager::init(const Device &device, const VkExtent2D extent, const CommandPool &commandPool) {
     ext_Device = &device;
     ext_CommandPool = &commandPool;
+
+    sceneStorage = new VKPT::SceneStorage();
 
     createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_UniformBuffer, m_UniformBufferMemory);
     vkMapMemory(device.getVkDevice(), m_UniformBufferMemory, 0, sizeof(VKPT::SceneData), 0, &m_UniformBufferMapped);
 
     createBuffer(device, sizeof(VKPT::SceneStorage), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_SceneStorage, m_SceneStorageMemory);
 
-    createTextureImage("", envTexture, device, commandPool);
+    for (uint32_t i = 0; i < MAX_TEXTURES; i++) {
+        VkFormat format = i == 0 ? VK_FORMAT_R32G32B32A32_SFLOAT : VK_FORMAT_R8G8B8A8_UNORM;
+        textures[i].createImage(device, {1, 1}, format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        textures[i].init(device.getVkDevice(), nullptr, format);
+        textures[i].transitionImageLayout(device, commandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+    }
+
+    textures[0].createSampler(device);
+
+    accumulationImageView.createImage(device, extent, VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+    accumulationImageView.transitionImageLayout(device, commandPool, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+    accumulationImageView.init(device.getVkDevice(), nullptr, VK_FORMAT_UNDEFINED);
 }
 
 void SceneManager::deinit(const VkDevice &device) {
@@ -30,20 +42,26 @@ void SceneManager::deinit(const VkDevice &device) {
     vkDestroyBuffer(device, m_SceneStorage, nullptr);
     vkFreeMemory(device, m_SceneStorageMemory, nullptr);
 
-    envTexture.deinit(device);
+    for (uint32_t i = 0; i < MAX_TEXTURES; i++) {
+        textures[i].deinit(device);
+    }
+
+    accumulationImageView.deinit(device);
+    delete sceneStorage;
 }
 
 void SceneManager::reset() {
     sceneData.numMeshes = 0;
     sceneData.numSpheres = 0;
     sceneData.numMaterials = 0;
+    sceneData.numTextures = 0;
     sceneData.numTriangles = 0;
     sceneData.numBVHs = 0;
     sceneData.framesRendered = 0;
     sceneData.camera = {};
     modelPaths.clear();
+    texturePaths.clear();
     meshTransforms.clear();
-    queueEnv("");
 }
 /* ----------------------------- */
 
@@ -53,6 +71,7 @@ void SceneManager::submitUniformUpdates() {
 }
 
 void SceneManager::uploadFullSceneStorage() {
+    printf("UPLOADING FULL SCENE\n");
     const Device &device = *ext_Device;
     const VkDevice &vkDevice = device.getVkDevice();
 
@@ -72,6 +91,7 @@ void SceneManager::uploadFullSceneStorage() {
     vkDestroyBuffer(vkDevice, stagingBuffer, nullptr);
     vkFreeMemory(vkDevice, stagingBufferMemory, nullptr);
 }
+
 /* ----------------------------- */
 
 /* ----------- RESET ----------- */
@@ -91,13 +111,13 @@ void SceneManager::addSphere() {
 /* ----------------------------- */
 
 /* ----------- MESH ----------- */
-void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint32_t matIndex) {
-    sceneStorage = new VKPT::SceneStorage();
+/*void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint32_t matIndex) {
+    //sceneStorage = new VKPT::SceneStorage();
 
     if (filename.empty())
         return;
 
-    File::GLTFLoader loader(filename);
+    File::GLTFLoader loader(filename, *this);
 
     selectedObjectIndex = sceneData.numMeshes;
     selectedObjectType = VKPT_MESH;
@@ -147,7 +167,7 @@ void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint
 
     printf("DONE!\n");
     delete sceneStorage;
-}
+}*/
 
 void SceneManager::updateMeshTransforms() {
     for (uint32_t i = 0; i < sceneData.numMeshes; i++) {
@@ -158,16 +178,31 @@ void SceneManager::updateMeshTransforms() {
 }
 /* ----------------------------- */
 
-/* ----------- HDRI ENV ----------- */
-void SceneManager::queueEnv(const std::string filename) {
-    texturePath = filename;
-    updateTexture = true;
+/* ----------- TEXTURE ----------- */
+void SceneManager::updateEnvTexture(const std::string filename) {
+    createTextureImage(filename, textures[0], *ext_Device, *ext_CommandPool);
+    texturesUpdated = true;
+    resetAccumulation();
 }
 
-void SceneManager::loadEnv() {
-    createTextureImage(texturePath, envTexture, *ext_Device, *ext_CommandPool);
-    updateTexture = false;
+void SceneManager::loadTexture(const std::string filename, uint32_t &textureIndex) {
+    if (filename.empty())
+        return;
+
+    if (textureIndex == 0)
+        textureIndex = sceneData.numTextures++;
+
+    createTextureImage(filename, textures[textureIndex], *ext_Device, *ext_CommandPool);
+    texturesUpdated = true;
+    resetAccumulation();
 }
+
 /* ----------------------------- */
+
+void SceneManager::addCamera(std::string name, tinygltf::Camera camera, glm::mat4 transform) {
+    cameraNames.push_back(name);
+    VKPT::Camera cam;
+    cameras.push_back(cam);
+}
 
 } // namespace Vulkan

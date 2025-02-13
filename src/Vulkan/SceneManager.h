@@ -10,9 +10,11 @@
 #include "VulkanApp.h"
 #include "vulkan/vulkan_core.h"
 
-#include "../Core/File/GLTFLoader.h"
+#include "../External/tiny_gltf/tiny_gltf.h"
+
 #include "../Core/Types/Scene.h"
 #include "../Core/Utils/Matrix.h"
+#include "../Core/File/FilePicker.h"
 
 namespace Vulkan {
 
@@ -21,7 +23,7 @@ class SceneManager {
     NO_COPY(SceneManager)
     SceneManager() = default;
 
-    void init(const Device &device, const CommandPool &commandPool);
+    void init(const Device &device, const VkExtent2D extent, const CommandPool &commandPool);
     void deinit(const VkDevice &device);
     void reset();
 
@@ -33,12 +35,13 @@ class SceneManager {
     void uploadFullSceneStorage();
 
     void addSphere();
-    void addMesh(const std::string filename, glm::mat3 transform = glm::mat3(0), uint32_t matIndex = -1);
-
-    void queueEnv(const std::string filename);
-    void loadEnv();
+    void addCamera(std::string name, tinygltf::Camera camera, glm::mat4 transform);
+    //void addMesh(const std::string filename, glm::mat3 transform = glm::mat3(0), uint32_t matIndex = -1);
 
     void updateMeshTransforms();
+
+    void updateEnvTexture(const std::string filename);
+    void loadTexture(const std::string filename, uint32_t &textureIndex);
 
     VKPT::SceneData sceneData;
     VKPT::SceneStorage *sceneStorage;
@@ -54,9 +57,13 @@ class SceneManager {
     std::vector<glm::vec3> triMax;
     std::vector<glm::vec3> triCentroid;
 
-    ImageView envTexture;
-    std::string texturePath;
-    bool updateTexture = false;
+    std::vector<VKPT::Camera> cameras;
+    std::vector<std::string> cameraNames;
+
+    bool texturesUpdated = false;
+    ImageView accumulationImageView;
+    ImageView textures[MAX_TEXTURES];
+    std::vector<std::string> texturePaths;
 
   private:
     VkBuffer m_UniformBuffer;
