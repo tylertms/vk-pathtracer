@@ -24,6 +24,7 @@ class ImageView {
     inline const VkImageView &getVkImageView() const { return m_ImageView; }
     inline const VkSampler &getVkSampler() const { return m_Sampler; }
     inline const VkDeviceMemory &getVkDeviceMemory() const { return m_ImageMemory; }
+    inline const VkFormat &getVkFormat() const { return m_Format; }
 
   private:
     VkImageView m_ImageView = nullptr;
