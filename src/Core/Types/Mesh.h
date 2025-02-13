@@ -12,8 +12,8 @@ namespace VKPT {
 struct alignas(16) Mesh {
     mat4 worldLocalTransform;
     mat4 localWorldTransform;
-    uint32_t materialIndex;
-    uint32_t rootBVHNode;
+    uint32_t materialIndex = 0;
+    uint32_t rootBVHNode = 0;
 };
 } // namespace VKPT
 
