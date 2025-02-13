@@ -44,7 +44,7 @@ void drawSceneOverview(Vulkan::SceneManager &sceneManager) {
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         bool selected = (sceneManager.selectedObjectType == VKPT_MESH) && (sceneManager.selectedObjectIndex == i);
-        std::string str = ICON_FA_DRAW_POLYGON"      Mesh - " +  File::extractFilename(sceneManager.modelPaths[i]);
+        std::string str = ICON_FA_DRAW_POLYGON"      Mesh - " +  sceneManager.modelPaths[i];
 
         if (ImGui::Selectable(str.c_str(), selected)) {
             if (selected) {
