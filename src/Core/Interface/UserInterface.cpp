@@ -6,6 +6,7 @@
 
 #include "../File/FilePicker.h"
 #include "../File/SceneLoader.h"
+#include "../File/GLTFLoader.h"
 #include "../Constants.h"
 
 #include <imgui.h>
@@ -160,11 +161,12 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
                 sceneManager.addSphere();
 
             if (ImGui::MenuItem(ICON_FA_DRAW_POLYGON"     Mesh"))
-                sceneManager.addMesh(pickFilePath(VKPT_MESH, VKPT_LOAD));
+                //sceneManager.addMesh(pickFilePath(VKPT_MESH, VKPT_LOAD));
+                File::loadGLTF(pickFilePath(VKPT_MESH, VKPT_LOAD), 0, -1, sceneManager);
 
             if (ImGui::MenuItem(ICON_FA_MOUNTAIN_SUN"   Environment"))
-                sceneManager.queueEnv(pickFilePath(VKPT_HDRI, VKPT_LOAD));
-
+                sceneManager.updateEnvTexture(pickFilePath(VKPT_HDRI, VKPT_LOAD));
+                
             ImGui::EndMenu();
         }
 
