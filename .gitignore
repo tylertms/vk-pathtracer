@@ -3,7 +3,8 @@
 /.cache/
 
 # Downloaded Assets
-# /assets/hdri/
+/assets/hdri/
+/assets/models
 
 # System Files
 .DS_Store
