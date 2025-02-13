@@ -20,7 +20,6 @@ struct alignas(16) Material {
     vec2 IOR = { 1.5f, 0.5f };
     float transmission = 0.0f;
 
-    // Loaded dynamically by GLTFLoader, not saved
     int32_t baseColorTextureIndex = -1;
     int32_t metallicRoughnessTextureIndex = -1;
     int32_t normalTextureIndex = -1;
@@ -93,12 +92,6 @@ struct convert<VKPT::Material> {
 #else
 /* ---------- GLSL ---------- */
 
-// Corrected GLSL Material struct that mirrors the C++ layout.
-// (If using this in a uniform block, be sure to declare "layout(std140)" on the block.)
-//
-// Note:
-// - GLSL does not pack booleans in std140; here we use an int (0 for false, nonzero for true)
-// - The order of members is chosen to match the C++ version.
 struct Material {
     vec3 baseColor;
     float metallic;
@@ -109,7 +102,6 @@ struct Material {
     vec2 IOR;
     float transmission;
 
-    // Loaded dynamically by GLTFLoader, not saved
     int baseColorTextureIndex;
     int metallicRoughnessTextureIndex;
     int normalTextureIndex;

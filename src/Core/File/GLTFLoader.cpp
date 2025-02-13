@@ -16,16 +16,10 @@
 
 namespace File {
 
-// -----------------------------------------------------------------------------
-// Logging helper: prints progress messages
-// -----------------------------------------------------------------------------
 static void logProgress(const std::string &msg) {
     std::cout << "[GLTF Loader] " << msg << std::endl;
 }
 
-// -----------------------------------------------------------------------------
-// Helper: Get a pointer to accessor data for a given type T
-// -----------------------------------------------------------------------------
 template<typename T>
 const T* getAccessorData(const tinygltf::Model &model, const tinygltf::Accessor &accessor) {
     const tinygltf::BufferView &bufferView = model.bufferViews[accessor.bufferView];
@@ -33,9 +27,6 @@ const T* getAccessorData(const tinygltf::Model &model, const tinygltf::Accessor 
     return reinterpret_cast<const T*>(buffer.data.data() + bufferView.byteOffset + accessor.byteOffset);
 }
 
-// -----------------------------------------------------------------------------
-// Process Materials
-// -----------------------------------------------------------------------------
 static void processMaterials(const tinygltf::Model &model, Vulkan::SceneManager &sceneManager, uint32_t textureOffset) {
     logProgress("Processing Materials...");
     for (const auto &gltfMaterial : model.materials) {
@@ -66,9 +57,6 @@ static void processMaterials(const tinygltf::Model &model, Vulkan::SceneManager 
     }
 }
 
-// -----------------------------------------------------------------------------
-// Process Textures
-// -----------------------------------------------------------------------------
 static void processTextures(const std::string &basePath, const tinygltf::Model &model, Vulkan::SceneManager &sceneManager) {
     logProgress("Processing Textures...");
     for (const auto &texture : model.textures) {
@@ -83,9 +71,6 @@ static void processTextures(const std::string &basePath, const tinygltf::Model &
     }
 }
 
-// -----------------------------------------------------------------------------
-// Get the node transformation using your original mat3 translation/euler rotation/scale scheme
-// -----------------------------------------------------------------------------
 static glm::mat3 getNodeTransform(const glm::mat3 &parent, const tinygltf::Node &node) {
     glm::mat3 transform = parent;
 
@@ -112,7 +97,6 @@ static glm::mat3 getNodeTransform(const glm::mat3 &parent, const tinygltf::Node 
             static_cast<float>(node.scale[2])
         );
 
-    // In this scheme, column 0 stores translation, column 1 stores rotation (Euler angles), and column 2 stores scale.
     transform[0] += translation;
     transform[1] += rotation;
     transform[2] *= scale;
@@ -120,9 +104,6 @@ static glm::mat3 getNodeTransform(const glm::mat3 &parent, const tinygltf::Node 
     return transform;
 }
 
-// -----------------------------------------------------------------------------
-// Recursively process a node and its children using mat3 transforms
-// -----------------------------------------------------------------------------
 static void processNode(int nodeIndex, const glm::mat3 &parentTransform, const tinygltf::Model &model, Vulkan::SceneManager &sceneManager) {
     const tinygltf::Node &node = model.nodes[nodeIndex];
     glm::mat3 nodeTransform = getNodeTransform(parentTransform, node);
@@ -146,14 +127,11 @@ static void processNode(int nodeIndex, const glm::mat3 &parentTransform, const t
     }
 }
 
-// -----------------------------------------------------------------------------
-// Process all nodes from all scenes in the glTF model
-// -----------------------------------------------------------------------------
 static void processNodes(const tinygltf::Model &model, Vulkan::SceneManager &sceneManager) {
     logProgress("Processing Nodes...");
-    // Default transform (as in your original code) with a zeroed translation/rotation and a scale of 1.
+
     glm::mat3 def(0.0f);
-    def[2] = glm::vec3(1.0f, 1.0f, 1.0f); // assuming column 2 is used for scale.
+    def[2] = glm::vec3(1.0f, 1.0f, 1.0f);
     for (const auto &scene : model.scenes) {
         logProgress("Processing Scene: " + scene.name);
         for (const int nodeIndex : scene.nodes)
@@ -161,9 +139,6 @@ static void processNodes(const tinygltf::Model &model, Vulkan::SceneManager &sce
     }
 }
 
-// -----------------------------------------------------------------------------
-// Load triangles from a glTF primitive
-// -----------------------------------------------------------------------------
 static void loadTrianglesFromPrimitive(const tinygltf::Model &model, const tinygltf::Primitive &primitive, std::vector<VKPT::Triangle> &allTriangles) {
     auto pos_it  = primitive.attributes.find("POSITION");
     auto norm_it = primitive.attributes.find("NORMAL");
@@ -186,7 +161,6 @@ static void loadTrianglesFromPrimitive(const tinygltf::Model &model, const tinyg
     if (primitive.attributes.find("TEXCOORD_0") != primitive.attributes.end())
         uvs0 = getAccessorData<float>(model, model.accessors[primitive.attributes.find("TEXCOORD_0")->second]);
 
-    // Gather indices – if not provided, assume sequential indices.
     std::vector<unsigned int> indices;
     if (primitive.indices >= 0) {
         const tinygltf::Accessor &indexAccessor = model.accessors[primitive.indices];
@@ -227,9 +201,6 @@ static void loadTrianglesFromPrimitive(const tinygltf::Model &model, const tinyg
     }
 }
 
-// -----------------------------------------------------------------------------
-// Process triangles from all primitives in all meshes
-// -----------------------------------------------------------------------------
 static void processTriangles(const tinygltf::Model &model, std::vector<VKPT::Triangle> &allTriangles) {
     logProgress("Processing Triangles...");
     for (const auto &mesh : model.meshes)
@@ -237,10 +208,6 @@ static void processTriangles(const tinygltf::Model &model, std::vector<VKPT::Tri
             loadTrianglesFromPrimitive(model, primitive, allTriangles);
 }
 
-// -----------------------------------------------------------------------------
-// Process mesh primitives and build their BVH structures.
-// Each primitive becomes its own mesh.
-// -----------------------------------------------------------------------------
 static void processMeshes(const tinygltf::Model &model, uint32_t triStartIndex, Vulkan::SceneManager &sceneManager) {
     logProgress("Processing Meshes and Building BVHs...");
     for (const auto &gltfMesh : model.meshes) {
@@ -275,9 +242,6 @@ static void processMeshes(const tinygltf::Model &model, uint32_t triStartIndex, 
     }
 }
 
-// -----------------------------------------------------------------------------
-// Main function to load a glTF file using a mat3 transform scheme
-// -----------------------------------------------------------------------------
 void loadGLTF(const std::string &filename, const glm::mat3 &transform, uint32_t matIndex, Vulkan::SceneManager &sceneManager) {
     if (filename.empty())
         return;

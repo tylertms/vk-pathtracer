@@ -2,7 +2,6 @@
 
 #include <glm/glm.hpp>
 
-#include "../Types/Scene.h"
 #include "../../Vulkan/SceneManager.h"
 
 namespace Interface {
