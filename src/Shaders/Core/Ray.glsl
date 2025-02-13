@@ -24,7 +24,8 @@ vec3 getEnvironmentLight(vec3 dir, uint bounceNum, inout uint state) {
         uv += randUnitCircle(state) * ENV_TEX_BLUR;
     }
 
-    return clamp(texture(envSampler, uv).rgb, 0, 20);
+    vec4 envTexColor = texture(sampler2D(textures[0], texSampler), uv);
+    return clamp(envTexColor.rgb, 0, 20);
 }
 
 Ray generateRay(vec2 uv, inout uint state) {
@@ -69,7 +70,19 @@ vec3 traceRay(Ray ray, uint maxBounces, inout uint state, inout uint stats[2]) {
             break;
         }
 
+        //return vec3(hit.uv, 0.0);
+
 #ifdef DEBUG_NORMAL
+        if (hit.material.normalTextureIndex > 0) {
+            vec3 tangentSpaceNormal = texture(sampler2D(textures[hit.material.normalTextureIndex], texSampler), hit.uv0).rgb;
+
+            vec3 T = normalize(hit.tangent);
+            vec3 N = normalize(hit.normal);
+            vec3 B = normalize(cross(N, T));
+
+            hit.normal = normalize(mat3(T, B, N) * tangentSpaceNormal);
+        }
+
         return hit.normal * 0.5 + 0.5;
 #endif
 

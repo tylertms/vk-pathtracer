@@ -39,12 +39,13 @@ HitPayload rayHitScene(Ray worldRay, inout uint stats[2]) {
                     stats[1]++;
 
                     if (temp.didHit && temp.distance < hit.distance) {
-                        hit.didHit = true;
-                        hit.distance = temp.distance;
+                        hit = temp;
                         hit.point = worldRay.origin + worldRay.dir * temp.distance;
                         hit.normal = normalize(vec3(mesh.localWorldTransform * vec4(temp.normal, 0.)));
+                        hit.tangent = normalize(vec3(mesh.localWorldTransform * vec4(temp.tangent, 0.)));
                         hit.material = scene.materials[mesh.materialIndex];
                     }
+
                 }
             } else {
                 uint leftChildIndex = node.index;

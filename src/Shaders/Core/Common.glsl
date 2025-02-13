@@ -14,6 +14,9 @@ struct HitPayload {
     bool didHit;
     vec3 normal;
     float distance;
+    vec3 tangent;
+    vec2 uv0;
+    vec2 uv1;
     Material material;
 };
 
