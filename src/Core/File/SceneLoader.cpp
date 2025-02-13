@@ -1,5 +1,7 @@
 #include "SceneLoader.h"
 
+#include "GLTFLoader.h"
+
 #include <filesystem>
 #include <fstream>
 #include <vector>
@@ -11,17 +13,14 @@ namespace File {
 
 std::string extractDirectory(const std::string &filepath) {
     size_t pos = filepath.find_last_of("/\\");
-
-    if (pos != std::string::npos) {
-        return filepath.substr(0, pos + 1);
-    }
-
-    return "";
+    return (pos != std::string::npos) ? filepath.substr(0, pos + 1) : "";
 }
 
 std::string extractFilename(const std::string& filepath) {
-    size_t lastSlashPos = max((int)filepath.find_last_of('/'), (int)filepath.find_last_of('\\'));
-    size_t lastDotPos = filepath.find_last_of('.');
+    int lastSlashPos = max((int)filepath.find_last_of('/'), (int)filepath.find_last_of('\\'));
+    int lastDotPos = filepath.find_last_of('.');
+
+    if (lastSlashPos < 0 || lastDotPos < 0) return "";
 
     if (lastSlashPos == std::string::npos) {
         lastSlashPos = -1; 
@@ -55,7 +54,6 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
         if (fs::path(loadpath).is_relative()) {
             loadpath = std::string(extractDirectory(filename) + loadpath);
         }
-        sceneManager.queueEnv(loadpath);
     }
 
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
@@ -70,7 +68,7 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
                 loadpath = std::string(extractDirectory(filename) + loadpath);
             }
 
-            sceneManager.addMesh(loadpath, transform, matIndex);
+            loadGLTF(loadpath, transform, matIndex, sceneManager);            
         }
 
         else if (object["Sphere"]) {
@@ -97,12 +95,13 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
 
     config["Camera"] = sceneManager.sceneData.camera;
 
-    if (!sceneManager.texturePath.empty()) {
-        config["EnvTexture"] = sceneManager.texturePath;
+    if (sceneManager.texturePaths.size() > 0 && !sceneManager.texturePaths[0].empty()) {
+        config["EnvTexture"] = sceneManager.texturePaths[0];
     }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
-        YAML::Node meshProperties = YAML::Node(sceneManager.sceneData.meshes[i]);
+        const VKPT::Mesh &mesh = sceneManager.sceneData.meshes[i];
+        YAML::Node meshProperties = YAML::Node(mesh);
         meshProperties["File"] = sceneManager.modelPaths[i];
         meshProperties["Transform"] = sceneManager.meshTransforms[i];
 
