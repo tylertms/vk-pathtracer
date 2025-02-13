@@ -8,3 +8,6 @@
     class(class &&) = delete;                 \
     class &operator=(const class &) = delete; \
     class &operator=(class &&) = delete;
+
+class DescriptorSet;
+class SceneManager;
