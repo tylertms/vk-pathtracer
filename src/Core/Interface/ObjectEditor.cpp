@@ -81,6 +81,7 @@ void drawObjectEditor(Vulkan::SceneManager &sceneManager) {
     if (sceneManager.selectedObjectType == VKPT_SPHERE) {
         if (drawSphereEditor(sceneManager.sceneData.spheres[selectedObjIndex]))
             sceneManager.resetAccumulation();
+            
     } else if (sceneManager.selectedObjectType == VKPT_MESH) {
         if (drawMeshEditor(sceneManager.sceneData.meshes[selectedObjIndex], sceneManager.meshTransforms[selectedObjIndex])) {
             sceneManager.updateMeshTransforms();

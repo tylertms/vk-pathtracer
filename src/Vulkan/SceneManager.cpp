@@ -111,64 +111,6 @@ void SceneManager::addSphere() {
 /* ----------------------------- */
 
 /* ----------- MESH ----------- */
-/*void SceneManager::addMesh(const std::string filename, glm::mat3 transform, uint32_t matIndex) {
-    //sceneStorage = new VKPT::SceneStorage();
-
-    if (filename.empty())
-        return;
-
-    File::GLTFLoader loader(filename, *this);
-
-    selectedObjectIndex = sceneData.numMeshes;
-    selectedObjectType = VKPT_MESH;
-
-    uint32_t triStartIndex = sceneData.numTriangles;
-
-    for (auto &triangle : loader.getTriangles()) {
-        triIndices.push_back(sceneData.numTriangles++);
-        triMin.push_back(glm::min(triangle.posA, glm::min(triangle.posB, triangle.posC)));
-        triMax.push_back(glm::max(triangle.posA, glm::max(triangle.posB, triangle.posC)));
-        triCentroid.push_back((triangle.posA + triangle.posB + triangle.posC) / 3.f);
-    }
-
-    for (auto mesh : loader.getMeshes()) {
-        VKPT::BVH initBVH{
-            .index = triStartIndex,
-            .triangleCount = static_cast<uint32_t>(loader.getTriangles().size())};
-
-        mesh.rootBVHNode = sceneData.numBVHs;
-
-        if (matIndex == -1) mesh.materialIndex = sceneData.numMaterials++;
-        else mesh.materialIndex = matIndex;
-
-        sceneData.meshes[sceneData.numMeshes++] = mesh;
-
-        printf("FINISHED PUSHING DATA, CREATING BVH\n");
-        BVH::createBVH(mesh, initBVH, *this);
-    }
-
-    if (transform == glm::mat3(0))
-        transform[2] = {1, 1, 1};
-
-    meshTransforms.push_back(transform);
-    modelPaths.push_back(filename);
-
-    printf("WRITING TRIANGLES TO SCENE...\n");
-
-    for (uint32_t i = triStartIndex; i < sceneData.numTriangles; i++) {
-        sceneStorage->triangles[i] = loader.getTriangles()[triIndices[i]];
-    }
-
-    printf("UPLOADING TO GPU...\n");
-
-    updateMeshTransforms();
-    uploadFullSceneStorage();
-    resetAccumulation();
-
-    printf("DONE!\n");
-    delete sceneStorage;
-}*/
-
 void SceneManager::updateMeshTransforms() {
     for (uint32_t i = 0; i < sceneData.numMeshes; i++) {
         auto &worldLocalTransform = sceneData.meshes[i].worldLocalTransform;

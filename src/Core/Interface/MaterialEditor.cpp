@@ -10,6 +10,7 @@ namespace Interface {
 
 void drawMaterialEditor(Vulkan::SceneManager &sceneManager) {
     const int selectedObjIndex = sceneManager.selectedObjectIndex;
+    
     if (selectedObjIndex == -1)
         return;
 
@@ -23,6 +24,7 @@ void drawMaterialEditor(Vulkan::SceneManager &sceneManager) {
             return dummy;
         }
     };
+
     uint32_t &objectMatIndex = getObjectMaterialIndex();
 
     ImGui::Begin("Material ");
@@ -30,7 +32,6 @@ void drawMaterialEditor(Vulkan::SceneManager &sceneManager) {
     for (uint32_t i = 0; i < sceneManager.sceneData.numMaterials; i++) {
         VKPT::Material &material = sceneManager.sceneData.materials[i];
         bool changed = false;
-
 
         if (ImGui::CollapsingHeader((std::string("Material ") + std::to_string(i)).c_str(), 
                 i == objectMatIndex ? ImGuiTreeNodeFlags_DefaultOpen : 0))
