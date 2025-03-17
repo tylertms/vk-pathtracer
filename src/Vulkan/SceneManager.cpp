@@ -127,12 +127,9 @@ void SceneManager::updateEnvTexture(const std::string filename) {
     resetAccumulation();
 }
 
-void SceneManager::loadTexture(const std::string filename, uint32_t &textureIndex) {
+void SceneManager::loadTexture(const std::string filename, const uint32_t textureIndex) {
     if (filename.empty())
         return;
-
-    if (textureIndex == 0)
-        textureIndex = sceneData.numTextures++;
 
     createTextureImage(filename, textures[textureIndex], *ext_Device, *ext_CommandPool);
     texturesUpdated = true;

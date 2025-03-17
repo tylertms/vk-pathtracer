@@ -40,7 +40,7 @@ class SceneManager {
     void updateMeshTransforms();
 
     void updateEnvTexture(const std::string filename);
-    void loadTexture(const std::string filename, uint32_t &textureIndex);
+    void loadTexture(const std::string filename, const uint32_t textureIndex);
 
     VKPT::SceneData sceneData;
     VKPT::SceneStorage *sceneStorage;
