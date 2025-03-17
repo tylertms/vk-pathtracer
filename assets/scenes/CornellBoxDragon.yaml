@@ -1,82 +1,86 @@
 Camera:
-  LookFrom: [0, 0.0299999993, -4.5]
-  LookAt: [0, 0.0299999993, 0]
-  VFOV: 40.9000015
-  FocalDistance: 5.73999977
+  LookFrom: [5.46882248, 0.00570835918, 0.0716967434]
+  LookAt: [-0.00109926192, 0.0100274775, 0.039988596]
+  VFOV: 60
+  FocalDistance: 4
   SamplesPerPixel: 1
-  MaxBounces: 8
+  MaxBounces: 1
   Defocus: 0
   Diverge: 1
   Exposure: 1
   EnvRotation: 0
 Objects:
   - Mesh:
-      Material:
-        Color: [1, 1, 1]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
-      File: ../models/quad.glb
-      Transform: [0, 1.20000005, 0, -180, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+      MaterialIndex: 1
+      File: Plane.001 - 0
+      Transform: [0, 2, 0, 180, 0, 0, 2, 2, 2]
   - Mesh:
-      Material:
-        Color: [1, 0, 0]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
-      File: ../models/quad.glb
-      Transform: [-1.20000005, 0, 0, 0, 0, -90, 1.20000005, 1.20000005, 1.20000005]
+      MaterialIndex: 3
+      File: Plane.002 - 0
+      Transform: [0, 0, -2, 90, 0, 0, 2, 2, 2]
   - Mesh:
-      Material:
-        Color: [1, 1, 1]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
-      File: ../models/quad.glb
-      Transform: [0, 0, 1.20000005, -90, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+      MaterialIndex: 2
+      File: Plane.003 - 0
+      Transform: [0, 0, 2, 270, 0, 0, 2, 2, 2]
   - Mesh:
-      Material:
-        Color: [1, 1, 1]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
-      File: ../models/quad.glb
-      Transform: [0, -1.20000005, 0, 0, 0, 0, 1.20000005, 1.20000005, 1.20000005]
+      MaterialIndex: 1
+      File: Plane.004 - 0
+      Transform: [-2, 0, 0, 90, 90, 0, 2, 2, 2]
   - Mesh:
-      Material:
-        Color: [0, 1, 0]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
-      File: ../models/quad.glb
-      Transform: [1.20000005, 0, 0, 0, 0, 90, 1.20000005, 1.20000005, 1.20000005]
+      MaterialIndex: 1
+      File: Plane - 0
+      Transform: [0, -2, 0, 0, 0, 0, 2, 2, 2]
   - Mesh:
-      Material:
-        Color: [1, 1, 1]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 1.58000004
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
-      File: ../models/quad.glb
-      Transform: [0, 1.19000006, 0, 0, 0, 0, 0.5, 0.5, 0.5]
+      MaterialIndex: 0
+      File: Plane.005 - 0
+      Transform: [0, 1.99000001, 0, 180, 0, 0, 0.799999952, 0.799999952, 0.799999952]
   - Mesh:
-      Material:
-        Color: [0.518987298, 0.518987298, 0.518987298]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0.100000001
-        Roughness: 0.0199999996
-      File: ../models/870k_dragon.glb
-      Transform: [-0.0399999991, -0.579999983, 0.0799999982, 0, -51.5, 0, 2.4000001, 2.4000001, 2.4000001]
+      MaterialIndex: 4
+      File: dragon - 0
+      Transform: [0.189999998, -1.01999998, 0.100000001, 0, -148.5, 0, 3.5, 3.5, 3.5]
+Materials:
+  - Material0:
+      BaseColor: [1, 1, 1]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 1.74000001
+      IOR: [1.5, 0.5]
+      Roughness: 0.5
+      Transmission: 0
+  - Material1:
+      BaseColor: [1, 1, 1]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 0
+      IOR: [1.5, 0.5]
+      Roughness: 0.5
+      Transmission: 0
+  - Material2:
+      BaseColor: [1, 0, 0]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 0
+      IOR: [1.5, 0.5]
+      Roughness: 0.5
+      Transmission: 0
+  - Material3:
+      BaseColor: [0, 1, 0]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 0
+      IOR: [1.5, 0.5]
+      Roughness: 0.5
+      Transmission: 0
+  - Material4:
+      BaseColor: [0.864978909, 0.864978909, 0.864978909]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0.0710000023
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 0
+      IOR: [1.5, 0.5]
+      Roughness: 0
+      Transmission: 0
