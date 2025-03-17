@@ -12,13 +12,13 @@ void evaluateBSDF(HitPayload hit, inout Ray ray, inout vec3 radiance, inout vec3
         color = texture(sampler2D(textures[hit.material.baseColorTextureIndex], texSampler), hit.uv0).rgb;
     }
 
-    if (hit.material.normalTextureIndex > 0) {
+    /*if (hit.material.normalTextureIndex > 0) {
         vec3 tangentSpaceNormal = texture(sampler2D(textures[hit.material.normalTextureIndex], texSampler), hit.uv0).rgb;
         vec3 T = hit.tangent;
         vec3 N = hit.normal;
         vec3 B = normalize(cross(N, T));
         hit.normal = normalize(mat3(T, B, N) * tangentSpaceNormal);
-    }
+    }*/
 
     /* ----- BRDF ----- */
     vec3 diffuseDir = diffuseBRDF(hit.normal, state);
