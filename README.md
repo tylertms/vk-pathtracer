@@ -44,7 +44,7 @@ cmake --build build -j4
 ```
 ## Features
 - GPU-accelerated pathtracing algorithm
-- Fully interactive scene (drag/zoom/pan)
+- Fully interactive scene (rotate/zoom/pan)
 - Control of camera FOV, focal distance, focal strength, exposure, etc.
 - glTF 2.0 loader
 - Position objects and adjust material properties from the sidebar
@@ -78,13 +78,13 @@ cmake --build build -j4
 
 [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) - Peter Shirley
 
-[How to build a BVH](https://jacco.ompf2.com/2022/04/13/how-to-build-a-bvh-part-1-basics/) - Jacco Bikker
-
 [Coding Adventure: Ray Tracing](https://www.youtube.com/watch?v=Qz0KTGYJtUk) - Sebastian Lague
 
 [Coding Adventure: Optimizing a Ray Tracer (by building a BVH)](https://www.youtube.com/watch?v=C1H4zIiCOaI) - Sebastian Lague
 
 [Physically Based Rendering: From Theory To Implementation](https://www.pbr-book.org)
+
+[How to build a BVH](https://jacco.ompf2.com/2022/04/13/how-to-build-a-bvh-part-1-basics/) - Jacco Bikker
 
 [RayTracingInVulkan](https://github.com/GPSnoopy/RayTracingInVulkan) - GPSnoopy
 
