@@ -49,6 +49,7 @@ cmake --build build -j4
 - Top level acceleration structure for scenes with many meshes
 - Improved glTF texture support and object hierarchy
 - BVH optimizations, construction through compute shader
+- Wavefront pathtracing (a fundamentally different approach to light transport)
   
 ## Issues
 - Scene saving/loading is currently broken
@@ -63,5 +64,14 @@ Please report further issues using the Github Issue feature
 
 
 ## References
+[Vulkan Tutorial - Alexander Overvoorde](https://vulkan-tutorial.com)
+
+[Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+
+[How to build a BVH - Jacco Bikker](https://jacco.ompf2.com/2022/04/13/how-to-build-a-bvh-part-1-basics/)
+
 [Coding Adventure: Ray Tracing - Sebastian Lague](https://www.youtube.com/watch?v=Qz0KTGYJtUk)
+
 [Coding Adventure: Optimizing a Ray Tracer (by building a BVH) - Sebastian Lague](https://www.youtube.com/watch?v=C1H4zIiCOaI)
+
+[Physically Based Rendering: From Theory To Implementation](https://www.pbr-book.org)
