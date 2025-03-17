@@ -2,6 +2,17 @@
 [WIP] Interactive, physically-based rendering engine using the Vulkan API. Includes full camera control, a custom BVH builder, glTF 2.0 loader, and much more. This is a hobby project for my own learning and likely has many naive implementations.
 ![Ajax](./assets/screenshots/Ajax.png)
 
+## Table of Contents
+- [Requirements](#requirements)
+- [Compilation](#compilation)
+  - [Mac/Linux](#mac--linux)
+  - [Windows](#windows)
+- [Features](#features)
+- [Roadmap](#roadmap)
+- [Issues](#issues)
+- [Gallery](#gallery)
+- [References](#references)
+- [Debug Views](#debug-views)
 ## Requirements
 - Windows, Mac, or Linux
 - Vulkan SDK v1.3+
@@ -60,10 +71,8 @@ Please report further issues using the Github Issue feature
 ## Gallery
 ![Dragon](./assets/screenshots/Dragon.png)
 ![Lucy](./assets/screenshots/Lucy.png)
-![DragonGlass](./assets/screenshots/DragonGlass.png)
+![DragonGlass](./assets/screenshots/GlassDragon.png)
 ![Spheres](./assets/screenshots/Spheres.png)
-
-
 
 ## References
 [Vulkan Tutorial](https://vulkan-tutorial.com) - Alexander Overvoorde
@@ -81,6 +90,9 @@ Please report further issues using the Github Issue feature
 [RayTracingInVulkan](https://github.com/GPSnoopy/RayTracingInVulkan) - GPSnoopy
 
 ## Debug Views
+Normal Vector (x/y/z) as Color (r/g/b)
 ![Normal](./assets/screenshots/debug/Normal.png)
+Number of Ray-Box Tests
 ![BoxTests](./assets/screenshots/debug/BoxTests.png)
+Number of Ray-Triangle Tests
 ![TriTests](./assets/screenshots/debug/TriTests.png)
