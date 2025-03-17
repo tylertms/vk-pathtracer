@@ -12,7 +12,7 @@ GLFWwindow* Window::init() {
     GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* vidmode = glfwGetVideoMode(primaryMonitor);
 
-    const float scale = 0.8;
+    const float scale = 1;
     m_Width  = static_cast<int>(vidmode->width * scale);
     m_Height = static_cast<int>(vidmode->height * scale);
 
