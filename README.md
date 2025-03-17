@@ -66,7 +66,7 @@ cmake --build build -j4
 - Scene saving/loading is currently broken
 - Creating new scenes is buggy and will sometimes crash the program
 - Textures may not always be detected and may load incorrectly
-Please report further issues using the Github Issue feature
+- Please report further issues using the Github Issue feature
 
 ## Gallery
 ![Dragon](./assets/screenshots/Dragon.png)
