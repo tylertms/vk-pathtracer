@@ -15,7 +15,7 @@
 - [Debug Views](#debug-views)
 ## Requirements
 - Windows, Mac, or Linux
-- Vulkan SDK v1.3+
+- Vulkan SDK with API v1.2+
 - GCC/Clang with C++17
 - CMake v3.20+
 
