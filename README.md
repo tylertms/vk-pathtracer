@@ -1,5 +1,5 @@
 # vk-pathtracer
-[WIP] Interactive, physically-based rendering engine using the Vulkan API. Includes full camera control, a custom BVH builder, glTF 2.0 loader, and much more. This is a hobby project for my own learning and likely has many naive implementations.
+[WIP] Interactive, physically-based pathtracing engine using the Vulkan API. Includes full camera control, a custom BVH builder, glTF 2.0 loader, and more. This is a hobby project for my own learning and likely has many naive implementations.
 ![Ajax](./assets/screenshots/Ajax.png)
 
 ## Table of Contents
@@ -66,7 +66,6 @@ cmake --build build -j4
 - Scene saving/loading is currently broken
 - Creating new scenes is buggy and will sometimes crash the program
 - Textures may not always be detected and may load incorrectly
-- Please report further issues using the Github Issue feature
 
 ## Gallery
 ![Dragon](./assets/screenshots/Dragon.png)
