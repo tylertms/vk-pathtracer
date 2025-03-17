@@ -64,7 +64,7 @@ static void processTextures(const std::string &basePath, const tinygltf::Model &
         if (imageIndex < 0 || imageIndex >= static_cast<int>(model.images.size()))
             continue;
         const tinygltf::Image &image = model.images[imageIndex];
-        std::string uri = basePath + image.uri;
+        std::string uri = basePath + (image.uri.empty() ? image.name : image.uri);
         uint32_t textureIndex = sceneManager.sceneData.numTextures;
         sceneManager.loadTexture(uri, textureIndex);
         sceneManager.sceneData.numTextures++;
