@@ -64,14 +64,17 @@ Please report further issues using the Github Issue feature
 
 
 ## References
-[Vulkan Tutorial - Alexander Overvoorde](https://vulkan-tutorial.com)
+[Vulkan Tutorial](https://vulkan-tutorial.com) - Alexander Overvoorde
 
-[Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html)
+[Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html) - Peter Shirley
 
-[How to build a BVH - Jacco Bikker](https://jacco.ompf2.com/2022/04/13/how-to-build-a-bvh-part-1-basics/)
+[How to build a BVH](https://jacco.ompf2.com/2022/04/13/how-to-build-a-bvh-part-1-basics/) - Jacco Bikker
 
-[Coding Adventure: Ray Tracing - Sebastian Lague](https://www.youtube.com/watch?v=Qz0KTGYJtUk)
+[Coding Adventure: Ray Tracing](https://www.youtube.com/watch?v=Qz0KTGYJtUk) - Sebastian Lague
 
-[Coding Adventure: Optimizing a Ray Tracer (by building a BVH) - Sebastian Lague](https://www.youtube.com/watch?v=C1H4zIiCOaI)
+[Coding Adventure: Optimizing a Ray Tracer (by building a BVH)](https://www.youtube.com/watch?v=C1H4zIiCOaI) - Sebastian Lague
 
 [Physically Based Rendering: From Theory To Implementation](https://www.pbr-book.org)
+
+[RayTracingInVulkan](https://github.com/GPSnoopy/RayTracingInVulkan) - GPSnoopy
+
