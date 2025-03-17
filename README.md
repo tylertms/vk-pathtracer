@@ -60,7 +60,9 @@ Please report further issues using the Github Issue feature
 ## Gallery
 ![Dragon](./assets/screenshots/Dragon.png)
 ![Lucy](./assets/screenshots/Lucy.png)
+![DragonGlass](./assets/screenshots/DragonGlass.png)
 ![Spheres](./assets/screenshots/Spheres.png)
+
 
 
 ## References
@@ -78,3 +80,7 @@ Please report further issues using the Github Issue feature
 
 [RayTracingInVulkan](https://github.com/GPSnoopy/RayTracingInVulkan) - GPSnoopy
 
+## Debug Views
+![Normal](./assets/screenshots/debug/Normal.png)
+![BoxTests](./assets/screenshots/debug/BoxTests.png)
+![TriTests](./assets/screenshots/debug/TriTests.png)
