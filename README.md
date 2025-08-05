@@ -1,5 +1,7 @@
 # vk-pathtracer
-[WIP] Interactive, physically-based pathtracing engine using the Vulkan API. Includes full camera control, a custom BVH builder, glTF 2.0 loader, and more. This is a hobby project for my own learning and likely has many naive implementations.
+**!!** This project is deprecated in favor of [parallax](https://github.com/tylertms/parallax), which is based on my new template, [vkrt](https://github.com/tylertms/vkrt). This new project implements the Vulkan ray tracing pipeline and has improved project architecture.
+
+Interactive, physically-based pathtracing engine using the Vulkan API. Includes full camera control, a custom BVH builder, glTF 2.0 loader, and more. This is a hobby project for my own learning and likely has many naive implementations.
 ![Ajax](./assets/screenshots/Ajax.png)
 
 ## Table of Contents
