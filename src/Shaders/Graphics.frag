@@ -8,7 +8,7 @@
 layout (pixel_interlock_unordered) in;
 layout (location = 0) in vec2 fragUV;
 
-layout (binding = 0, std140) readonly uniform SceneUniform {
+layout (binding = 0, std430) readonly buffer SceneUniform {
     Camera camera;
     Sphere spheres[MAX_SPHERES];
     Mesh meshes[MAX_MESHES];

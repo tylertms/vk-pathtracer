@@ -48,20 +48,24 @@ struct convert<VKPT::Material> {
         if (!node.IsMap())
             return false;
 
-        if (node["BaseColor"]) {
-            rhs.baseColor[0] = node["BaseColor"][0].as<float>();
-            rhs.baseColor[1] = node["BaseColor"][1].as<float>();
-            rhs.baseColor[2] = node["BaseColor"][2].as<float>();
+        const Node baseColorNode = node["BaseColor"] ? node["BaseColor"] : node["Color"];
+        if (baseColorNode) {
+            rhs.baseColor[0] = baseColorNode[0].as<float>();
+            rhs.baseColor[1] = baseColorNode[1].as<float>();
+            rhs.baseColor[2] = baseColorNode[2].as<float>();
         }
 
-        if (node["SpecularTint"]) {
-            rhs.specularTint[0] = node["SpecularTint"][0].as<float>();
-            rhs.specularTint[1] = node["SpecularTint"][1].as<float>();
-            rhs.specularTint[2] = node["SpecularTint"][2].as<float>();
+        const Node specularTintNode = node["SpecularTint"] ? node["SpecularTint"] : node["SpecularColor"];
+        if (specularTintNode) {
+            rhs.specularTint[0] = specularTintNode[0].as<float>();
+            rhs.specularTint[1] = specularTintNode[1].as<float>();
+            rhs.specularTint[2] = specularTintNode[2].as<float>();
         }
 
         if (node["Metallic"])
             rhs.metallic = node["Metallic"].as<float>();
+        else if (node["SpecularFactor"])
+            rhs.metallic = node["SpecularFactor"].as<float>();
 
         if (node["EmissionColor"]) {
             rhs.emissionColor[0] = node["EmissionColor"][0].as<float>();

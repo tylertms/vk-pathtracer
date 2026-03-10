@@ -49,6 +49,7 @@ class SceneManager {
     VKPT_FILE_TYPE selectedObjectType;
 
     std::vector<std::string> modelPaths;
+    std::vector<std::string> meshNames;
     std::vector<glm::mat3> meshTransforms;
 
     std::vector<uint32_t> triIndices;

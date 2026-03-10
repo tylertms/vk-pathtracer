@@ -1,8 +1,9 @@
 #ifndef USER_INTERFACE_H
 #define USER_INTERFACE_H
 
-#include <vector>
 #include <chrono>
+#include <string>
+#include <vector>
 #include <imgui.h>
 
 #include "../../Vulkan/Device.h"
@@ -28,6 +29,7 @@ class UserInterface {
 
     void deinit();
     void draw(Vulkan::SceneManager &sceneManager, ImVec2 &position, ImVec2 &extent);
+    void processPendingActions(Vulkan::SceneManager &sceneManager);
 
   private:
     void drawStats(Vulkan::SceneManager &sceneManager);
@@ -41,6 +43,11 @@ class UserInterface {
     std::chrono::high_resolution_clock::time_point m_TimeStart;
     std::chrono::high_resolution_clock::time_point m_TimeCurrent;
     std::vector<float> m_FrameTimes;
+
+    bool m_RequestNewScene = false;
+    std::string m_PendingSceneToOpen;
+    std::string m_PendingMeshToImport;
+    std::string m_PendingEnvironmentPath;
 
 };
 

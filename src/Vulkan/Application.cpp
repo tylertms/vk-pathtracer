@@ -141,6 +141,7 @@ void Application::onResize() {
 
 void Application::drawFrame() {
     vkWaitForFences(m_Device.getVkDevice(), 1, &m_InFlightFences[m_CurrentFrame].getVkFence(), VK_TRUE, UINT64_MAX);
+    m_Interface.processPendingActions(m_SceneManager);
 
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(m_Device.getVkDevice(), m_SwapChain.getVkSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame].getVkSemaphore(), VK_NULL_HANDLE, &imageIndex);

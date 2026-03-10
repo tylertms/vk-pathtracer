@@ -4,6 +4,8 @@
 
 #include <filesystem>
 #include <fstream>
+#include <limits>
+#include <stdexcept>
 #include <vector>
 #include <yaml-cpp/yaml.h>
 
@@ -11,27 +13,88 @@ namespace fs = std::filesystem;
 
 namespace File {
 
+namespace {
+
+constexpr uint32_t INVALID_MATERIAL_INDEX = std::numeric_limits<uint32_t>::max();
+
+glm::mat3 makeIdentityTransform() {
+    glm::mat3 transform(0.0f);
+    transform[2] = glm::vec3(1.0f);
+    return transform;
+}
+
+std::string resolvePath(const std::string &sceneFilename, const std::string &assetPath) {
+    if (assetPath.empty()) {
+        return assetPath;
+    }
+
+    fs::path path(assetPath);
+    if (path.is_absolute()) {
+        return path.lexically_normal().string();
+    }
+
+    return (fs::path(extractDirectory(sceneFilename)) / path).lexically_normal().string();
+}
+
+std::string makeSceneRelativePath(const std::string &sceneFilename, const std::string &assetPath) {
+    if (assetPath.empty()) {
+        return assetPath;
+    }
+
+    try {
+        const fs::path sceneDirectory = fs::absolute(fs::path(sceneFilename)).parent_path();
+        const fs::path assetAbsolute = fs::absolute(fs::path(assetPath));
+        return fs::relative(assetAbsolute, sceneDirectory).generic_string();
+    } catch (...) {
+        return assetPath;
+    }
+}
+
+uint32_t appendMaterial(const YAML::Node &materialNode, Vulkan::SceneManager &sceneManager) {
+    if (!materialNode || !materialNode.IsMap()) {
+        return INVALID_MATERIAL_INDEX;
+    }
+    if (sceneManager.sceneData.numMaterials >= MAX_MATERIALS) {
+        throw std::runtime_error("ERROR: Increase MAX_MATERIALS in Constants.h");
+    }
+
+    const uint32_t materialIndex = sceneManager.sceneData.numMaterials++;
+    sceneManager.sceneData.materials[materialIndex] = materialNode.as<VKPT::Material>();
+    return materialIndex;
+}
+
+uint32_t ensureDefaultMaterial(Vulkan::SceneManager &sceneManager) {
+    if (sceneManager.sceneData.numMaterials == 0) {
+        if (sceneManager.sceneData.numMaterials >= MAX_MATERIALS) {
+            throw std::runtime_error("ERROR: Increase MAX_MATERIALS in Constants.h");
+        }
+        sceneManager.sceneData.materials[sceneManager.sceneData.numMaterials++] = VKPT::Material{};
+    }
+    return 0;
+}
+
+uint32_t resolveMaterialIndex(const YAML::Node &objectNode, Vulkan::SceneManager &sceneManager, uint32_t fallback = INVALID_MATERIAL_INDEX) {
+    if (objectNode["MaterialIndex"]) {
+        return objectNode["MaterialIndex"].as<uint32_t>();
+    }
+    if (objectNode["Material"]) {
+        return appendMaterial(objectNode["Material"], sceneManager);
+    }
+    if (fallback != INVALID_MATERIAL_INDEX) {
+        return fallback;
+    }
+    return ensureDefaultMaterial(sceneManager);
+}
+
+} // namespace
+
 std::string extractDirectory(const std::string &filepath) {
     size_t pos = filepath.find_last_of("/\\");
     return (pos != std::string::npos) ? filepath.substr(0, pos + 1) : "";
 }
 
 std::string extractFilename(const std::string& filepath) {
-    int lastSlashPos = max((int)filepath.find_last_of('/'), (int)filepath.find_last_of('\\'));
-    int lastDotPos = filepath.find_last_of('.');
-
-    if (lastSlashPos < 0 || lastDotPos < 0) return "";
-
-    if (lastSlashPos == std::string::npos) {
-        lastSlashPos = -1; 
-    }
-
-    if (lastDotPos != std::string::npos && lastDotPos > lastSlashPos) {
-        return filepath.substr(lastSlashPos + 1, lastDotPos - lastSlashPos - 1);
-    } else if (lastSlashPos != std::string::npos) {
-        return filepath.substr(lastSlashPos + 1);
-    }
-    return "";
+    return fs::path(filepath).stem().string();
 }
 
 void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneManager) {
@@ -39,8 +102,6 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
         return;
 
     YAML::Node config = YAML::LoadFile(filename);
-    if (!config["Objects"] || !config["Objects"].IsSequence())
-        return;
 
     sceneManager.reset();
 
@@ -50,37 +111,49 @@ void loadSceneFromYAML(const std::string filename, Vulkan::SceneManager &sceneMa
     }
 
     if (config["EnvTexture"]) {
-        std::string loadpath = config["EnvTexture"].as<std::string>();
-        if (fs::path(loadpath).is_relative()) {
-            loadpath = std::string(extractDirectory(filename) + loadpath);
+        sceneManager.updateEnvTexture(resolvePath(filename, config["EnvTexture"].as<std::string>()));
+    }
+
+    if (config["Materials"] && config["Materials"].IsSequence()) {
+        for (uint32_t i = 0; i < config["Materials"].size(); i++) {
+            const YAML::Node materialNode = config["Materials"][i];
+            if (!materialNode || !materialNode.IsMap() || materialNode.size() == 0) {
+                continue;
+            }
+
+            appendMaterial(materialNode.begin()->second, sceneManager);
         }
     }
 
+    if (!config["Objects"] || !config["Objects"].IsSequence()) {
+        sceneManager.uploadFullSceneStorage();
+        sceneManager.resetAccumulation();
+        return;
+    }
+
     for (uint32_t i = 0; i < config["Objects"].size(); i++) {
-        YAML::Node object = config["Objects"][i];
+        const YAML::Node object = config["Objects"][i];
 
         if (object["Mesh"]) {
-            glm::mat3 transform = object["Mesh"]["Transform"].as<glm::mat3>();
-            uint32_t matIndex = object["Mesh"]["MaterialIndex"].as<uint32_t>();
-            std::string loadpath = object["Mesh"]["File"].as<std::string>();
-
-            if (fs::path(loadpath).is_relative()) {
-                loadpath = std::string(extractDirectory(filename) + loadpath);
+            const YAML::Node meshNode = object["Mesh"];
+            if (!meshNode["File"]) {
+                continue;
             }
 
-            loadGLTF(loadpath, transform, matIndex, sceneManager);            
-        }
-
-        else if (object["Sphere"]) {
-            VKPT::Sphere sphere = object["Sphere"].as<VKPT::Sphere>();
+            const glm::mat3 transform = meshNode["Transform"] ? meshNode["Transform"].as<glm::mat3>() : makeIdentityTransform();
+            const uint32_t materialIndex = resolveMaterialIndex(meshNode, sceneManager, INVALID_MATERIAL_INDEX);
+            const std::string loadpath = resolvePath(filename, meshNode["File"].as<std::string>());
+            loadGLTF(loadpath, transform, materialIndex, sceneManager);
+        } else if (object["Sphere"]) {
+            YAML::Node sphereNode = object["Sphere"];
+            VKPT::Sphere sphere = sphereNode.as<VKPT::Sphere>();
+            sphere.materialIndex = resolveMaterialIndex(sphereNode, sceneManager, sphere.materialIndex);
             sceneManager.sceneData.spheres[sceneManager.sceneData.numSpheres++] = sphere;
         }
     }
 
-    for (uint32_t i = 0; i < config["Materials"].size(); i++) {
-        sceneManager.sceneData.materials[sceneManager.sceneData.numMaterials++] = 
-            config["Materials"][i]["Material" + std::to_string(i)].as<VKPT::Material>();
-    }
+    sceneManager.uploadFullSceneStorage();
+    sceneManager.resetAccumulation();
 }
 
 void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sceneManager) {
@@ -96,13 +169,13 @@ void saveSceneToYAML(const std::string filename, const Vulkan::SceneManager &sce
     config["Camera"] = sceneManager.sceneData.camera;
 
     if (sceneManager.texturePaths.size() > 0 && !sceneManager.texturePaths[0].empty()) {
-        config["EnvTexture"] = sceneManager.texturePaths[0];
+        config["EnvTexture"] = makeSceneRelativePath(filename, sceneManager.texturePaths[0]);
     }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         const VKPT::Mesh &mesh = sceneManager.sceneData.meshes[i];
         YAML::Node meshProperties = YAML::Node(mesh);
-        meshProperties["File"] = sceneManager.modelPaths[i];
+        meshProperties["File"] = makeSceneRelativePath(filename, sceneManager.modelPaths[i]);
         meshProperties["Transform"] = sceneManager.meshTransforms[i];
 
         YAML::Node meshNode;

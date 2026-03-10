@@ -80,9 +80,9 @@ void SetDarkTheme() {
 
 
 void UserInterface::init(
-    const Vulkan::Device &device, 
+    const Vulkan::Device &device,
     const Vulkan::Instance &instance,
-    const Vulkan::Window &window, 
+    const Vulkan::Window &window,
     const Vulkan::DescriptorPool &descriptorPool,
     const Vulkan::SwapChain &swapChain,
     const Vulkan::GraphicsPipeline &graphicsPipeline)
@@ -94,15 +94,15 @@ void UserInterface::init(
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     static const ImWchar icons_ranges[] = { ICON_MIN_FA, ICON_MAX_16_FA, 0 };
-    ImFontConfig icons_config; 
-    icons_config.MergeMode = true; 
-    icons_config.PixelSnapH = true; 
+    ImFontConfig icons_config;
+    icons_config.MergeMode = true;
+    icons_config.PixelSnapH = true;
     io.Fonts->AddFontFromFileTTF("assets/fonts/Lato.ttf", 16);
     io.Fonts->AddFontFromFileTTF("assets/fonts/fa-solid-900.ttf", 14, &icons_config, icons_ranges);
-    
+
     ImGui::StyleColorsDark();
     SetDarkTheme();
-    
+
     ImGuiStyle &style = ImGui::GetStyle();
     style.WindowRounding = 2;
     style.GrabRounding = 2;
@@ -140,19 +140,43 @@ void UserInterface::deinit() {
     ImGui::DestroyContext();
 }
 
+void UserInterface::processPendingActions(Vulkan::SceneManager &sceneManager) {
+    if (m_RequestNewScene) {
+        sceneManager.reset();
+        m_RequestNewScene = false;
+    }
+
+    if (!m_PendingSceneToOpen.empty()) {
+        File::loadSceneFromYAML(m_PendingSceneToOpen, sceneManager);
+        m_PendingSceneToOpen.clear();
+    }
+
+    if (!m_PendingMeshToImport.empty()) {
+        glm::mat3 transform(0.0f);
+        transform[2] = glm::vec3(1.0f);
+        File::loadGLTF(m_PendingMeshToImport, transform, static_cast<uint32_t>(-1), sceneManager);
+        m_PendingMeshToImport.clear();
+    }
+
+    if (!m_PendingEnvironmentPath.empty()) {
+        sceneManager.updateEnvTexture(m_PendingEnvironmentPath);
+        m_PendingEnvironmentPath.clear();
+    }
+}
+
 void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
     if (ImGui::BeginMainMenuBar()) {
 
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem(ICON_FA_FILE_CIRCLE_PLUS"    New"))
-                sceneManager.reset();
+                m_RequestNewScene = true;
 
             if (ImGui::MenuItem(ICON_FA_FOLDER_OPEN"    Open"))
-                File::loadSceneFromYAML(pickFilePath(VKPT_SCENE, VKPT_LOAD), sceneManager);
+                m_PendingSceneToOpen = pickFilePath(VKPT_SCENE, VKPT_LOAD);
 
             if (ImGui::MenuItem(ICON_FA_FLOPPY_DISK"      Save"))
                 File::saveSceneToYAML(pickFilePath(VKPT_SCENE, VKPT_SAVE), sceneManager);
-                
+
             ImGui::EndMenu();
         }
 
@@ -161,12 +185,11 @@ void UserInterface::drawMenuBar(Vulkan::SceneManager &sceneManager) {
                 sceneManager.addSphere();
 
             if (ImGui::MenuItem(ICON_FA_DRAW_POLYGON"     Mesh"))
-                //sceneManager.addMesh(pickFilePath(VKPT_MESH, VKPT_LOAD));
-                File::loadGLTF(pickFilePath(VKPT_MESH, VKPT_LOAD), 0, -1, sceneManager);
+                m_PendingMeshToImport = pickFilePath(VKPT_MESH, VKPT_LOAD);
 
             if (ImGui::MenuItem(ICON_FA_MOUNTAIN_SUN"   Environment"))
-                sceneManager.updateEnvTexture(pickFilePath(VKPT_HDRI, VKPT_LOAD));
-                
+                m_PendingEnvironmentPath = pickFilePath(VKPT_HDRI, VKPT_LOAD);
+
             ImGui::EndMenu();
         }
 

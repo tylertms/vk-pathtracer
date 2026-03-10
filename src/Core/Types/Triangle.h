@@ -58,7 +58,7 @@ HitPayload rayHitTriangle(Ray ray, Triangle tri) {
     p.didHit = (passAll != 0.0f);
     p.distance = mix(0.0f, t, passAll);
 
-    vec3 hitP = ray.origin + ray.dir * t + nI * 1e6;
+    vec3 hitP = ray.origin + ray.dir * t;
 
     p.point = mix(vec3(0.0f), hitP, passAll);
     p.normal = mix(vec3(0.0f), nI, passAll);

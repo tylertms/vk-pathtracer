@@ -12,22 +12,29 @@ Camera:
 EnvTexture: ../hdri/spruit_sunrise_4k.hdr
 Objects:
   - Mesh:
-      Material:
-        Color: [1, 1, 1]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0
-        Roughness: 1
+      MaterialIndex: 0
       File: ../models/cloth.glb
       Transform: [0, -1.10000002, 0, 0, 180, 0, 3, 3, 3]
   - Mesh:
-      Material:
-        Color: [0.632911384, 0.248053417, 0.0801153928]
-        EmissionColor: [1, 1, 1]
-        EmissionStrength: 0
-        SpecularColor: [1, 1, 1]
-        SpecularFactor: 0.150000006
-        Roughness: 0
+      MaterialIndex: 1
       File: ../models/870k_dragon.glb
       Transform: [0.25999999, -0.140000001, -1.39999998, 0, -51, 0, 3.5, 3.5, 3.5]
+Materials:
+  - Material0:
+      BaseColor: [1, 1, 1]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 0
+      IOR: [1.5, 0.5]
+      Roughness: 1
+      Transmission: 0
+  - Material1:
+      BaseColor: [0.632911384, 0.248053417, 0.0801153928]
+      SpecularTint: [1, 1, 1]
+      Metallic: 0.150000006
+      EmissionColor: [1, 1, 1]
+      EmissionStrength: 0
+      IOR: [1.5, 0.5]
+      Roughness: 0
+      Transmission: 0

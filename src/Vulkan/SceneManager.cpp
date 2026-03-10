@@ -9,6 +9,13 @@
 
 namespace Vulkan {
 
+static void reloadTextureSlot(ImageView &texture, const std::string &filename, const Device &device, const CommandPool &commandPool) {
+    if (texture.getVkImageView() != nullptr || texture.getVkImage() != nullptr || texture.getVkSampler() != nullptr) {
+        texture.deinit(device.getVkDevice());
+    }
+    createTextureImage(filename, texture, device, commandPool);
+}
+
 /* ----------- INIT ----------- */
 void SceneManager::init(const Device &device, const VkExtent2D extent, const CommandPool &commandPool) {
     ext_Device = &device;
@@ -16,7 +23,7 @@ void SceneManager::init(const Device &device, const VkExtent2D extent, const Com
 
     sceneStorage = new VKPT::SceneStorage();
 
-    createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_UniformBuffer, m_UniformBufferMemory);
+    createBuffer(device, sizeof(VKPT::SceneData), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_UniformBuffer, m_UniformBufferMemory);
     vkMapMemory(device.getVkDevice(), m_UniformBufferMemory, 0, sizeof(VKPT::SceneData), 0, &m_UniformBufferMapped);
 
     createBuffer(device, sizeof(VKPT::SceneStorage), VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_SceneStorage, m_SceneStorageMemory);
@@ -51,17 +58,23 @@ void SceneManager::deinit(const VkDevice &device) {
 }
 
 void SceneManager::reset() {
-    sceneData.numMeshes = 0;
-    sceneData.numSpheres = 0;
-    sceneData.numMaterials = 0;
-    sceneData.numTextures = 0;
-    sceneData.numTriangles = 0;
-    sceneData.numBVHs = 0;
-    sceneData.framesRendered = 0;
-    sceneData.camera = {};
+    const glm::uvec2 windowSize = sceneData.camera.windowSize;
+    sceneData = {};
+    sceneData.camera.windowSize = windowSize;
+    selectedObjectIndex = static_cast<uint32_t>(-1);
     modelPaths.clear();
+    meshNames.clear();
     texturePaths.clear();
     meshTransforms.clear();
+    triIndices.clear();
+    triMin.clear();
+    triMax.clear();
+    triCentroid.clear();
+    cameras.clear();
+    cameraNames.clear();
+
+    reloadTextureSlot(textures[0], "", *ext_Device, *ext_CommandPool);
+    texturesUpdated = true;
 }
 /* ----------------------------- */
 
@@ -122,7 +135,11 @@ void SceneManager::updateMeshTransforms() {
 
 /* ----------- TEXTURE ----------- */
 void SceneManager::updateEnvTexture(const std::string filename) {
-    createTextureImage(filename, textures[0], *ext_Device, *ext_CommandPool);
+    if (texturePaths.size() < 1) {
+        texturePaths.resize(1);
+    }
+    texturePaths[0] = filename;
+    reloadTextureSlot(textures[0], filename, *ext_Device, *ext_CommandPool);
     texturesUpdated = true;
     resetAccumulation();
 }
@@ -131,7 +148,11 @@ void SceneManager::loadTexture(const std::string filename, const uint32_t textur
     if (filename.empty())
         return;
 
-    createTextureImage(filename, textures[textureIndex], *ext_Device, *ext_CommandPool);
+    if (texturePaths.size() <= textureIndex) {
+        texturePaths.resize(textureIndex + 1);
+    }
+    texturePaths[textureIndex] = filename;
+    reloadTextureSlot(textures[textureIndex], filename, *ext_Device, *ext_CommandPool);
     texturesUpdated = true;
     resetAccumulation();
 }

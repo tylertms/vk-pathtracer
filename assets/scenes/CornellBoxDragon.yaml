@@ -12,32 +12,34 @@ Camera:
 Objects:
   - Mesh:
       MaterialIndex: 1
-      File: Plane.001 - 0
+      File: ../models/quad.glb
       Transform: [0, 2, 0, 180, 0, 0, 2, 2, 2]
   - Mesh:
       MaterialIndex: 3
-      File: Plane.002 - 0
+      File: ../models/quad.glb
       Transform: [0, 0, -2, 90, 0, 0, 2, 2, 2]
   - Mesh:
       MaterialIndex: 2
-      File: Plane.003 - 0
+      File: ../models/quad.glb
       Transform: [0, 0, 2, 270, 0, 0, 2, 2, 2]
   - Mesh:
       MaterialIndex: 1
-      File: Plane.004 - 0
+      File: ../models/quad.glb
       Transform: [-2, 0, 0, 90, 90, 0, 2, 2, 2]
   - Mesh:
       MaterialIndex: 1
-      File: Plane - 0
+      File: ../models/quad.glb
       Transform: [0, -2, 0, 0, 0, 0, 2, 2, 2]
   - Mesh:
       MaterialIndex: 0
-      File: Plane.005 - 0
-      Transform: [0, 1.99000001, 0, 180, 0, 0, 0.799999952, 0.799999952, 0.799999952]
+      File: ../models/quad.glb
+      Transform:
+        [0, 1.99000001, 0, 180, 0, 0, 0.799999952, 0.799999952, 0.799999952]
   - Mesh:
       MaterialIndex: 4
-      File: dragon - 0
-      Transform: [0.189999998, -1.01999998, 0.100000001, 0, -148.5, 0, 3.5, 3.5, 3.5]
+      File: ../models/870k_dragon.glb
+      Transform:
+        [0.189999998, -1.01999998, 0.100000001, 0, -148.5, 0, 3.5, 3.5, 3.5]
 Materials:
   - Material0:
       BaseColor: [1, 1, 1]

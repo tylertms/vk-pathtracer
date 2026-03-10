@@ -31,7 +31,7 @@ void drawSceneOverview(Vulkan::SceneManager &sceneManager) {
     for (uint32_t i = 0; i < sceneManager.sceneData.numSpheres; i++) {
         bool selected = (sceneManager.selectedObjectType == VKPT_SPHERE) && (sceneManager.selectedObjectIndex == i);
         std::string str = ICON_FA_CIRCLE"     Sphere - " + std::to_string(i + 1);
-
+        ImGui::PushID(static_cast<int>(i));
         if (ImGui::Selectable(str.c_str(), selected)) {
             if (selected) {
                 sceneManager.selectedObjectIndex = -1;
@@ -40,12 +40,16 @@ void drawSceneOverview(Vulkan::SceneManager &sceneManager) {
                 sceneManager.selectedObjectType = VKPT_SPHERE;
             }
         }
+        ImGui::PopID();
     }
 
     for (uint32_t i = 0; i < sceneManager.sceneData.numMeshes; i++) {
         bool selected = (sceneManager.selectedObjectType == VKPT_MESH) && (sceneManager.selectedObjectIndex == i);
-        std::string str = ICON_FA_DRAW_POLYGON"      Mesh - " +  sceneManager.modelPaths[i];
-
+        const std::string &meshName = i < sceneManager.meshNames.size() && !sceneManager.meshNames[i].empty()
+            ? sceneManager.meshNames[i]
+            : File::extractFilename(sceneManager.modelPaths[i]);
+        std::string str = ICON_FA_DRAW_POLYGON"      Mesh - " + meshName;
+        ImGui::PushID(static_cast<int>(sceneManager.sceneData.numSpheres + i));
         if (ImGui::Selectable(str.c_str(), selected)) {
             if (selected) {
                 sceneManager.selectedObjectIndex = -1;
@@ -54,6 +58,7 @@ void drawSceneOverview(Vulkan::SceneManager &sceneManager) {
                 sceneManager.selectedObjectType = VKPT_MESH;
             }
         }
+        ImGui::PopID();
     }
 
     ImGui::End();

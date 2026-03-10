@@ -54,7 +54,7 @@ void DescriptorSet::updateSet(const VkDevice &device, const SceneManager &sceneM
     descriptorWrites[0].dstSet = m_DescriptorSet;
     descriptorWrites[0].dstBinding = 0;
     descriptorWrites[0].dstArrayElement = 0;
-    descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     descriptorWrites[0].descriptorCount = 1;
     descriptorWrites[0].pBufferInfo = &sceneDataInfo;
 
@@ -96,7 +96,7 @@ void DescriptorSet::updateSet(const VkDevice &device, const SceneManager &sceneM
 void DescriptorSet::createLayout(const VkDevice &device) {
     VkDescriptorSetLayoutBinding sceneDataBinding{};
     sceneDataBinding.binding = 0;
-    sceneDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    sceneDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
     sceneDataBinding.descriptorCount = 1;
     sceneDataBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
     sceneDataBinding.pImmutableSamplers = nullptr;
